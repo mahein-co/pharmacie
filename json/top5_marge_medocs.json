@@ -1,0 +1,22 @@
+[
+    {
+        "Nom_Commercial": "Ibuprofène",
+        "Marge_Moyenne_Pourcent": 20.0
+    },
+    {
+        "Nom_Commercial": "Efferalgan",
+        "Marge_Moyenne_Pourcent": 20.0
+    },
+    {
+        "Nom_Commercial": "Dafalgan",
+        "Marge_Moyenne_Pourcent": 20.0
+    },
+    {
+        "Nom_Commercial": "Gaviscon",
+        "Marge_Moyenne_Pourcent": 20.0
+    },
+    {
+        "Nom_Commercial": "Doliprane Enfant",
+        "Marge_Moyenne_Pourcent": 20.0
+    }
+]

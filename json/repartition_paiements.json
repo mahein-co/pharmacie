@@ -1,0 +1,14 @@
+[
+    {
+        "Mode_Paiement": "Espèces",
+        "Pourcentage": 35.36
+    },
+    {
+        "Mode_Paiement": "Chèque",
+        "Pourcentage": 34.6
+    },
+    {
+        "Mode_Paiement": "CB",
+        "Pourcentage": 30.04
+    }
+]

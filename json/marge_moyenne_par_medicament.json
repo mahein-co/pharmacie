@@ -1,0 +1,67 @@
+[
+    {
+        "Nom_Commercial": "Doliprane Enfant",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Efferalgan",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Ibuprofène",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Dafalgan",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Lexomil",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Augmentin",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Doliprane",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Amoxicilline",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Gaviscon",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Spasfon",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Doliprane modifié",
+        "Marge_Moyenne_Pourcent": 10.64,
+        "Pourcentage": 7.4
+    },
+    {
+        "Nom_Commercial": "Lexomil modifié",
+        "Marge_Moyenne_Pourcent": -31.12,
+        "Pourcentage": -21.64
+    },
+    {
+        "Nom_Commercial": "Amoxicilline modifié",
+        "Marge_Moyenne_Pourcent": -35.74,
+        "Pourcentage": -24.86
+    }
+]
