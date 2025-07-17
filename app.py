@@ -9,9 +9,24 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
+from data.mongodb_ip_manager import MongoDBIPManager
+
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
+
+
+def mongodb_ip_manager():   
+    manager = MongoDBIPManager()
+
+    current_ip = manager.get_current_ip()
+    if current_ip:
+        if not manager.ip_exists(current_ip):
+            manager.add_ip(current_ip)
+
+
+mongodb_ip_manager()
 
 # Chargement CSS
 # with open("style/pharmacie.css", "r") as css_file:
@@ -219,7 +234,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
             col2.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">📉 Stock Minimum</div>
-                    <div class="metric-value">{stats_stock["stock_min"][0]}</div>
+                    <div class="metric-value">{abs(stats_stock["stock_min"][0])}</div>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -281,7 +296,6 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
         st.markdown("---")
 
-        
 
     except Exception as e:
         st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
