@@ -99,8 +99,6 @@ if prompt := st.chat_input("Écrivez votre message ici..."):
 
     Resumes toujours ta réponse si on ne te demande pas de la détailler.
 
-    Si on te demande une liste, ta réponse devra toujours un tableau.
-
     En aucun cas, tu ne fourniras jamais comme une réponse un identifiant ou l'ID d'une entité.
 
     Si tu ne connais pas la réponse, dis simplement que tu ne sais pas."""
@@ -128,4 +126,4 @@ if prompt := st.chat_input("Écrivez votre message ici..."):
     # Ajouter la réponse du bot à l'historique
     st.session_state.messages.append({"role": "assistant", "content": reponse_finaly})
     with st.chat_message("assistant"):
-        st.markdown(response)
+        st.markdown(reponse_finaly)
