@@ -5,17 +5,17 @@
         "Pourcentage": 13.91
     },
     {
+        "Nom_Commercial": "Augmentin",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
+        "Nom_Commercial": "Doliprane",
+        "Marge_Moyenne_Pourcent": 20.0,
+        "Pourcentage": 13.91
+    },
+    {
         "Nom_Commercial": "Efferalgan",
-        "Marge_Moyenne_Pourcent": 20.0,
-        "Pourcentage": 13.91
-    },
-    {
-        "Nom_Commercial": "Ibuprofène",
-        "Marge_Moyenne_Pourcent": 20.0,
-        "Pourcentage": 13.91
-    },
-    {
-        "Nom_Commercial": "Dafalgan",
         "Marge_Moyenne_Pourcent": 20.0,
         "Pourcentage": 13.91
     },
@@ -25,12 +25,12 @@
         "Pourcentage": 13.91
     },
     {
-        "Nom_Commercial": "Augmentin",
+        "Nom_Commercial": "Dafalgan",
         "Marge_Moyenne_Pourcent": 20.0,
         "Pourcentage": 13.91
     },
     {
-        "Nom_Commercial": "Doliprane",
+        "Nom_Commercial": "Spasfon",
         "Marge_Moyenne_Pourcent": 20.0,
         "Pourcentage": 13.91
     },
@@ -45,7 +45,7 @@
         "Pourcentage": 13.91
     },
     {
-        "Nom_Commercial": "Spasfon",
+        "Nom_Commercial": "Ibuprofène",
         "Marge_Moyenne_Pourcent": 20.0,
         "Pourcentage": 13.91
     },

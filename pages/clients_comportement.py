@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import json
 
+from data.mongodb_client import MongoDBClient
+
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
@@ -62,114 +64,151 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Connexion à MongoDB pour récupérer les données des clients
+clients_collection = MongoDBClient(collection_name="client")
+
+
+
 # Vérification des données disponibles
-if df is not None and "client" in df and "vente" in df:
-    clients = df["client"]
-    ventes = df["vente"]
+# if df is not None and "client" in df and "vente" in df:
+if clients_collection:
+    # All clients
+    clients = clients_collection.find_all_documents()
+    # Nombre total de clients
+    nb_total_clients = clients_collection.count_distinct_agg(field_name="ID_Client")
+    
+    # clients = df["client"] # should be removed
+    # ventes = df["vente"]
+
 
     # Connexion à DuckDB pour effectuer des calculs
-    con = duckdb.connect(database=":memory:")
-    con.register("clients_data", clients)
-    con.register("ventes_data", ventes)
+    # con = duckdb.connect(database=":memory:")
+    # con.register("clients_data", clients)
+    # con.register("ventes_data", ventes)
 
+    # Pipeline d'agrégation équivalent à ta requête SQL
+    pipeline = [
+        {
+            "$group": {
+                "_id": "$ID_Client",
+                "nombre_ventes": { "$sum": 1 }
+            }
+        },
+        {
+            "$match": {
+                "nombre_ventes": { "$gt": 3 }
+            }
+        },
+        {
+            "$count": "nombre_clients"
+        }
+    ]
+
+    # Exécution de l'agrégation
     try:
+        title="Recuperer le nombre de clients fideles"
+        nb_clients_fideles_result = clients_collection.make_specific_pipeline(title=title, pipeline=pipeline)
+        nb_clients_fideles = nb_clients_fideles_result[0]["nombre_clients"] if nb_clients_fideles_result else 0
+
+
         # Vérifier que les DataFrames clients et ventes contiennent des données valides
-        if clients is not None and ventes is not None:
+        # if clients is not None :
+        # and ventes is not None:
             # Nombre total de clients enregistrés
-            nb_total_clients_result = con.execute("SELECT COUNT(DISTINCT ID_Client) FROM clients_data").fetchone()
-            nb_total_clients = nb_total_clients_result[0] if nb_total_clients_result is not None else 0
+            # nb_total_clients_result = con.execute("SELECT COUNT(DISTINCT ID_Client) FROM clients_data").fetchone()
+            # nb_total_clients = nb_total_clients_result[0] if nb_total_clients_result is not None else 0
 
             # Nombre de clients fidèles (> 10 achats)
-            nb_clients_fideles_result = con.execute("""
-                SELECT COUNT(DISTINCT ID_Client) 
-                FROM ventes_data 
-                GROUP BY ID_Client
-                HAVING COUNT(ID_Vente) > 10
-            """).fetchone()
-            nb_clients_fideles = nb_clients_fideles_result[0] if nb_clients_fideles_result is not None else 0
+            # nb_clients_fideles_result = con.execute("""
+            #     SELECT COUNT(DISTINCT ID_Client) 
+            #     FROM ventes_data 
+            #     GROUP BY ID_Client
+            #     HAVING COUNT(ID_Vente) > 10
+            # """).fetchone()
+            # nb_clients_fideles = nb_clients_fideles_result[0] if nb_clients_fideles_result is not None else 0
 
             # Nombre de nouveaux clients (dernier mois)
-            one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
-            nb_nouveaux_clients_result = con.execute(f"""
-                SELECT COUNT(DISTINCT ID_Client)
-                FROM ventes_data
-                WHERE Date_Vente >= '{one_month_ago}'
-            """).fetchone()
-            nb_nouveaux_clients = nb_nouveaux_clients_result[0] if nb_nouveaux_clients_result is not None else 0
+            # one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+            # nb_nouveaux_clients_result = con.execute(f"""
+            #     SELECT COUNT(DISTINCT ID_Client)
+            #     FROM ventes_data
+            #     WHERE Date_Vente >= '{one_month_ago}'
+            # """).fetchone()
+            # nb_nouveaux_clients = nb_nouveaux_clients_result[0] if nb_nouveaux_clients_result is not None else 0
 
-            # Nombre moyen d'achats par client
-            nb_moyen_achats_client_result = con.execute("""
-                SELECT AVG(nb_achats) 
-                FROM (
-                    SELECT COUNT(ID_Vente) AS nb_achats
-                    FROM ventes_data
-                    GROUP BY ID_Client
-                ) AS achats
-            """).fetchone()
-            nb_moyen_achats_client = nb_moyen_achats_client_result[0] if nb_moyen_achats_client_result is not None else 0
+            # # Nombre moyen d'achats par client
+            # nb_moyen_achats_client_result = con.execute("""
+            #     SELECT AVG(nb_achats) 
+            #     FROM (
+            #         SELECT COUNT(ID_Vente) AS nb_achats
+            #         FROM ventes_data
+            #         GROUP BY ID_Client
+            #     ) AS achats
+            # """).fetchone()
+            # nb_moyen_achats_client = nb_moyen_achats_client_result[0] if nb_moyen_achats_client_result is not None else 0
 
-            # Client avec le plus d'achats
-            client_plus_achats = con.execute("""
-                SELECT ID_Client, COUNT(ID_Vente) AS total_achats
-                FROM ventes_data
-                GROUP BY ID_Client
-                ORDER BY total_achats DESC
-                LIMIT 1
-            """).fetchdf()
+            # # Client avec le plus d'achats
+            # client_plus_achats = con.execute("""
+            #     SELECT ID_Client, COUNT(ID_Vente) AS total_achats
+            #     FROM ventes_data
+            #     GROUP BY ID_Client
+            #     ORDER BY total_achats DESC
+            #     LIMIT 1
+            # """).fetchdf()
 
             # Vérifier si client_plus_achats a des données valides
-            if not client_plus_achats.empty:
-                client_max = client_plus_achats['ID_Client'][0]
-                achats_max = client_plus_achats['total_achats'][0]
-            else:
-                client_max = "Inconnu"
-                achats_max = 0
+            # if not client_plus_achats.empty:
+            #     client_max = client_plus_achats['ID_Client'][0]
+            #     achats_max = client_plus_achats['total_achats'][0]
+            # else:
+            #     client_max = "Inconnu"
+            #     achats_max = 0
 
             # AFFICHAGE DESIGN
-            with st.container():
-                st.markdown("### 👥 Statistiques des clients")
+        with st.container():
+            st.markdown("### 👥 Statistiques des clients")
 
-                # Disposition en colonnes pour un affichage structuré
-                col1, col2, col3 = st.columns(3)
-                col1.markdown(f"""
-                    <div class="metric-box">
-                        <div class="metric-label">🔢 Nombre total de clients</div>
-                        <div class="metric-value">{nb_total_clients}</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            # Disposition en colonnes pour un affichage structuré
+            col1, col2, col3 = st.columns(3)
+            col1.markdown(f"""
+                <div class="metric-box">
+                    <div class="metric-label">🔢 Nombre total de clients</div>
+                    <div class="metric-value">{nb_total_clients}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
-                col2.markdown(f"""
-                    <div class="metric-box">
-                        <div class="metric-label">🤝 Clients fidèles (> 10 achats)</div>
-                        <div class="metric-value">{nb_clients_fideles}</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            col2.markdown(f"""
+                <div class="metric-box">
+                    <div class="metric-label">🤝 Clients fidèles (> 03 achats)</div>
+                    <div class="metric-value">{nb_clients_fideles}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
-                col3.markdown(f"""
-                    <div class="metric-box">
-                        <div class="metric-label">🆕 Nouveaux clients (dernier mois)</div>
-                        <div class="metric-value">{nb_nouveaux_clients}</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            # col3.markdown(f"""
+            #     <div class="metric-box">
+            #         <div class="metric-label">🆕 Nouveaux clients (dernier mois)</div>
+            #         <div class="metric-value">{nb_nouveaux_clients}</div>
+            #     </div>
+            # """, unsafe_allow_html=True)
 
-                col4, col5 = st.columns([2, 1])
-                col4.markdown(f"""
-                    <div class="metric-box">
-                        <div class="metric-label">💡 Nombre moyen d'achats par client</div>
-                        <div class="metric-value">{nb_moyen_achats_client}</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            col4, col5 = st.columns([2, 1])
+            # col4.markdown(f"""
+            #     <div class="metric-box">
+            #         <div class="metric-label">💡 Nombre moyen d'achats par client</div>
+            #         <div class="metric-value">{nb_moyen_achats_client}</div>
+            #     </div>
+            # """, unsafe_allow_html=True)
 
-                col5.markdown(f"""
-                    <div class="metric-box">
-                        <div class="metric-label">🏆 Client avec le plus d'achats</div>
-                        <div class="metric-value">{client_max} ({achats_max} achats)</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            # col5.markdown(f"""
+            #     <div class="metric-box">
+            #         <div class="metric-label">🏆 Client avec le plus d'achats</div>
+            #         <div class="metric-value">{client_max} ({achats_max} achats)</div>
+            #     </div>
+            # """, unsafe_allow_html=True)
 
-        else:
-            st.error("❌ Les données clients ou ventes sont invalides ou manquantes.")
-        st.markdown("---")
+        # else:
+        #     st.error("❌ Les données clients ou ventes sont invalides ou manquantes.")
+        # st.markdown("---")
     except Exception as e:
         st.error(f"❌ Erreur lors du calcul des statistiques des clients : {e}")
 else:

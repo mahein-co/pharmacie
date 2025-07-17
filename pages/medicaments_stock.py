@@ -604,7 +604,7 @@ try:
 
     # Moyenne
     moyenne_rupture = rupture_df["jours_avant_rupture"].mean()
-    st.success(f"**{moyenne_rupture:.2f} jours** en moyenne avant rupture de stock d’un lot.")
+    st.success(f"**{abs(moyenne_rupture):.2f} jours** en moyenne avant rupture de stock d’un lot.")
 
     # Graphique
     fig = px.bar(

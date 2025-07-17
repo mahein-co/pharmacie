@@ -4,15 +4,15 @@
         "Total_Quantite": 7557.0
     },
     {
-        "Nom_Client": "Félicie Anaël",
-        "Total_Quantite": 7557.0
-    },
-    {
         "Nom_Client": "Agnès Yóu",
         "Total_Quantite": 7557.0
     },
     {
-        "Nom_Client": "Faîtes Nélie",
+        "Nom_Client": "Félicie Anaël",
+        "Total_Quantite": 7557.0
+    },
+    {
+        "Nom_Client": "Mélys Ruò",
         "Total_Quantite": 6493.0
     },
     {
@@ -20,15 +20,15 @@
         "Total_Quantite": 6493.0
     },
     {
-        "Nom_Client": "Mélys Ruò",
+        "Nom_Client": "Faîtes Nélie",
         "Total_Quantite": 6493.0
     },
     {
-        "Nom_Client": "Léonie Erwéi",
+        "Nom_Client": "Ruò Göran",
         "Total_Quantite": 6365.0
     },
     {
-        "Nom_Client": "Ruò Göran",
+        "Nom_Client": "Léonie Erwéi",
         "Total_Quantite": 6365.0
     },
     {
@@ -36,7 +36,7 @@
         "Total_Quantite": 6365.0
     },
     {
-        "Nom_Client": "Cécile Véronique",
+        "Nom_Client": "Erwéi Håkan",
         "Total_Quantite": 4689.0
     }
 ]
