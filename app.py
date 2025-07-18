@@ -5,10 +5,9 @@ import plotly.express as px
 import duckdb
 from utils import load_data
 from db import init_duckdb
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
+# from sklearn.linear_model import LinearRegression
+# from sklearn.model_selection import train_test_split
 import numpy as np
-
 
 from data.mongodb_ip_manager import MongoDBIPManager
 
@@ -58,7 +57,7 @@ if df is not None and "medicament" in df and "stock" in df:
 
     # 💊 Titre principal
     st.markdown("""
-        <h1 style='font-size: 32px; color: #4CAF50; margin-bottom: 0;'>PHARMACIE RAKOTO</h1>
+        <h1 style='font-size: 32px; color: #4CAF50; margin-bottom: 0;'>PHARMACIE METROPOLE</h1>
         <p style='font-size: 16px; color: gray;'>Vue d'ensemble des indicateurs clés</p>
         <hr style='margin-top: 10px; margin-bottom: 20px;' />
     """, unsafe_allow_html=True)
