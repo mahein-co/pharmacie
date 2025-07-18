@@ -31,9 +31,7 @@ with st.sidebar:
 
 # MEDICAMENT
 
-
-
-st.markdown("<h2 style='color: green;'>Médicaments & Stock</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>Vue en details des Médicaments</h2>", unsafe_allow_html=True)
 
 # Appliquer des styles CSS personnalisés pour les métriques
 st.markdown("""
@@ -140,163 +138,178 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
             col2.markdown(f"""
                 <div class="metric-box">
-                    <div class="metric-label">📉 Stock Minimum</div>
+                    <div class="metric-label">📉Médicaments critiques en stock</div>
                     <div class="metric-value">{stats_stock["stock_min"][0]}</div>
                 </div>
             """, unsafe_allow_html=True)
 
             col3.markdown(f"""
                 <div class="metric-box">
-                    <div class="metric-label">📈 Stock Maximum</div>
+                    <div class="metric-label">📈Nombre total d’approvisionnements</div>
                     <div class="metric-value">{stats_stock["stock_max"][0]}</div>
                 </div>
             """, unsafe_allow_html=True)
 
-            col4, col5 = st.columns([2, 1])
-            col4.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">📊 Stock Moyen</div>
-                    <div class="metric-value">{stats_stock["stock_moyen"][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col5.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🧪 Catégories</div>
-                    <div class="metric-value">{nb_categories}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-     
-        
-        with st.expander("### 🏆 Top Médicaments"):
-         with st.container():
-            st.markdown("### 🏆 Top Médicaments")
-            col6, col7, col8 = st.columns(3)
-            col6.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🔥 Le plus vendu</div>
-                    <div class="metric-value">{med_plus_vendu['nom'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col7.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">❗ Stock le plus bas</div>
-                    <div class="metric-value">{med_stock_bas['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col8.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💰 Plus cher</div>
-                    <div class="metric-value">{med_cher['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col9, _ = st.columns([1, 2])
-            col9.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🪙 Moins cher</div>
-                    <div class="metric-value">{med_moins_cher['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        
-
-    except Exception as e:
-        st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
-else:
-    st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
-
-
-
-
-
-
-
 
 
 # Médicaments critiques en stock (<10 unités)
-try:
-    if "medicament" in df and "stock" in df:
-        medicament = df["medicament"]
-        stock = df["stock"]
-
-        # Fusion des données
-        merged_df = pd.merge(stock, medicament, on="ID_Medicament", how="left")
-
-        # Créer des colonnes pour les éléments en ligne
-        col1, col2 = st.columns([1, 1])
-
-        # Sélection de la date dans la première colonne
-        with col1:
-            date_column = st.selectbox(
-                "🗓️ Sélectionnez la date à utiliser pour l'analyse :",
-                ["date_entree", "Date_Peremption"]
-            )
-
-        # Nettoyage des dates
-        merged_df[date_column] = merged_df[date_column].astype(str).str.extract(r'(\d{1,2}/\d{1,2}/\d{4})')
-        merged_df["Année"] = pd.to_datetime(merged_df[date_column], dayfirst=True, errors='coerce').dt.year
-        merged_df = merged_df.dropna(subset=["Année"])
-
-        # Filtrage des médicaments critiques
-        stock_critique = (
-            merged_df[merged_df["Stock_Disponible"] < 10]
-            .groupby(["Année", "Nom_Commercial"])
-            .size()
-            .reset_index(name="Nombre_Médicaments_Critiques")
-        )
-
-        # Sélection de l’année dans la deuxième colonne
-        with col2:
-            selected_year = st.selectbox(
-                "📅 Sélectionnez une année :",
-                sorted(stock_critique["Année"].unique())
-            )
-
-        # Graphique 1 : Évolution (dans la première colonne)
-        fig_area = px.area(
-            stock_critique,
-            x="Année",
-            y="Nombre_Médicaments_Critiques",
-            color="Nom_Commercial",
-            title="📊 Évolution des Médicaments Critiques en Stock (<10 unités)",
-            labels={"Nombre_Médicaments_Critiques": "Nombre de Médicaments Critiques"},
-            color_discrete_sequence=px.colors.sequential.Plasma
-        )
-
-        # Graphique 2 : Camembert (dans la première colonne)
-        filtered_data = stock_critique[stock_critique["Année"] == selected_year]
-        fig = px.pie(
-            filtered_data,
-            names="Nom_Commercial",
-            values="Nombre_Médicaments_Critiques",
-            title=f"<b>Répartition des Médicaments Critiques en Stock en {selected_year}</b>",
-            color_discrete_sequence=px.colors.sequential.Plasma,
-            hole=0.4
-        )
-
-        # Affichage des graphiques l'un à côté de l'autre
-        with col1:
-            st.plotly_chart(fig_area, use_container_width=True)
+        with st.container():
+            st.markdown("Détails Médicaments critiques en stock ")
         
-        with col2:
-            st.plotly_chart(fig, use_container_width=True)
+        st.markdown("""
+            <style>
+                    /* Fond noir général */
+                    body, .stApp {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+                    /* Style du tableau */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    background-color: #0e0e0e;
+                }
 
-    else:
-        st.error("❌ Les feuilles 'medicament' et 'stock' ne sont pas disponibles dans le fichier Excel.")
+                thead tr {
+                    background-color: #28a745; /* Vert pharmacie */
+                    color: white;
+                    font-weight: bold;
+                }
 
-except Exception as e:
-    st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
+                tbody tr {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
 
+                td, th {
+                    padding: 10px;
+                    text-align: left;
+                }
 
+                tbody tr:hover {
+                    background-color: #e0f0e0;
+                    color: #0e0e0e;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
+        # Contenu HTML du tableau
+        html_table = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Domenic</td>
+                        <td>88,110</td>
+                        <td>dcode</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Sally</td>
+                        <td>72,400</td>
+                        <td>Students</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nick</td>
+                        <td>52,300</td>
+                        <td>dcode</td>
+                    </tr>
+                </tbody>
+            </table>
+        """
 
+        # Affichage HTML personnalisé
+    st.markdown(html_table, unsafe_allow_html=True)
+    
+    #Médicaments en surplus (>500 unités)
 
+    with st.container():
+            st.markdown("Médicaments en surplus")
+        
+        st.markdown("""
+            <style>
+                    /* Fond noir général */
+                    body, .stApp {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+                    /* Style du tableau */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    background-color: #0e0e0e;
+                }
+
+                thead tr {
+                    background-color: #28a745; /* Vert pharmacie */
+                    color: white;
+                    font-weight: bold;
+                }
+
+                tbody tr {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+
+                td, th {
+                    padding: 10px;
+                    text-align: left;
+                }
+
+                tbody tr:hover {
+                    background-color: #e0f0e0;
+                    color: #0e0e0e;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # Contenu HTML du tableau
+        html_table = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Domenic</td>
+                        <td>88,110</td>
+                        <td>dcode</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Sally</td>
+                        <td>72,400</td>
+                        <td>Students</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nick</td>
+                        <td>52,300</td>
+                        <td>dcode</td>
+                    </tr>
+                </tbody>
+            </table>
+        """
+
+        # Affichage HTML personnalisé
+    st.markdown(html_table, unsafe_allow_html=True)
 
 
 
@@ -324,46 +337,6 @@ if df is not None and "medicament" in df and "stock" in df:
         "#3a93c6",
     ]
 
-
-
-    try:
-        # Requête SQL : obtenir tous les noms et leurs stocks
-        query = """
-            SELECT Nom_Commercial, count(Stock_Disponible) AS Total_Stock
-            FROM pharmacie
-            WHERE Stock_Disponible > 20
-            GROUP BY Nom_Commercial
-            ORDER BY Total_Stock DESC
-        """
-        surplus_df = con.execute(query).fetchdf()
-
-        if not surplus_df.empty:
-    # Création du bar chart horizontal
-            fig = px.bar(
-                surplus_df,
-                x="Total_Stock",
-                y="Nom_Commercial",
-                orientation="h",
-                title="📦 Médicaments en surplus (>500 unités)",
-                labels={"Total_Stock": "Stock disponible", "Nom_Commercial": "Médicament"},
-                text="Total_Stock",
-                color="Nom_Commercial",  # Obligatoire pour appliquer color_discrete_sequence
-                color_discrete_sequence=custom_plasma
-            )
-            fig.update_layout(
-                yaxis=dict(categoryorder="total ascending"),
-                showlegend=False  # Facultatif si tu veux éviter une légende répétitive
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("Aucun médicament en surplus (>500 unités) trouvé.")
-
-
-    except Exception as e:
-        st.error(f"❌ Erreur lors de la génération du graphique : {e}")
-
-else:
-    st.error("❌ Les données 'medicament' et 'stock' ne sont pas présentes dans le DataFrame.")
 
 
 
@@ -551,72 +524,3 @@ else:
     st.warning("Les données 'vente', 'detailVente' et 'client' ne sont pas disponibles.")
 
 
-
-
-
-
-
-# tsy azoko fa mandeha
-
-st.markdown("### Nombre moyen de jours avant rupture de stock")
-
-try:
-    vente_df = df["vente"].copy()
-    stock_df = df["stock"].copy()
-    lot_df = df["lot"].copy()
-
-    # Vérification existence de ID_Medicament
-    if "ID_Medicament" not in vente_df.columns or "ID_Medicament" not in stock_df.columns:
-        vente_df = pd.merge(vente_df, lot_df[["id_lot", "ID_Medicament"]], on="id_lot", how="left")
-        stock_df = pd.merge(stock_df, lot_df[["id_lot", "ID_Medicament"]], on="id_lot", how="left")
-
-    # Convertir les dates
-    vente_df["Date_Vente"] = pd.to_datetime(vente_df["Date_Vente"], errors='coerce')
-    stock_df["date_entree"] = pd.to_datetime(stock_df["date_entree"], errors='coerce')
-
-    # Fusion ventes + stock via id_lot
-    merged_df = pd.merge(vente_df, stock_df[["id_lot", "date_entree"]], on="id_lot", how="inner")
-
-    # Vérifier que ID_Medicament est bien là
-    if "ID_Medicament" not in merged_df.columns:
-        merged_df = pd.merge(merged_df, lot_df[["id_lot", "ID_Medicament"]], on="id_lot", how="left")
-
-    # Calcul des jours avant rupture
-    rupture_info = []
-    for id_lot, group in merged_df.groupby("id_lot"):
-        date_entree = group["date_entree"].iloc[0]
-        date_derniere_vente = group["Date_Vente"].max()
-        jours_avant_rupture = (date_derniere_vente - date_entree).days
-
-        rupture_info.append({
-            "id_lot": id_lot,
-            "ID_Medicament": group["ID_Medicament"].iloc[0],
-            "jours_avant_rupture": jours_avant_rupture
-        })
-
-    rupture_df = pd.DataFrame(rupture_info)
-
-    # Ajouter le nom du médicament s’il existe
-    if "medicament" in df and "Nom_Commercial" in df["medicament"].columns:
-        rupture_df = pd.merge(rupture_df, df["medicament"][["ID_Medicament", "Nom_Commercial"]], on="ID_Medicament", how="left")
-    else:
-        rupture_df["Nom_Commercial"] = rupture_df["ID_Medicament"]
-
-    # Moyenne
-    moyenne_rupture = rupture_df["jours_avant_rupture"].mean()
-    st.success(f"**{abs(moyenne_rupture):.2f} jours** en moyenne avant rupture de stock d’un lot.")
-
-    # Graphique
-    fig = px.bar(
-        rupture_df.sort_values("jours_avant_rupture", ascending=False),
-        x="Nom_Commercial",
-        y="jours_avant_rupture",
-        text_auto=True,
-        title="Jours avant rupture par médicament",
-        labels={"jours_avant_rupture": "Jours", "Nom_Commercial": "Médicament"},
-        color="Nom_Commercial"
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
-except Exception as e:
-    st.error(f"Erreur lors du calcul : {e}")
