@@ -156,7 +156,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         with st.container():
             st.markdown("Détails Médicaments critiques en stock ")
         
-        st.markdown("""
+            st.markdown("""
             <style>
                     /* Fond noir général */
                     body, .stApp {
@@ -234,7 +234,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
     #Médicaments en surplus (>500 unités)
 
     with st.container():
-            st.markdown("Médicaments en surplus")
+        st.markdown("Médicaments en surplus")
         
         st.markdown("""
             <style>
