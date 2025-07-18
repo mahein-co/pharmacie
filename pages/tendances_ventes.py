@@ -8,6 +8,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+from data.mongodb_client import MongoDBClient
+
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
@@ -57,29 +59,36 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-if df is not None and "vente" in df and "detailVente" in df:
-    ventes = df["vente"]
-    detail_ventes = df["detailVente"]
 
-    con = duckdb.connect(database=":memory:")
-    con.register("ventes", ventes)
-    con.register("detailVente", detail_ventes)
+# Connexion à MongoDB pour récupérer les données des clients
+ventes_collection = MongoDBClient(collection_name="vente")
+
+if ventes_collection:
+    # Recuperer toutes les ventes
+    ventes = ventes_collection.find_all_documents()
+
+    # Nombre totale de ventes
+    nb_total_ventes = ventes_collection.count_distinct_agg("id_vente")
+
+    # con = duckdb.connect(database=":memory:")
+    # con.register("ventes", ventes)
+    # con.register("detailVente", detail_ventes)
 
     try:
         # Statistiques des ventes
-        nb_total_ventes = con.execute("SELECT COUNT(ID_Vente) FROM ventes").fetchone()[0]
+        # nb_total_ventes = con.execute("SELECT COUNT(ID_Vente) FROM ventes").fetchone()[0]
 
-        ca_total = con.execute("SELECT SUM(Total_Payer) FROM ventes").fetchone()[0]
+        # ca_total = con.execute("SELECT SUM(Total_Payer) FROM ventes").fetchone()[0]
 
-        ca_moyen = con.execute("SELECT AVG(Total_Payer) FROM ventes").fetchone()[0]
+        # ca_moyen = con.execute("SELECT AVG(Total_Payer) FROM ventes").fetchone()[0]
 
-        vente_max = con.execute("SELECT MAX(Total_Payer) FROM ventes").fetchone()[0]
+        # vente_max = con.execute("SELECT MAX(Total_Payer) FROM ventes").fetchone()[0]
 
-        vente_min = con.execute("SELECT MIN(Total_Payer) FROM ventes").fetchone()[0]
+        # vente_min = con.execute("SELECT MIN(Total_Payer) FROM ventes").fetchone()[0]
 
-        nb_ventes_annulees = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'Annulé'").fetchone()[0]
+        # nb_ventes_annulees = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'Annulé'").fetchone()[0]
 
-        nb_ventes_en_attente = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'En attente'").fetchone()[0]
+        # nb_ventes_en_attente = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'En attente'").fetchone()[0]
 
         # AFFICHAGE DESIGN
         with st.container():
@@ -93,53 +102,53 @@ if df is not None and "vente" in df and "detailVente" in df:
                 </div>
             """, unsafe_allow_html=True)
 
-            col2.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💰 Chiffre d'affaires total</div>
-                    <div class="metric-value">{ca_total:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
+        #     col2.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">💰 Chiffre d'affaires total</div>
+        #             <div class="metric-value">{ca_total:.2f} €</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
-            col3.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💸 Montant moyen par vente</div>
-                    <div class="metric-value">{ca_moyen:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
+        #     col3.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">💸 Montant moyen par vente</div>
+        #             <div class="metric-value">{ca_moyen:.2f} €</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
-            col4, col5 = st.columns([2, 1])
-            col4.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💵 Vente la plus élevée</div>
-                    <div class="metric-value">{vente_max:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
+        #     col4, col5 = st.columns([2, 1])
+        #     col4.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">💵 Vente la plus élevée</div>
+        #             <div class="metric-value">{vente_max:.2f} €</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
-            col5.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💲 Vente la plus basse</div>
-                    <div class="metric-value">{vente_min:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
+        #     col5.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">💲 Vente la plus basse</div>
+        #             <div class="metric-value">{vente_min:.2f} €</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
-        st.markdown("---")
+        # st.markdown("---")
 
-        with st.container():
-            st.markdown("### 🛑 Statistiques des ventes en attente ou annulées")
-            col6, col7 = st.columns(2)
-            col6.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">❌ Nombre de ventes annulées</div>
-                    <div class="metric-value">{nb_ventes_annulees}</div>
-                </div>
-            """, unsafe_allow_html=True)
+        # with st.container():
+        #     st.markdown("### 🛑 Statistiques des ventes en attente ou annulées")
+        #     col6, col7 = st.columns(2)
+        #     col6.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">❌ Nombre de ventes annulées</div>
+        #             <div class="metric-value">{nb_ventes_annulees}</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
-            col7.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">⏳ Nombre de ventes en attente de paiement</div>
-                    <div class="metric-value">{nb_ventes_en_attente}</div>
-                </div>
-            """, unsafe_allow_html=True)
+        #     col7.markdown(f"""
+        #         <div class="metric-box">
+        #             <div class="metric-label">⏳ Nombre de ventes en attente de paiement</div>
+        #             <div class="metric-value">{nb_ventes_en_attente}</div>
+        #         </div>
+        #     """, unsafe_allow_html=True)
 
         st.markdown("---")
 
