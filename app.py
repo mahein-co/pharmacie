@@ -237,12 +237,6 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         
 
 
-
-
-
-
-
-
         # CSS personnalisé
         st.markdown("""
             <style>
@@ -274,6 +268,8 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                 }
             </style>
         """, unsafe_allow_html=True)
+
+        # Contenu HTML du tableau
         html_table = """
             <table>
                 <thead>
@@ -305,10 +301,11 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                     </tr>
                 </tbody>
             </table>
-            """
+        """
 
         # Affichage HTML personnalisé
         st.markdown(html_table, unsafe_allow_html=True)
+
 
 
     except Exception as e:
