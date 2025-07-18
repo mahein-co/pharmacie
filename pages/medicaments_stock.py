@@ -156,7 +156,7 @@ else:
 
 
 # Médicaments critiques en stock (<10 unités)
-St.contaiter(): 
+st.container(): 
     st.markdown("Détails Médicaments critiques en stock ")        
     st.markdown("""
                     <style>
@@ -234,7 +234,7 @@ St.contaiter():
     st.markdown(html_table, unsafe_allow_html=True)
     
     #Médicaments en surplus (>500 unités)
-St.contaiter() :
+st.container():
     st.markdown("Médicaments en surplus")            
     st.markdown("""
                 <style>
