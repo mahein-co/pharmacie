@@ -1,33 +1,54 @@
 import streamlit as st
 from huggingface_hub import login
 import os
+from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-# from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-
-from langchain_community.document_loaders import UnstructuredExcelLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-# from langchain.chains import LLMChain
-# from langchain.prompts import PromptTemplate
 
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint, HuggingFaceEmbeddings
 
-# from sentence_transformers import SentenceTransformer
 import pandas as pd
 from IPython.display import display, Markdown
 from data.config import hf_token
+from data.mongodb_client import MongoDBClient
 
 
 # ✅ Définir ta clé API HuggingFace
 login(token=hf_token)
 
+# Models LLM
 model_name = "meta-llama/Llama-2-7b-chat-hf"
 repo_id = "meta-llama/Llama-3.1-8B-Instruct"
 repo_id2 = "microsoft/phi-4"
 
+# Chargement du modèle d'embedding
+embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Connexion MongoDB Atlas
+collection = MongoDBClient(collection_name="corpus_rag").get_collection()
+
+
+tokenizer = AutoTokenizer.from_pretrained(repo_id)
+hf_model = AutoModelForCausalLM.from_pretrained(
+    repo_id,
+    device_map="auto",
+    load_in_4bit=True,  # ou False selon ta machine
+    trust_remote_code=True
+)
+
+generator = pipeline(
+    "text-generation",
+    model=hf_model,
+    tokenizer=tokenizer,
+    max_new_tokens=512,
+    temperature=0.7,
+    top_p=0.9
+)
+
 st.set_page_config(page_title="Chatbot Simple", layout="centered")
-st.title("🤖 Pharma bot")
+# UI Streamlit
+st.title("🧠 Assistant Pharmacie")
+st.markdown("Posez une question liée aux ventes, employés ou médicaments.")
 
 # Initialiser les messages
 if "messages" not in st.session_state:
@@ -39,91 +60,65 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Zone de saisie utilisateur
-if prompt := st.chat_input("Écrivez votre message ici..."):
+if prompt := st.chat_input("❓ Votre question"):
 
     # Ajouter le message utilisateur à l'historique
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    base_dir = os.path.dirname(__file__)
-    file_path = os.path.join(base_dir, '../data', 'dataPharmacie.xlsx')
 
-    loader = UnstructuredExcelLoader(file_path, mode="elements")
-    docs = loader.load()
+    with st.spinner("🔍 Recherche des documents pertinents..."):
+        # Étape 1 : vectoriser la question
+        query_vector = embed_model.encode(prompt).tolist()
 
-    xls = pd.ExcelFile(file_path)
-    sheet_names = xls.sheet_names
+        # Étape 2 : requête vectorielle dans corpus_rag
+        pipeline = [
+            {
+                "$vectorSearch": {
+                    "queryVector": query_vector,
+                    "path": "embedding",
+                    "numCandidates": 100,
+                    "limit": 4,
+                    "index": "embedding_corpus_rag"
+                }
+            },
+            {
+                "$project": {
+                    "texte_embedding": 1,
+                    "source": 1,
+                    "score": {"$meta": "vectorSearchScore"}
+                }
+            }
+        ]
+        results = list(collection.aggregate(pipeline))
 
-    all_docs = []
-    for sheet in sheet_names:
-        loader = UnstructuredExcelLoader(file_path=file_path, mode="elements", sheet=sheet)
-        docs = loader.load()
-        all_docs.extend(docs)
+        if results:
+            st.subheader("📄 Contexte extrait")
+            context = "\n".join([f"- {doc['texte_embedding']}" for doc in results])
+            st.code(context, language="markdown")
 
-    # Split the documents into chuncks
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
-        chunk_overlap=200,
-    )
-    chunks = text_splitter.split_documents(all_docs)
+            # Étape 3 : créer le prompt
+            prompt = """
+                Vous êtes un assistant intelligent travaillant dans une pharmacie. 
+                Votre tâche est de répondre à la question de l'utilisateur uniquement à partir du contexte fourni.
 
-    texts = [chunk.page_content for chunk in chunks]
+                Contexte :
+                {contexte}  
 
-    # model name
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+                Question : {question}
 
-    # Créer des Documents à partir des textes
-    documents = [Document(page_content=text) for text in texts]
+                Répondez de manière claire, précise et factuelle. 
+                Si l'information n’est pas présente dans le contexte, dites-le explicitement.
+            """
 
-    # Adaptateur d'embedding LangChain pour HuggingFace
-    embedding_function = HuggingFaceEmbeddings(model_name=model_name)
-
-    # Créer l'index FAISS
-    db_faiss = FAISS.from_documents(documents, embedding_function)
-
-    # Recherche vectorielle (top 50)
-    query = prompt
-    docs_faiss = db_faiss.similarity_search_with_score(query, k=30)
-
-    context = "\n\n".join([doc.page_content for doc, _score in docs_faiss])
-
-    # Prompt for RAG system
-    prompt = f"""
-    Utilise les éléments de contexte suivants {context} pour répondre à la question {query} à la fin.
-    Tes réponses seront toujours en français.
-    Si on te demande une date, ta réponse devra toujours être en long format.
-
-    Si on te demande la date d'expiration ou peremption ou permiction d'un médicament,
-    tu devras toujours analyser bien la date et la comparer à la date d'aujourd'hui.
-
-    Resumes toujours ta réponse si on ne te demande pas de la détailler.
-
-    En aucun cas, tu ne fourniras jamais comme une réponse un identifiant ou l'ID d'une entité.
-
-    Si tu ne connais pas la réponse, dis simplement que tu ne sais pas."""
-
-    # Model LLM
-    llm = HuggingFaceEndpoint(
-        repo_id = repo_id,
-        task="text-generation",
-        max_new_tokens=150,
-        temperature=0.7,
-        top_k=50,
-        top_p=0.9,
-        repetition_penalty=1.2,
-        do_sample=True
-    )
-
-    chat_model = ChatHuggingFace(llm=llm)
-
-    response = chat_model.invoke(prompt)
-    reponse_finaly = display(Markdown(response.content))
     
-    # Réponse du bot (ici réponse simple)
-    # response = f"Tu as dit : **{prompt}**"
+    with st.spinner("💬 Génération de la réponse..."):
+        output = generator(prompt)
+        reponse_finale = output[0]['generated_text'].replace(prompt, "").strip()
+
 
     # Ajouter la réponse du bot à l'historique
-    st.session_state.messages.append({"role": "assistant", "content": reponse_finaly})
+    st.session_state.messages.append({"role": "assistant", "content": reponse_finale})
     with st.chat_message("assistant"):
-        st.markdown(reponse_finaly)
+        st.markdown(reponse_finale)
