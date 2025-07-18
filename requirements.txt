@@ -89,6 +89,7 @@ nvidia-nccl-cu12==2.26.2
 nvidia-nvjitlink-cu12==12.6.85
 nvidia-nvtx-cu12==12.6.77
 olefile==0.47
+ollama==0.5.1
 openai==1.96.1
 openpyxl==3.1.5
 orjson==3.10.18
@@ -145,7 +146,7 @@ tiktoken==0.9.0
 tokenizers==0.21.2
 toml==0.10.2
 torch==2.7.1
-torchaudio==2.7.1
+torchaudio==2.7.1+cu118
 tornado==6.5.1
 tqdm==4.67.1
 traitlets==5.14.3
