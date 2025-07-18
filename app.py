@@ -260,8 +260,8 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                 }
 
                 tbody tr {
-                    background-color: #f9f9f9;
-                    color: black;
+                    background-color: #0e0e0e;
+                    color: white;
                 }
 
                 td, th {
