@@ -220,9 +220,9 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
         # AFFICHAGE DESIGN
         with st.container():
-            st.markdown("### 📦 Stock des médicaments")
+            st.markdown("### 📦 Vue Global de Médicaments")
 
-            col1, col2, col3 = st.columns(3)
+            col1,col2,col3 = st.columns(3)
             col1.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">🔢 Total Médicaments</div>
@@ -230,32 +230,18 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                 </div>
             """, unsafe_allow_html=True)
 
+
             col2.markdown(f"""
                 <div class="metric-box">
-                    <div class="metric-label">📉 Stock Minimum</div>
-                    <div class="metric-value">{abs(stats_stock["stock_min"][0])}</div>
+                    <div class="metric-label">📈 Total des pertes dues aux médicaments invendus</div>
+                    <div class="metric-value">{stats_stock["stock_max"][0]}</div>
                 </div>
             """, unsafe_allow_html=True)
 
             col3.markdown(f"""
                 <div class="metric-box">
-                    <div class="metric-label">📈 Stock Maximum</div>
-                    <div class="metric-value">{stats_stock["stock_max"][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col4, col5 = st.columns([2, 1])
-            col4.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">📊 Stock Moyen</div>
+                    <div class="metric-label">📊 Quantité totale de médicaments approvisionnés</div>
                     <div class="metric-value">{stats_stock["stock_moyen"][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col5.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🧪 Catégories</div>
-                    <div class="metric-value">{nb_categories}</div>
                 </div>
             """, unsafe_allow_html=True)
 
