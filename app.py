@@ -274,6 +274,38 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                 }
             </style>
         """, unsafe_allow_html=True)
+        html_table = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Domenic</td>
+                        <td>88,110</td>
+                        <td>dcode</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Sally</td>
+                        <td>72,400</td>
+                        <td>Students</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nick</td>
+                        <td>52,300</td>
+                        <td>dcode</td>
+                    </tr>
+                </tbody>
+            </table>
+            """
 
         # Affichage HTML personnalisé
         st.markdown(html_table, unsafe_allow_html=True)
