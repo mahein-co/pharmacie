@@ -276,7 +276,6 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         """, unsafe_allow_html=True)
 
         # Affichage HTML personnalisé
-        html_table = df.to_html(index=False, escape=False)
         st.markdown(html_table, unsafe_allow_html=True)
 
 
