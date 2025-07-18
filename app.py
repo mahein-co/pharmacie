@@ -245,6 +245,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                     width: 100%;
                     border-collapse: collapse;
                     margin-top: 20px;
+                    background-color: #0e0e0e;
                 }
 
                 thead tr {
