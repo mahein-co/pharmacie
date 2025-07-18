@@ -229,7 +229,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         """
 
         # Affichage HTML personnalisé
-        st.markdown(html_table, unsafe_allow_html=True)
+    st.markdown(html_table, unsafe_allow_html=True)
     
     #Médicaments en surplus (>500 unités)
 
@@ -309,7 +309,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         """
 
         # Affichage HTML personnalisé
-        st.markdown(html_table, unsafe_allow_html=True)
+    st.markdown(html_table, unsafe_allow_html=True)
 
 
 
