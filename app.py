@@ -67,7 +67,7 @@ if df is not None and "medicament" in df and "stock" in df:
         "💰 Chiffre d'affaires total": "SELECT SUM(Prix_Vente * Stock_Disponible) FROM pharmacie",
         "📦 Valeur totale du stock": "SELECT SUM(Stock_Disponible) FROM pharmacie",
         "🔢 Nombre total de ventes": "SELECT COUNT(DISTINCT Nom_Commercial) FROM pharmacie",
-        "⚠️Nombre total d’approvisionnements": "SELECT COUNT(*) FROM pharmacie WHERE Stock_Disponible < 10"
+        "⚠️Nombre total d’alimentation": "SELECT COUNT(*) FROM pharmacie WHERE Stock_Disponible < 10"
     }
 
     st.markdown("""
