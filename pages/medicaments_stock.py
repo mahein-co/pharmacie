@@ -153,7 +153,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
 
 # Médicaments critiques en stock (<10 unités)
-with st.container():
+
     st.markdown("Détails Médicaments critiques en stock ")
             
     st.markdown("""
@@ -233,7 +233,6 @@ with st.container():
     
     #Médicaments en surplus (>500 unités)
 
-with st.container():
     st.markdown("Médicaments en surplus")
             
     st.markdown("""
