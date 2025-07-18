@@ -239,121 +239,45 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
 
 
+
+
+
+
         # CSS personnalisé
         st.markdown("""
-                <style>
-                    /* Fond noir global */
-                    .main {
-                        background-color: #000000;
-                        color: white;
-                    }
+            <style>
+                /* Style du tableau */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
 
-                    /* Style du tableau */
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 20px;
-                    }
+                thead tr {
+                    background-color: #28a745; /* Vert pharmacie */
+                    color: white;
+                    font-weight: bold;
+                }
 
-                    thead tr {
-                        background-color: #008065;
-                        color: white;
-                        text-align: left;
-                        font-weight: bold;
-                    }
+                tbody tr {
+                    background-color: #f9f9f9;
+                    color: black;
+                }
 
-                    tbody tr {
-                        background-color: #1e1e1e;
-                        color: white;
-                    }
+                td, th {
+                    padding: 10px;
+                    text-align: left;
+                }
 
-                    tbody tr:nth-child(2) {
-                        background-color: #f2f2f2;
-                        color: #008065;
-                        font-weight: bold;
-                    }
+                tbody tr:hover {
+                    background-color: #e0f0e0;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
-                    td, th {
-                        padding: 10px;
-                    }
-
-                    tbody tr:hover {
-                        background-color: #333333;
-                    }
-                </style>
-            """, unsafe_allow_html=True)
-
-        # Affichage HTML du tableau stylisé
-        html_table = """
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Points</th>
-                        <th>Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Domenic</td>
-                        <td>88,110</td>
-                        <td>dcode</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Sally</td>
-                        <td>72,400</td>
-                        <td>Students</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nick</td>
-                        <td>52,300</td>
-                        <td>dcode</td>
-                    </tr>
-                </tbody>
-            </table>
-            """
-
+        # Affichage HTML personnalisé
+        html_table = df.to_html(index=False, escape=False)
         st.markdown(html_table, unsafe_allow_html=True)
-        
-        st.markdown("---")
-
-        with st.container():
-            st.markdown("### 🏆 Top Médicaments")
-            col6, col7, col8 = st.columns(3)
-            col6.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🔥 Le plus vendu</div>
-                    <div class="metric-value">{med_plus_vendu['nom'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col7.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">❗ Stock le plus bas</div>
-                    <div class="metric-value">{med_stock_bas['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col8.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💰 Plus cher</div>
-                    <div class="metric-value">{med_cher['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col9, _ = st.columns([1, 2])
-            col9.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🪙 Moins cher</div>
-                    <div class="metric-value">{med_moins_cher['Nom_Commercial'][0]}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
 
 
     except Exception as e:
