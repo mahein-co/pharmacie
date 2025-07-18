@@ -153,10 +153,10 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
 
 # Médicaments critiques en stock (<10 unités)
-        with st.container():
-            st.markdown("Détails Médicaments critiques en stock ")
+with st.container():
+st.markdown("Détails Médicaments critiques en stock ")
         
-            st.markdown("""
+st.markdown("""
             <style>
                     /* Fond noir général */
                     body, .stApp {
@@ -195,7 +195,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         """, unsafe_allow_html=True)
 
         # Contenu HTML du tableau
-        html_table = """
+html_table = """
             <table>
                 <thead>
                     <tr>
@@ -229,14 +229,14 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         """
 
         # Affichage HTML personnalisé
-    st.markdown(html_table, unsafe_allow_html=True)
+st.markdown(html_table, unsafe_allow_html=True)
     
     #Médicaments en surplus (>500 unités)
 
 with st.container():
-    st.markdown("Médicaments en surplus")
+st.markdown("Médicaments en surplus")
         
-        st.markdown("""
+st.markdown("""
             <style>
                     /* Fond noir général */
                     body, .stApp {
