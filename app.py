@@ -368,7 +368,7 @@ st.markdown("""
         """, unsafe_allow_html=True)
 
         # Contenu HTML du tableau
-    html_table = """
+html_table = """
             <table>
                 <thead>
                     <tr>
@@ -404,12 +404,12 @@ st.markdown("""
         # Affichage HTML personnalisé
 st.markdown(html_table, unsafe_allow_html=True)
 
-try:
+# try:
 
-    except Exception as e:
-        st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
-else:
-    st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
+#     except Exception as e:
+#         st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
+# else:
+#     st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
 
 
 
