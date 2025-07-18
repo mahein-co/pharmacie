@@ -209,7 +209,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
         # AFFICHAGE DESIGN
         with st.container():
-            
+
             col1,col2,col3,col4 = st.columns(4)
             col1.markdown(f"""
                 <div class="metric-box">
@@ -241,8 +241,9 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
             """, unsafe_allow_html=True)
         
 
-
+        #Médicaments expirés ou bientôt expirés (alerte)
         # CSS personnalisé
+        st.markdown("Médicaments expirés ou bientôt expirés")
         st.markdown("""
             <style>
                     /* Fond noir général */
@@ -324,6 +325,92 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
 else:
     st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
+
+
+        st.markdown("Vendeur non habilité")
+# CSS personnalisé
+        st.markdown("""
+            <style>
+                    /* Fond noir général */
+                    body, .stApp {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+                    /* Style du tableau */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    background-color: #0e0e0e;
+                }
+
+                thead tr {
+                    background-color: #28a745; /* Vert pharmacie */
+                    color: white;
+                    font-weight: bold;
+                }
+
+                tbody tr {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+
+                td, th {
+                    padding: 10px;
+                    text-align: left;
+                }
+
+                tbody tr:hover {
+                    background-color: #e0f0e0;
+                    color: #0e0e0e;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # Contenu HTML du tableau
+        html_table = """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Domenic</td>
+                        <td>88,110</td>
+                        <td>dcode</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Sally</td>
+                        <td>72,400</td>
+                        <td>Students</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nick</td>
+                        <td>52,300</td>
+                        <td>dcode</td>
+                    </tr>
+                </tbody>
+            </table>
+        """
+
+        # Affichage HTML personnalisé
+        st.markdown(html_table, unsafe_allow_html=True)
+
+
+
+    except Exception as e:
+        st.error(f"❌ Erreur lors du calcul des statistiques : {e}")
+else:
+    st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
+
 
 
 
