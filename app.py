@@ -327,9 +327,9 @@ else:
     st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
 
 
-        st.markdown("Vendeur non habilité")
+    st.markdown("Vendeur non habilité")
 # CSS personnalisé
-        st.markdown("""
+    st.markdown("""
             <style>
                     /* Fond noir général */
                     body, .stApp {
@@ -368,7 +368,7 @@ else:
         """, unsafe_allow_html=True)
 
         # Contenu HTML du tableau
-        html_table = """
+    html_table = """
             <table>
                 <thead>
                     <tr>
@@ -402,7 +402,7 @@ else:
         """
 
         # Affichage HTML personnalisé
-        st.markdown(html_table, unsafe_allow_html=True)
+    st.markdown(html_table, unsafe_allow_html=True)
 
 
 
