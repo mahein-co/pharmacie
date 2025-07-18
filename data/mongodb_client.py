@@ -55,6 +55,9 @@ class MongoDBClient:
             return []
         
 
+    def get_collection(self):
+        return self.collection
+
     def count_distinct_agg(self, field_name: str) -> int:
         """Version performante via agrégation pour compter les valeurs distinctes."""
         try:
@@ -89,3 +92,4 @@ class MongoDBClient:
         except Exception as e:
             logger.exception("Erreur lors de la lecture des documents.")
             return []
+
