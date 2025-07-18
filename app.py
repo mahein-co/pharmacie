@@ -115,7 +115,6 @@ else:
     st.error("❌ Les données 'medicament' et 'stock' sont manquantes ou invalides.")
 
 
-st.markdown("<h2 style='color: green;'>Médicaments</h2>", unsafe_allow_html=True)
 
 # Appliquer des styles CSS personnalisés pour les métriques
 st.markdown("""
@@ -210,9 +209,8 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 
         # AFFICHAGE DESIGN
         with st.container():
-            st.markdown("### 📦 Vue Global de Médicaments")
-
-            col1,col2,col3 = st.columns(3)
+            
+            col1,col2,col3,col4 = st.columns(4)
             col1.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">🔢 Total Médicaments</div>
@@ -231,6 +229,13 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
             col3.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">📊 Quantité totale de médicaments approvisionnés</div>
+                    <div class="metric-value">{stats_stock["stock_moyen"][0]}</div>
+                </div>
+            """, unsafe_allow_html=True)
+
+            col4.markdown(f"""
+                <div class="metric-box">
+                    <div class="metric-label">📊 Nombre total de fournisseurs</div>
                     <div class="metric-value">{stats_stock["stock_moyen"][0]}</div>
                 </div>
             """, unsafe_allow_html=True)
@@ -320,123 +325,6 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
 else:
     st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
 
-# ventes
-
-st.markdown("<h2 style='color: green;'> ventes</h2>", unsafe_allow_html=True)
-
-# Appliquer des styles CSS personnalisés pour les métriques
-st.markdown("""
-    <style>
-        .metric-box {
-            border-left: 5px solid #4CAF50;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            box-shadow: 1px 1px 4px rgba(0,0,0,0.05);
-            background-color:  rgb(38, 39, 48);
-        }
-        .metric-label {
-            font-size: 16px;
-            color: white;
-            margin-bottom: 5px;
-        }
-        .metric-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-if df is not None and "vente" in df and "detailVente" in df:
-    ventes = df["vente"]
-    detail_ventes = df["detailVente"]
-
-    con = duckdb.connect(database=":memory:")
-    con.register("ventes", ventes)
-    con.register("detailVente", detail_ventes)
-
-    try:
-        # Statistiques des ventes
-        nb_total_ventes = con.execute("SELECT COUNT(ID_Vente) FROM ventes").fetchone()[0]
-
-        ca_total = con.execute("SELECT SUM(Total_Payer) FROM ventes").fetchone()[0]
-
-        ca_moyen = con.execute("SELECT AVG(Total_Payer) FROM ventes").fetchone()[0]
-
-        vente_max = con.execute("SELECT MAX(Total_Payer) FROM ventes").fetchone()[0]
-
-        vente_min = con.execute("SELECT MIN(Total_Payer) FROM ventes").fetchone()[0]
-
-        nb_ventes_annulees = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'Annulé'").fetchone()[0]
-
-        nb_ventes_en_attente = con.execute("SELECT COUNT(ID_Vente) FROM ventes WHERE Mode_Paiement = 'En attente'").fetchone()[0]
-
-        # AFFICHAGE DESIGN
-        with st.container():
-            st.markdown("### 📦 Statistiques des ventes")
-
-            col1, col2, col3 = st.columns(3)
-            col1.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">🔢 Nombre total de fournisseurs</div>
-                    <div class="metric-value">{nb_total_ventes}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col2.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💰 Chiffre d'affaires total</div>
-                    <div class="metric-value">{ca_total:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col3.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💸 Montant moyen par vente</div>
-                    <div class="metric-value">{ca_moyen:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col4, col5 = st.columns([2, 1])
-            col4.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💵 Vente la plus élevée</div>
-                    <div class="metric-value">{vente_max:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col5.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">💲 Vente la plus basse</div>
-                    <div class="metric-value">{vente_min:.2f} €</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        with st.container():
-            st.markdown("### 🛑 Statistiques des ventes en attente ou annulées")
-            col6, col7 = st.columns(2)
-            col6.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">❌ Nombre de ventes annulées</div>
-                    <div class="metric-value">{nb_ventes_annulees}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            col7.markdown(f"""
-                <div class="metric-box">
-                    <div class="metric-label">⏳ Nombre de ventes en attente de paiement</div>
-                    <div class="metric-value">{nb_ventes_en_attente}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-    except Exception as e:
-        st.error(f"❌ Erreur lors du calcul des statistiques des ventes : {e}")
-else:
-    st.error("❌ Les données 'ventes' et 'detailVente' ne sont pas présentes dans le DataFrame.")
 
 
 
