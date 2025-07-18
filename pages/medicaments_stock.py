@@ -156,159 +156,86 @@ else:
 
 
 # Médicaments critiques en stock (<10 unités)
-st.container(): 
-    st.markdown("Détails Médicaments critiques en stock ")        
+
+with st.container():
+    st.markdown("## Détails Médicaments critiques en stock")
+
+    # CSS personnalisé
     st.markdown("""
-                    <style>
-                            /* Fond noir général */
-                            body, .stApp {
-                            background-color: #0e0e0e;
-                            color: white;
-                        }
-                            /* Style du tableau */
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-top: 20px;
-                            background-color: #0e0e0e;
-                        }
+        <style>
+            /* Fond noir général */
+            body, .stApp {
+                background-color: #0e0e0e;
+                color: white;
+            }
 
-                        thead tr {
-                            background-color: #28a745; /* Vert pharmacie */
-                            color: white;
-                            font-weight: bold;
-                        }
+            /* Style du tableau */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                background-color: #0e0e0e;
+                color: white;
+            }
 
-                        tbody tr {
-                            background-color: #0e0e0e;
-                            color: white;
-                        }
+            thead tr {
+                background-color: #28a745; /* Vert pharmacie */
+                color: white;
+                font-weight: bold;
+            }
 
-                        td, th {
-                            padding: 10px;
-                            text-align: left;
-                        }
+            tbody tr {
+                background-color: #0e0e0e;
+                color: white;
+            }
 
-                        tbody tr:hover {
-                            background-color: #e0f0e0;
-                            color: #0e0e0e;
-                        }
-                    </style>
-                """, unsafe_allow_html=True)
+            td, th {
+                padding: 10px;
+                text-align: left;
+            }
 
-                # Contenu HTML du tableau
+            tbody tr:hover {
+                background-color: #e0f0e0;
+                color: #0e0e0e;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Contenu HTML du tableau
     html_table = """
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Points</th>
-                                <th>Team</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Domenic</td>
-                                <td>88,110</td>
-                                <td>dcode</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Sally</td>
-                                <td>72,400</td>
-                                <td>Students</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Nick</td>
-                                <td>52,300</td>
-                                <td>dcode</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                """
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Points</th>
+                    <th>Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Domenic</td>
+                    <td>88,110</td>
+                    <td>dcode</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Sally</td>
+                    <td>72,400</td>
+                    <td>Students</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Nick</td>
+                    <td>52,300</td>
+                    <td>dcode</td>
+                </tr>
+            </tbody>
+        </table>
+    """
 
-                # Affichage HTML personnalisé
-    st.markdown(html_table, unsafe_allow_html=True)
-    
-    #Médicaments en surplus (>500 unités)
-st.container():
-    st.markdown("Médicaments en surplus")            
-    st.markdown("""
-                <style>
-                        /* Fond noir général */
-                        body, .stApp {
-                        background-color: #0e0e0e;
-                        color: white;
-                    }
-                        /* Style du tableau */
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 20px;
-                        background-color: #0e0e0e;
-                    }
-
-                    thead tr {
-                        background-color: #28a745; /* Vert pharmacie */
-                        color: white;
-                        font-weight: bold;
-                    }
-
-                    tbody tr {
-                        background-color: #0e0e0e;
-                        color: white;
-                    }
-
-                    td, th {
-                        padding: 10px;
-                        text-align: left;
-                    }
-
-                    tbody tr:hover {
-                        background-color: #e0f0e0;
-                        color: #0e0e0e;
-                    }
-                </style>
-            """, unsafe_allow_html=True)
-
-            # Contenu HTML du tableau
-    html_table = """
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Points</th>
-                            <th>Team</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Domenic</td>
-                            <td>88,110</td>
-                            <td>dcode</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Sally</td>
-                            <td>72,400</td>
-                            <td>Students</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Nick</td>
-                            <td>52,300</td>
-                            <td>dcode</td>
-                        </tr>
-                    </tbody>
-                </table>
-            """
-
-            # Affichage HTML personnalisé
+    # Affichage HTML du tableau
     st.markdown(html_table, unsafe_allow_html=True)
 
 
