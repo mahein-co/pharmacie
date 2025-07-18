@@ -41,8 +41,6 @@ with st.sidebar:
     st.sidebar.image("images/logoMahein.png", caption="", use_container_width=True)
 
 
-
-
 if df is not None and "medicament" in df and "stock" in df:
     # Extraction des DataFrames
     medicament_df = df["medicament"]
@@ -115,14 +113,6 @@ if df is not None and "medicament" in df and "stock" in df:
 
 else:
     st.error("❌ Les données 'medicament' et 'stock' sont manquantes ou invalides.")
-
-
-
-    
-    
-    
-
-
 
 
 st.markdown("<h2 style='color: green;'>Médicaments</h2>", unsafe_allow_html=True)
@@ -244,7 +234,47 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                     <div class="metric-value">{stats_stock["stock_moyen"][0]}</div>
                 </div>
             """, unsafe_allow_html=True)
+        
+            # CSS personnalisé
+        css = """
+            <style>
+            .custom-table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            .custom-table th, .custom-table td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            .custom-table th {
+                background-color: #333;
+                color: white;
+            }
+            .custom-table td {
+                background-color: #f9f9f9;
+            }
+            </style>
+            """
 
+            # HTML de la table vide (en-têtes uniquement)
+            html = """
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Âge</th>
+                        <th>Ville</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Lignes vides ici -->
+                </tbody>
+            </table>
+            """
+
+            # Affichage dans Streamlit
+            st.markdown(css + html, unsafe_allow_html=True) 
         st.markdown("---")
 
         with st.container():
