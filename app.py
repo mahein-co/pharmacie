@@ -240,7 +240,12 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
         # CSS personnalisé
         st.markdown("""
             <style>
-                /* Style du tableau */
+                    /* Fond noir général */
+                    body, .stApp {
+                    background-color: #0e0e0e;
+                    color: white;
+                }
+                    /* Style du tableau */
                 table {
                     width: 100%;
                     border-collapse: collapse;
