@@ -274,7 +274,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
             """
 
             # Affichage dans Streamlit
-            st.markdown(css + html, unsafe_allow_html=True) 
+        st.markdown(css + html, unsafe_allow_html=True) 
         st.markdown("---")
 
         with st.container():
