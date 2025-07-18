@@ -258,7 +258,7 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
             """
 
             # HTML de la table vide (en-têtes uniquement)
-            html = """
+        html = """
             <table class="custom-table">
                 <thead>
                     <tr>
