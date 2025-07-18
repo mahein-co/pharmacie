@@ -235,46 +235,90 @@ if df is not None and "medicament" in df and "stock" in df and "detailVente" in 
                 </div>
             """, unsafe_allow_html=True)
         
-            # CSS personnalisé
-        css = """
-            <style>
-            .custom-table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-            .custom-table th, .custom-table td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-            .custom-table th {
-                background-color: #333;
-                color: white;
-            }
-            .custom-table td {
-                background-color: #f9f9f9;
-            }
-            </style>
-            """
 
-            # HTML de la table vide (en-têtes uniquement)
-        html = """
-            <table class="custom-table">
+
+
+
+        # CSS personnalisé
+        st.markdown("""
+                <style>
+                    /* Fond noir global */
+                    .main {
+                        background-color: #000000;
+                        color: white;
+                    }
+
+                    /* Style du tableau */
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                    }
+
+                    thead tr {
+                        background-color: #008065;
+                        color: white;
+                        text-align: left;
+                        font-weight: bold;
+                    }
+
+                    tbody tr {
+                        background-color: #1e1e1e;
+                        color: white;
+                    }
+
+                    tbody tr:nth-child(2) {
+                        background-color: #f2f2f2;
+                        color: #008065;
+                        font-weight: bold;
+                    }
+
+                    td, th {
+                        padding: 10px;
+                    }
+
+                    tbody tr:hover {
+                        background-color: #333333;
+                    }
+                </style>
+            """, unsafe_allow_html=True)
+
+        # Affichage HTML du tableau stylisé
+        html_table = """
+            <table>
                 <thead>
                     <tr>
-                        <th>Nom</th>
-                        <th>Âge</th>
-                        <th>Ville</th>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                        <th>Team</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Lignes vides ici -->
+                    <tr>
+                        <td>1</td>
+                        <td>Domenic</td>
+                        <td>88,110</td>
+                        <td>dcode</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Sally</td>
+                        <td>72,400</td>
+                        <td>Students</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nick</td>
+                        <td>52,300</td>
+                        <td>dcode</td>
+                    </tr>
                 </tbody>
             </table>
             """
 
-            # Affichage dans Streamlit
-        st.markdown(css + html, unsafe_allow_html=True) 
+        st.markdown(html_table, unsafe_allow_html=True)
+        
         st.markdown("---")
 
         with st.container():
