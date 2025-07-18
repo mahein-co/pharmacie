@@ -32,7 +32,7 @@ tokenizer = AutoTokenizer.from_pretrained(repo_id)
 hf_model = AutoModelForCausalLM.from_pretrained(
     repo_id,
     device_map="auto",
-    load_in_4bit=True,  # ou False selon ta machine
+    load_in_4bit=False, 
     trust_remote_code=True
 )
 
