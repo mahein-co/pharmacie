@@ -65,9 +65,9 @@ if df is not None and "medicament" in df and "stock" in df:
     # 🔎 Indicateurs SQL
     metrics_queries = {
         "💰 Chiffre d'affaires total": "SELECT SUM(Prix_Vente * Stock_Disponible) FROM pharmacie",
-        "📦 Stock total disponible": "SELECT SUM(Stock_Disponible) FROM pharmacie",
-        "🔢 Nombre de produits": "SELECT COUNT(DISTINCT Nom_Commercial) FROM pharmacie",
-        "⚠️ Médicaments critiques": "SELECT COUNT(*) FROM pharmacie WHERE Stock_Disponible < 10"
+        "📦 Valeur totale du stock": "SELECT SUM(Stock_Disponible) FROM pharmacie",
+        "🔢 Nombre total de ventes": "SELECT COUNT(DISTINCT Nom_Commercial) FROM pharmacie",
+        "⚠️Nombre total d’approvisionnements": "SELECT COUNT(*) FROM pharmacie WHERE Stock_Disponible < 10"
     }
 
     st.markdown("""
@@ -101,7 +101,7 @@ if df is not None and "medicament" in df and "stock" in df:
             value = con.execute(query).fetchone()[0]
             value = "N/A" if value is None else f"{value:,.2f}"
 
-            # Affichage HTML personnalisé avec bordure gauche
+            # Affichage HTML perfsonnalisé avec bordure gauche
             html_metric = f"""
                 <div class="metric-box">
                     <div class="metric-label">{label}</div>
