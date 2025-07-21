@@ -16,9 +16,9 @@ from data.mongodb_client import MongoDBClient
 login(token=hf_token)
 
 # Models LLM
-model_name = "meta-llama/Llama-2-7b-chat-hf"
-repo_id = "meta-llama/Llama-3.1-8B-Instruct"
+repo_id = "meta-llama/Llama-2-7b-chat-hf"
 repo_id2 = "microsoft/phi-4"
+repo_id3 = "meta-llama/Llama-3.1-8B-Instruct"
 
 # Chargement du modèle d'embedding
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -27,13 +27,14 @@ embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 collection = MongoDBClient(collection_name="corpus_rag").get_collection()
 
 
-tokenizer = AutoTokenizer.from_pretrained(repo_id)
-hf_model = AutoModelForCausalLM.from_pretrained(
-    repo_id,
-    device_map="auto",
-    load_in_4bit=False, 
-    trust_remote_code=True
-)
+tokenizer = AutoTokenizer.from_pretrained(repo_id3, use_auth_token=hf_token)
+hf_model =  AutoModelForCausalLM(repo_id3, use_auth_token=hf_token)
+# hf_model = AutoModelForCausalLM.from_pretrained(
+#     repo_id3,
+#     device_map="auto",
+#     load_in_4bit=False, 
+#     trust_remote_code=True,
+# )
 
 generator = pipeline(
     "text-generation",

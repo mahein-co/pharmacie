@@ -320,3 +320,95 @@ pymongo.errors.NetworkTimeout: ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017:
 2025-07-17 08:41:50,262 - INFO - ✅ IP 129.222.109.210 ajoutée avec succès à MongoDB Atlas.
 2025-07-17 08:51:04,160 - INFO - 📡 IP publique détectée : 129.222.109.210
 2025-07-17 08:51:05,817 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 10:50:56,512 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 10:50:58,840 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 12:22:28,971 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 12:22:30,718 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 12:22:45,150 - INFO - Connexion MongoDB établie avec succès.
+2025-07-17 12:22:46,211 - INFO - 1001 documents récupérés depuis la collection.
+2025-07-17 12:22:46,403 - INFO - 301 valeurs distinctes trouvées (via aggregation) pour 'ID_Client'.
+2025-07-17 12:22:46,607 - INFO - Recuperer le nombre de clients fideles est bien réussit.
+2025-07-17 12:24:19,191 - INFO - Connexion MongoDB établie avec succès.
+2025-07-17 12:24:20,519 - INFO - 1001 documents récupérés depuis la collection.
+2025-07-17 12:24:20,762 - INFO - 301 valeurs distinctes trouvées (via aggregation) pour 'ID_Client'.
+2025-07-17 12:24:21,021 - INFO - Recuperer le nombre de clients fideles est bien réussit.
+2025-07-17 12:27:35,481 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 12:27:36,805 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 13:39:06,891 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 13:39:08,844 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 13:43:26,578 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 13:43:28,825 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-17 13:57:08,050 - INFO - 📡 IP publique détectée : 129.222.109.210
+2025-07-17 13:57:10,074 - INFO - 🔍 IP 129.222.109.210 est déjà présente dans la liste.
+2025-07-18 09:24:33,647 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 09:24:35,749 - INFO - 🔍 IP 129.222.109.88 n'est PAS dans la liste.
+2025-07-18 09:24:37,366 - INFO - 🔍 IP 129.222.109.88 n'est PAS dans la liste.
+2025-07-18 09:24:39,214 - INFO - ✅ IP 129.222.109.88 ajoutée avec succès à MongoDB Atlas.
+2025-07-18 09:24:59,946 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 09:25:11,488 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 09:25:11,964 - INFO - 27360 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-07-18 09:28:07,852 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 09:28:09,758 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 09:28:10,469 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 09:28:11,777 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 09:33:44,203 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 09:33:57,910 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 09:33:58,316 - INFO - 27360 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-07-18 09:34:17,310 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 09:34:26,634 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 09:34:26,934 - INFO - 27360 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-07-18 17:42:56,238 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 17:42:59,523 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 17:47:43,932 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 17:47:47,383 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 17:48:11,607 - INFO - Use pytorch device_name: cpu
+2025-07-18 17:48:11,608 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 17:48:31,153 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 17:51:18,371 - INFO - Use pytorch device_name: cpu
+2025-07-18 17:51:18,371 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 17:51:33,081 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 17:59:46,415 - INFO - Use pytorch device_name: cpu
+2025-07-18 17:59:46,440 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 17:59:58,335 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 18:00:59,900 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 18:01:02,217 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 18:02:22,147 - INFO - Use pytorch device_name: cpu
+2025-07-18 18:02:22,147 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 18:02:38,665 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 18:03:10,623 - INFO - Use pytorch device_name: cpu
+2025-07-18 18:03:10,624 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 18:03:27,620 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 18:10:28,568 - INFO - Use pytorch device_name: cpu
+2025-07-18 18:10:28,569 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 18:11:06,024 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 18:14:55,856 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-18 18:15:13,117 - INFO - Use pytorch device_name: cpu
+2025-07-18 18:15:13,118 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 18:15:36,879 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-18 18:15:58,257 - INFO - Use pytorch device_name: cpu
+2025-07-18 18:15:58,257 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 18:16:51,533 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 18:17:49,485 - ERROR - Échec du ping MongoDB: ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 687a657f6dc5f7c7e6e7e1b0, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-07-18 18:17:49,486 - ERROR - Erreur d'initialisation de la connexion MongoDB.
+Traceback (most recent call last):
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/data/mongodb_client.py", line 32, in __init__
+    self.ping()
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/data/mongodb_client.py", line 38, in ping
+    self.client.admin.command('ping')
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/database.py", line 926, in command
+    with self._client._conn_for_reads(read_preference, session, operation=command_name) as (
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/mongo_client.py", line 1864, in _conn_for_reads
+    server = self._select_server(read_preference, session, operation)
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/mongo_client.py", line 1812, in _select_server
+    server = topology.select_server(
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/topology.py", line 409, in select_server
+    server = self._select_server(
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/topology.py", line 387, in _select_server
+    servers = self.select_servers(
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/topology.py", line 294, in select_servers
+    server_descriptions = self._select_servers_loop(
+  File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/topology.py", line 344, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+pymongo.errors.ServerSelectionTimeoutError: ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 687a657f6dc5f7c7e6e7e1b0, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>

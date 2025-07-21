@@ -15944,3 +15944,57 @@ pymongo.errors.ConfigurationError: The DNS operation timed out after 20.00168895
 2025-07-14 17:35:06,862 - INFO - Document inséré avec l'id: 6875159aa49de893831cd130
 2025-07-14 17:35:07,066 - INFO - Document inséré avec l'id: 6875159aa49de893831cd131
 2025-07-14 17:35:07,310 - INFO - Document inséré avec l'id: 6875159ba49de893831cd132
+2025-07-18 10:35:38,023 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:36:03,438 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 10:36:05,333 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:36:05,730 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 10:36:07,733 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:36:07,919 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 10:46:54,590 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:47:00,925 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 10:47:03,383 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:47:04,182 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 10:47:07,384 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:47:07,743 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 10:48:44,126 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:48:52,702 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 10:48:54,980 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:48:55,385 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 10:48:57,857 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:48:58,062 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 10:49:56,363 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:50:02,287 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 10:50:04,761 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:50:05,583 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 10:50:08,819 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 10:50:09,729 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 11:54:09,831 - INFO - Use pytorch device_name: cpu
+2025-07-18 11:54:09,841 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 11:54:25,798 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 11:54:34,918 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 11:54:37,295 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 11:54:37,709 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 11:54:40,474 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 11:54:40,707 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 12:25:10,552 - INFO - Use pytorch device_name: cpu
+2025-07-18 12:25:10,552 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 12:25:24,179 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:25:36,375 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 12:25:38,726 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:25:39,169 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 12:25:41,994 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:25:42,246 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 12:31:43,007 - INFO - Use pytorch device_name: cpu
+2025-07-18 12:31:43,008 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 12:31:54,539 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:32:08,421 - INFO - 27360 documents récupérés depuis la collection.
+2025-07-18 12:32:10,867 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:32:11,269 - INFO - 85 documents récupérés depuis la collection.
+2025-07-18 12:32:13,381 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 12:32:13,591 - INFO - 30 documents récupérés depuis la collection.
+2025-07-18 15:25:56,954 - INFO - Use pytorch device_name: cpu
+2025-07-18 15:25:56,969 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-18 15:26:07,012 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 15:26:09,484 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 15:26:12,772 - INFO - Connexion MongoDB établie avec succès.
+2025-07-18 15:26:20,724 - INFO - Connexion MongoDB établie avec succès.
