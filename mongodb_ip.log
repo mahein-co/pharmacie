@@ -412,3 +412,82 @@ Traceback (most recent call last):
   File "/mnt/Movies/Mahein/pharmaco/streamlit/.venv/lib/python3.10/site-packages/pymongo/synchronous/topology.py", line 344, in _select_servers_loop
     raise ServerSelectionTimeoutError(
 pymongo.errors.ServerSelectionTimeoutError: ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 687a657f6dc5f7c7e6e7e1b0, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-00.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-01.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net', 27017) server_type: Unknown, rtt: None, error=NetworkTimeout('ac-11rlwnv-shard-00-02.sdly3uh.mongodb.net:27017: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-07-21 09:42:55,875 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-21 09:42:59,356 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-21 09:43:38,084 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 09:43:38,288 - INFO - 0 documents récupérés depuis la collection.
+2025-07-21 09:43:38,488 - INFO - 0 valeurs distinctes trouvées (via aggregation) pour 'ID_Client'.
+2025-07-21 09:43:41,375 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 09:43:41,965 - INFO - 0 documents récupérés depuis la collection.
+2025-07-21 09:43:42,160 - INFO - 0 valeurs distinctes trouvées (via aggregation) pour 'ID_Client'.
+2025-07-21 09:44:00,479 - INFO - Use pytorch device_name: cpu
+2025-07-21 09:44:00,479 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 09:44:14,934 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 09:51:08,533 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-21 09:51:11,074 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-21 09:58:17,323 - INFO - Use pytorch device_name: cpu
+2025-07-21 09:58:17,337 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 09:58:27,947 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 09:59:06,604 - INFO - Use pytorch device_name: cpu
+2025-07-21 09:59:06,605 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 09:59:20,546 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 09:59:56,632 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-21 10:00:00,113 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-21 10:00:26,105 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:00:26,106 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:00:44,344 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:01:23,251 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:01:23,254 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:01:35,713 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:03:22,900 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:03:22,916 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:03:35,110 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:03:54,631 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:03:54,632 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:04:11,967 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:05:46,700 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:05:46,700 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:05:59,902 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:06:02,250 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:06:02,261 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:06:12,977 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:07:01,212 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:07:01,213 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:07:14,655 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:07:37,875 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:07:37,876 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:07:49,253 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:08:34,353 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:08:34,353 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:08:46,611 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:09:24,936 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:09:24,937 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:09:34,903 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:17:31,822 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:17:31,823 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:17:42,468 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:19:21,729 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:19:21,730 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:19:32,357 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:23:17,352 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:23:17,358 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-07-21 10:26:25,887 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:26:25,890 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:26:40,427 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:26:47,621 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:26:47,628 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:26:59,419 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:27:44,547 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:27:44,547 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:27:55,762 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:31:31,779 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:31:31,782 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:31:44,461 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:34:08,367 - INFO - Use pytorch device_name: cpu
+2025-07-21 10:34:08,383 - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-07-21 10:34:22,914 - INFO - Connexion MongoDB établie avec succès.
+2025-07-21 10:35:35,820 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-21 10:35:38,084 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
+2025-07-21 10:41:07,061 - INFO - Loading faiss with AVX2 support.
+2025-07-21 10:41:08,700 - INFO - Successfully loaded faiss with AVX2 support.
+2025-07-21 10:41:08,737 - INFO - Failed to load GPU Faiss: name 'GpuIndexIVFFlat' is not defined. Will not load constructor refs for GPU indexes. This is only an error if you're trying to use GPU Faiss.

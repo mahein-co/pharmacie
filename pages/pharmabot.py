@@ -1,18 +1,13 @@
 import streamlit as st
 from huggingface_hub import login
-import os
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint, HuggingFaceEmbeddings
 
-import pandas as pd
-from IPython.display import display, Markdown
 from data.config import hf_token
 from data.mongodb_client import MongoDBClient
 
 
-# ✅ Définir ta clé API HuggingFace
 login(token=hf_token)
 
 # Models LLM
@@ -29,12 +24,12 @@ collection = MongoDBClient(collection_name="corpus_rag").get_collection()
 
 tokenizer = AutoTokenizer.from_pretrained(repo_id3, use_auth_token=hf_token)
 hf_model =  AutoModelForCausalLM(repo_id3, use_auth_token=hf_token)
-# hf_model = AutoModelForCausalLM.from_pretrained(
-#     repo_id3,
-#     device_map="auto",
-#     load_in_4bit=False, 
-#     trust_remote_code=True,
-# )
+hf_model = AutoModelForCausalLM.from_pretrained(
+    repo_id3,
+    device_map="auto",
+    load_in_4bit=False, 
+    trust_remote_code=True,
+)
 
 generator = pipeline(
     "text-generation",
@@ -60,7 +55,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Zone de saisie utilisateur
-if prompt := st.chat_input("❓ Votre question"):
+if prompt := st.chat_input("Votre question"):
 
     # Ajouter le message utilisateur à l'historique
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -78,8 +73,8 @@ if prompt := st.chat_input("❓ Votre question"):
                 "$vectorSearch": {
                     "queryVector": query_vector,
                     "path": "embedding",
-                    "numCandidates": 100,
-                    "limit": 4,
+                    "numCandidates": 2000,
+                    "limit": 200,
                     "index": "embedding_corpus_rag"
                 }
             },
@@ -94,9 +89,9 @@ if prompt := st.chat_input("❓ Votre question"):
         results = list(collection.aggregate(pipeline))
 
         if results:
-            st.subheader("📄 Contexte extrait")
+            # st.subheader("📄 Contexte extrait")
             context = "\n".join([f"- {doc['texte_embedding']}" for doc in results])
-            st.code(context, language="markdown")
+            # st.code(context, language="markdown")
 
             # Étape 3 : créer le prompt
             prompt = """
@@ -112,6 +107,7 @@ if prompt := st.chat_input("❓ Votre question"):
                 Si l'information n’est pas présente dans le contexte, dites-le explicitement.
             """
 
+            
     
     with st.spinner("💬 Génération de la réponse..."):
         output = generator(prompt)
