@@ -491,3 +491,5 @@ pymongo.errors.ServerSelectionTimeoutError: ac-11rlwnv-shard-00-00.sdly3uh.mongo
 2025-07-21 10:41:07,061 - INFO - Loading faiss with AVX2 support.
 2025-07-21 10:41:08,700 - INFO - Successfully loaded faiss with AVX2 support.
 2025-07-21 10:41:08,737 - INFO - Failed to load GPU Faiss: name 'GpuIndexIVFFlat' is not defined. Will not load constructor refs for GPU indexes. This is only an error if you're trying to use GPU Faiss.
+2025-07-21 10:53:43,043 - INFO - 📡 IP publique détectée : 129.222.109.88
+2025-07-21 10:53:44,416 - INFO - 🔍 IP 129.222.109.88 est déjà présente dans la liste.
