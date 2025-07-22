@@ -59,10 +59,6 @@ st.markdown("""
 
 
 
-# Exemple de données de vente
-import streamlit as st
-import pandas as pd
-import numpy as np
 
 # --------------------
 # Données exemple
@@ -285,3 +281,5 @@ with st.container():
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+
