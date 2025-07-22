@@ -489,38 +489,53 @@ with st.container():
 
         st.plotly_chart(fig_low)
 
-with st.container():
-     
-    # Exemple de données
-    data = pd.DataFrame({
-        'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine', 'Diclofénac', 'Loratadine', 'Oméprazole'],
-        'Ventes': [150, 120, 110, 80, 40, 30, 20]
+
+
+# ------------------- Données d'exemple ------------------- #
+    data_stock = pd.DataFrame({
+        'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine', 'Doliprane'],
+        'Prix unitaire': [1500, 2000, 2500, 1000, 3000],
+        'Quantité en stock': [50, 30, 20, 40, 10]
     })
 
-    top3_plus = data.nlargest(3, 'Ventes')
-    top3_moins = data.nsmallest(3, 'Ventes')
+    # ------------------- Calculs ------------------- #
+    nb_total_medicaments = data_stock['Quantité en stock'].sum()
+    valeur_stock = (data_stock['Prix unitaire'] * data_stock['Quantité en stock']).sum()
 
-    def create_bar_chart(df, title, color_scale):
-        fig = px.bar(df, x='Médicament', y='Ventes', title=title,
-                    color='Ventes', color_continuous_scale=color_scale)
-        # Fond transparent
-        fig.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',  # fond graphique transparent
-            paper_bgcolor='rgba(0,0,0,0)', # fond autour transparent
-            font=dict(color='white')       # texte blanc si fond sombre Streamlit
-        )
-        return fig
+    plus_cher = data_stock.loc[data_stock['Prix unitaire'].idxmax()]
+    moins_cher = data_stock.loc[data_stock['Prix unitaire'].idxmin()]
 
-    fig_plus = create_bar_chart(top3_plus, 'Top 3 Médicaments les plus vendus', 'Greens')
-    fig_moins = create_bar_chart(top3_moins, 'Top 3 Médicaments les moins vendus', 'Reds')
+    # ------------------- CSS pour tableau ------------------- #
+    st.markdown("""
+        <style>
+            .custom-table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            .custom-table th {
+                background-color: #2d6a4f;
+                color: white;
+                padding: 10px;
+                text-align: left;
+            }
+            .custom-table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-top: 10px;
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
 
-    with col1:
-        st.plotly_chart(fig_plus, use_container_width=True)
+    # ------------------- Tableau HTML stylisé ------------------- #
+    st.markdown("<h3>📋 Détails du stock</h3>", unsafe_allow_html=True)
 
-    with col2:
-        st.plotly_chart(fig_moins, use_container_width=True)
+    table_html = data_stock.to_html(classes="custom-table", index=False)
+    st.markdown(table_html, unsafe_allow_html=True)
+
 
 
 
