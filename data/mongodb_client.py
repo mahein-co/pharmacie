@@ -14,13 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class MongoDBClient:
-    def __init__(self, db_name="pharmacie", collection_name="client"):
+    def __init__(self, db_name="pharmacie", collection_name="vente"):
         try:
             uri = (
                 f"mongodb+srv://{mongo_username}:{mongo_password}"
                 f"@{mongo_cluster}.sdly3uh.mongodb.net/?retryWrites=true"
                 f"&w=majority&appName={mongo_app_name}"
             )
+
             self.client = MongoClient(
                 uri,
                 server_api=ServerApi('1'),
@@ -43,18 +44,17 @@ class MongoDBClient:
     
     def make_specific_pipeline(self, pipeline:list, title:str)-> list:
         try:
-            result = list(self.collection.aggregate(pipeline))
+            result = list(self.collection.aggregate(pipeline,  allowDiskUse=True, maxTimeMS=180000))
             if result:
-                logger.info(f"{title} est bien réussit.")
+                logger.info(f"**{title}** est bien réussit.")
                 return result
             else:
                 return []
 
         except Exception as e:
-            logger.exception(f"Erreur lors de {title} avec l'erreur {e}.")
+            logger.exception(f"Erreur lors de **{title}** avec l'erreur {e}.")
             return []
         
-
     def get_collection(self):
         return self.collection
 
@@ -72,17 +72,15 @@ class MongoDBClient:
         except Exception as e:
             logger.exception(f"Erreur dans l'agrégation distincte pour '{field_name}'.")
             return 0
-
-    def set_collection(self, collection_name):
-        self.collection = self.db[collection_name]
-        logger.info(f"Collection changée pour : {collection_name}")
-
-    def insert_document(self, data: dict):
+        
+    def ventes_completes(self, pipeline:list) -> list:
         try:
-            result = self.collection.insert_one(data)
-            logger.info(f"Document inséré avec l'id: {result.inserted_id}")
+            result = list(self.collection.aggregate(pipeline))
+            logger.info(f"{len(result)} ventes complètes récupérées.")
+            return result
         except Exception as e:
-            logger.exception("Erreur lors de l'insertion du document.")
+            logger.exception("Erreur lors de la récupération des ventes complètes.")
+            return []
 
     def find_all_documents(self):
         try:
@@ -92,4 +90,5 @@ class MongoDBClient:
         except Exception as e:
             logger.exception("Erreur lors de la lecture des documents.")
             return []
-
+        
+        
