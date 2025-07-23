@@ -2,11 +2,15 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import duckdb
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import load_data
 from db import init_duckdb
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
+
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -15,6 +19,8 @@ st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs
 # Chargement CSS
 # with open("style/pharmacie.css", "r") as css_file:
 #     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
+# Dis à Python d'aller voir dans le dossier parent
+
 
 # Chargement des données
 df = load_data()
@@ -31,7 +37,7 @@ with st.sidebar:
 
 # MEDICAMENT
 
-st.markdown("<h2 style='color: green;'>Vue en details des Médicaments</h2>", unsafe_allow_html=True)
+st.markdown("<h3 style='color: green;'>Vue en details des Médicaments</h3>", unsafe_allow_html=True)
 
 # Appliquer des styles CSS personnalisés pour les métriques
 st.markdown("""
@@ -159,7 +165,7 @@ else:
 
 with st.container():
 
-    st.markdown("<h2>Médicaments critiques en stock </h2>", unsafe_allow_html=True)
+    st.markdown("<h3>Médicaments critiques en stock </h3>", unsafe_allow_html=True)
 
     # CSS personnalisé
     st.markdown("""
@@ -244,7 +250,7 @@ with st.container():
 #Médicaments en surplus (>500 unités)
 with st.container():
     
-    st.markdown("<h2>Médicaments en surplus </h2>", unsafe_allow_html=True)
+    st.markdown("<h3>Médicaments en surplus </h3>", unsafe_allow_html=True)
 
     # CSS personnalisé
     st.markdown("""
@@ -327,7 +333,7 @@ with st.container():
 
 with st.container():
     
-    st.markdown("<h2>Ruptures de stock sur le dernier mois</h2>", unsafe_allow_html=True)
+    st.markdown("<h3>Ruptures de stock sur le dernier mois</h3>", unsafe_allow_html=True)
 
     # CSS personnalisé
     st.markdown("""
@@ -407,213 +413,141 @@ with st.container():
     # Affichage HTML du tableau
     st.markdown(html_table, unsafe_allow_html=True)
 
+with st.container():
 
-if df is not None and "medicament" in df and "stock" in df:
-    # Récupération des deux DataFrames
-    medicament = df["medicament"]
-    stock = df["stock"]
+    col1, col2 = st.columns(2)
 
-    # Fusionner stock et medicament
-    merged_df = pd.merge(stock, medicament, on="ID_Medicament", how="left")
+    # Données exemples
+    data = pd.DataFrame({
+        'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine'],
+        'Rotation': [120, 85, 60, 150]
+    })
 
-    # Connexion à DuckDB en mémoire et insertion des données
-    con = duckdb.connect(database=':memory:')
-    con.register('pharmacie', merged_df)
+    # 🔥 Colonne 1 : Médicament avec la plus forte rotation
+    with col1:
+        st.markdown("<h3>Médicament avec la plus forte rotation</h3>", unsafe_allow_html=True)
 
-    st.markdown("### 📈 Médicaments en surplus")
-    custom_plasma = [
-        "#0d0887",  # Bleu profond
-        "#5c01a6",  # Violet foncé
-        "#9c179e",  # Violet
-        "#6a41b4",  # Violet clair
-        "#4f76c4",  # Bleu plus clair
-        "#3a93c6",
-    ]
+        data_high = data.sort_values('Rotation', ascending=False).reset_index(drop=True)
 
+        max_rot = data_high['Rotation'].max()
 
+        def add_fire(row, max_rotation):
+            return f"{row['Rotation']} 🔥" if row['Rotation'] == max_rotation else str(row['Rotation'])
 
+        data_high['label'] = data_high.apply(lambda row: add_fire(row, max_rot), axis=1)
 
+        fig_high = px.bar(
+            data_high,
+            x='Rotation',
+            y='Médicament',
+            orientation='h',
+            text='label',
+            color='Rotation',
+            color_continuous_scale=['#a8d5a2', '#28a745'],
+        )
 
-with st.expander("### ❌ Ruptures de stock sur le dernier mois"):
+        fig_high.update_traces(textposition='inside', textfont_color='white')
+        fig_high.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(autorange='reversed'),
+            coloraxis_showscale=False
+        )
 
-    if df is not None and "medicament" in df and "stock" in df:
-        # Récupération des deux DataFrames
-        medicament = df["medicament"]
-        stock = df["stock"]
+        st.plotly_chart(fig_high)
 
-        # ✅ Conversion correcte du format Date_Reception
-        stock["Date_Reception"] = pd.to_datetime(stock["Date_Reception"], format="%m/%d/%Y", errors="coerce")
+    # ❄️ Colonne 2 : Médicament avec la plus faible rotation
+    with col2:
+        st.markdown("<h3>Médicament avec la plus faible rotation</h3>", unsafe_allow_html=True)
 
-        # Fusionner stock et medicament
-        merged_df = pd.merge(stock, medicament, on="ID_Medicament", how="left")
+        data_low = data.sort_values('Rotation', ascending=True).reset_index(drop=True)
 
-        # Connexion à DuckDB en mémoire et insertion des données
-        con = duckdb.connect(database=':memory:')
-        con.register('pharmacie', merged_df)
+        min_rot = data_low['Rotation'].min()
 
-        # Requête pour les ruptures de stock sur le dernier mois
-        try:
-            query = """
-            SELECT 
-                Nom_Commercial, 
-                COUNT(ID_Stock) AS Nombre_de_ruptures
-            FROM 
-                pharmacie
-            WHERE 
-                quantite_disponible <= 0 
-                AND Date_Reception >= CURRENT_DATE - INTERVAL '1 month'
-            GROUP BY 
-                Nom_Commercial
-            ORDER BY 
-                Nombre_de_ruptures DESC;
-            """
-            ruptures_df = con.execute(query).fetchdf()
+        def add_snow(row, min_rotation):
+            return f"{row['Rotation']} ❄️" if row['Rotation'] == min_rotation else str(row['Rotation'])
 
-            st.markdown("### ❌ Ruptures de stock sur le dernier mois")
+        data_low['label'] = data_low.apply(lambda row: add_snow(row, min_rot), axis=1)
 
-            # Utilisation de st.columns pour afficher le tableau et le graphique côte à côte
-            col1, col2 = st.columns([1, 2])  # Ajuste les proportions si nécessaire
+        fig_low = px.bar(
+            data_low,
+            x='Rotation',
+            y='Médicament',
+            orientation='h',
+            text='label',
+            color='Rotation',
+            color_continuous_scale=['#a8d5a2', '#28a745'],
+        )
 
-            # Colonne 1: Tableau
-            with col1:
-                st.markdown("<br><br>", unsafe_allow_html=True) 
-                st.dataframe(ruptures_df)
+        fig_low.update_traces(textposition='inside', textfont_color='white')
+        fig_low.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(autorange='reversed'),
+            coloraxis_showscale=False
+        )
 
-            # Colonne 2: Graphique Plotly
-            with col2:
-                # ✅ Graphique Plotly (barres verticales)
-                if not ruptures_df.empty:
-                    fig = px.bar(
-                        ruptures_df,
-                        x="Nom_Commercial",
-                        y="Nombre_de_ruptures",
-                        color="Nom_Commercial",  # Nécessaire pour appliquer color_discrete_sequence
-                        title="📉 Médicaments en rupture de stock (dernier mois)",
-                        labels={"Nom_Commercial": "Médicament", "Nombre_de_ruptures": "Nombre de ruptures"},
-                        text="Nombre_de_ruptures",
-                        color_discrete_sequence=px.colors.sequential.Plasma
-                    )
-                    fig.update_traces(textposition="outside")
-                    fig.update_layout(
-                        xaxis_tickangle=-45,
-                        showlegend=False  # Cacher la légende si chaque barre correspond à un médicament unique
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("Aucune rupture de stock détectée ce mois-ci.")
-
-        except Exception as e:
-            st.error(f"❌ Erreur lors de l'exécution de la requête : {e}")
-    else:
-        st.error("❌ Les données 'medicament' et 'stock' ne sont pas présentes dans le DataFrame.")
+        st.plotly_chart(fig_low)
 
 
 
+# ------------------- Données d'exemple ------------------- #
+    data_stock = pd.DataFrame({
+        'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine', 'Doliprane'],
+        'Prix unitaire': [1500, 2000, 2500, 1000, 3000],
+        'Quantité en stock': [50, 30, 20, 40, 10]
+    })
+
+    # ------------------- Calculs ------------------- #
+    nb_total_medicaments = data_stock['Quantité en stock'].sum()
+    valeur_stock = (data_stock['Prix unitaire'] * data_stock['Quantité en stock']).sum()
+
+    plus_cher = data_stock.loc[data_stock['Prix unitaire'].idxmax()]
+    moins_cher = data_stock.loc[data_stock['Prix unitaire'].idxmin()]
+
+    # ------------------- CSS pour tableau ------------------- #
+    st.markdown("""
+        <style>
+            .custom-table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            .custom-table th {
+                background-color: #2d6a4f;
+                color: white;
+                padding: 10px;
+                text-align: left;
+            }
+            .custom-table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-top: 10px;
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+
+    # ------------------- Tableau HTML stylisé ------------------- #
+    st.markdown("<h3>📋 Détails du stock</h3>", unsafe_allow_html=True)
+
+    table_html = data_stock.to_html(classes="custom-table", index=False)
+    st.markdown(table_html, unsafe_allow_html=True)
 
 
 
-# Médicaments avec la plus forte et la plus faible rotation
-if df is not None and "vente" in df and "detailVente" in df and "client" in df:
-    vente = df["vente"]
-    detail_vente = df["detailVente"]
-    client = df["client"]
 
-    merged = pd.merge(vente, detail_vente, on="ID_Vente", how="inner")
 
-    # Fusion avec les noms de médicament si présents
-    if "medicament" in df:
-        medicament_df = df["medicament"]
-        merged = pd.merge(merged, medicament_df[["ID_Medicament", "Nom_Commercial"]], on="ID_Medicament", how="left")
-    else:
-        merged["Nom_Commercial"] = merged["ID_Medicament"]
 
-    # Connexion DuckDB
-    con = duckdb.connect(database=":memory:")
-    con.register("vente_detail", merged)
 
-    with st.expander("🔄 Médicaments avec la plus forte et la plus faible rotation"):
-        st.markdown("## ⚖️ Comparaison des rotations des médicaments")
 
-        try:
-            # Médicament le plus vendu
-            top_medicament = con.execute("""
-                SELECT Nom_Commercial, SUM(Quantité) AS Total_Vendu
-                FROM vente_detail
-                GROUP BY Nom_Commercial
-                ORDER BY Total_Vendu DESC
-                LIMIT 1
-            """).fetchdf()
 
-            top5_df = con.execute("""
-                SELECT Nom_Commercial, SUM(Quantité) AS Total_Vendu
-                FROM vente_detail
-                GROUP BY Nom_Commercial
-                ORDER BY Total_Vendu DESC
-                LIMIT 5
-            """).fetchdf()
 
-            # Médicament le moins vendu
-            least_medicament = con.execute("""
-                SELECT Nom_Commercial, SUM(Quantité) AS Total_Vendu
-                FROM vente_detail
-                GROUP BY Nom_Commercial
-                HAVING SUM(Quantité) > 0
-                ORDER BY Total_Vendu ASC
-                LIMIT 1
-            """).fetchdf()
 
-            bottom5_df = con.execute("""
-                SELECT Nom_Commercial, SUM(Quantité) AS Total_Vendu
-                FROM vente_detail
-                GROUP BY Nom_Commercial
-                HAVING SUM(Quantité) > 0
-                ORDER BY Total_Vendu ASC
-                LIMIT 5
-            """).fetchdf()
 
-            col2, col1 = st.columns(2)
 
-            with col1:
-                st.markdown("### 🔁 Plus forte rotation")
-                if not top_medicament.empty:
-                    nom_top = top_medicament.iloc[0]["Nom_Commercial"]
-                    qte_top = int(top_medicament.iloc[0]["Total_Vendu"])
-                    st.success(f"🏅 Médicament : **{nom_top}**\n\n💊 Quantité vendue : **{qte_top}**")
-                else:
-                    st.warning("Aucune donnée pour la forte rotation.")
-                fig_top = px.bar(
-                    top5_df,
-                    x="Nom_Commercial",
-                    y="Total_Vendu",
-                    title="Top 5 Médicaments les plus vendus",
-                    text_auto=True,
-                    color="Nom_Commercial",
-                    color_discrete_sequence=px.colors.qualitative.Set3
-                )
-                st.plotly_chart(fig_top, use_container_width=True)
 
-            with col2:
-                st.markdown("### 📉 Plus faible rotation")
-                if not least_medicament.empty:
-                    nom_low = least_medicament.iloc[0]["Nom_Commercial"]
-                    qte_low = int(least_medicament.iloc[0]["Total_Vendu"])
-                    st.warning(f"📉 Médicament : **{nom_low}**\n\n💊 Quantité vendue : **{qte_low}**")
-                else:
-                    st.info("Aucune donnée pour la faible rotation.")
-                fig_low = px.bar(
-                    bottom5_df,
-                    x="Nom_Commercial",
-                    y="Total_Vendu",
-                    title="Top 5 Médicaments les moins vendus",
-                    text_auto=True,
-                    color="Nom_Commercial",
-                    color_discrete_sequence=px.colors.qualitative.Pastel
-                )
-                st.plotly_chart(fig_low, use_container_width=True)
-
-        except Exception as e:
-            st.error(f"❌ Erreur lors de l'affichage : {e}")
-else:
-    st.warning("Les données 'vente', 'detailVente' et 'client' ne sont pas disponibles.")
 
 
