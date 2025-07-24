@@ -66,6 +66,7 @@ lxml==6.0.0
 MarkupSafe==3.0.2
 marshmallow==3.26.1
 matplotlib-inline==0.1.7
+motor==3.7.1
 mpmath==1.3.0
 multidict==6.6.3
 mypy_extensions==1.1.0
@@ -132,7 +133,6 @@ tiktoken==0.9.0
 tokenizers==0.21.2
 toml==0.10.2
 torch==2.7.1
-torchaudio==2.7.1
 tornado==6.5.1
 tqdm==4.67.1
 traitlets==5.14.3

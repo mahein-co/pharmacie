@@ -1,16 +1,21 @@
 from datetime import timedelta
 import streamlit as st
+from streamlit.components.v1 import html
+
 import pandas as pd
 import plotly.express as px
 import duckdb
 from utils import load_data
 from db import init_duckdb
-# import numpy as np
-# import asyncio
+import streamlit as st
+
 
 from data.mongodb_ip_manager import MongoDBIPManager
-from data.mongodb_client import MongoDBClient
 from data import mongodb_pipelines
+from streamlit.components.v1 import html
+
+# views
+from views import dashboard_views
 
 
 # Initialisation
@@ -30,8 +35,9 @@ def mongodb_ip_manager():
 mongodb_ip_manager()
 
 # Chargement CSS
-# with open("style/pharmacie.css", "r") as css_file:
-#     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
+with open("style/pharmacie.css", "r") as css_file:
+    st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
+
 
 # Chargement des données
 df = load_data()
@@ -42,42 +48,30 @@ with st.sidebar:
         st.cache_data.clear()
     st.sidebar.image("images/logoMahein.png", caption="", use_container_width=True)
 
+# -----------------------------------------------------------------
+# TITLE
+html("""
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    
+  .box {
+    color: #eee;
+    padding: 20px;
+    font-family: 'Dancing Script', cursive;
+    border-radius: 10px;
+    font-size: 74px;
+  }
+</style>
+<div class="box">Dashboard</div>
+""")
 
+# importation de style CSS
+# st.markdown(dashboard_views.custom_css, unsafe_allow_html=True)
+st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
 
-# Initialisation a MongoDB
-vente_collection = MongoDBClient(collection_name="vente")
-medicament_collection = MongoDBClient(collection_name="medicament")
-employe_collection = MongoDBClient(collection_name="employe")
 
 # I- FIRST LINE OF SCORECARD
-if vente_collection and medicament_collection:
-    # 1. chiffre d'affaire total
-    chiffre_affaire = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_chiffre_affaire, title="Calcul du chiffre d'affaire")
-    try:
-        total_chiffre_affaire = chiffre_affaire[0]["montant_total"] if chiffre_affaire else 0
-    except Exception as e:
-        st.error(f"❌ Erreur lors du calcul du chiffre d'affaire : {e}")
-        total_chiffre_affaire = 0
-
-    # # 2. valeur totale du stock
-    # valeur_stock = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_somme_valeur_stock, title="Calcul de la valeur totale du stock")
-    # try:
-    #     valeur_totale_stock = valeur_stock[0]["valeur_totale_stock"] if valeur_stock else 0
-    # except Exception as e:
-    #     st.error(f"❌ Erreur lors du calcul de la valeur totale du stock : {e}")
-    #     valeur_totale_stock = 0
-        
-    # 3. nombre total de vente
-    nombre_total_vente = vente_collection.count_distinct_agg(field_name="id_vente")
-
-    # 4. nombre total d'alimentation
-    nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
-    try:
-        nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
-    except Exception as e :
-        st.error(f"❌ Erreur lors du calcul du nombre total d'alimentation : {e}")
-        nombre_total_alimentation = 0
-
+if dashboard_views.vente_collection and dashboard_views.medicament_collection:
 
     # Extraction des DataFrames
     medicament_df = df["medicament"]
@@ -90,22 +84,15 @@ if vente_collection and medicament_collection:
     con = duckdb.connect(database=':memory:')
     con.register('pharmacie', merged_df)
 
-    # 💊 Titre principal
-    st.markdown("""
-        <h1 style='font-size: 32px; color: #4CAF50; margin-bottom: 0;'>PHARMACIE MÉTROPOLE</h1>
-        <p style='font-size: 16px; color: gray;'>Vue d'ensemble des indicateurs clés</p>
-        <hr style='margin-top: 10px; margin-bottom: 20px;' />
-    """, unsafe_allow_html=True)
 
     # 🔎 Indicateurs SQL
     metrics_queries = {
-        "Chiffre d'affaires total": f"{total_chiffre_affaire:,}".replace(",", " ") + "&nbsp; MGA",
         # "📦 Valeur totale du stock": f"{valeur_totale_stock:,}".replace(",", " ") + " MGA",
-        "🔢 Nombre total de ventes": f"{nombre_total_vente:,}".replace(",", " "),
-        "⚠️Nombre total d’alimentation": nombre_total_alimentation
         # "⚠️Nombre total d’alimentation": "SELECT COUNT(*) FROM pharmacie WHERE Stock_Disponible < 10"
         # "📦 Valeur totale du stock": "SELECT SUM(Stock_Disponible) FROM pharmacie",
     }   
+
+    st.markdown(dashboard_views.kpis_html, unsafe_allow_html=True)
 
     st.markdown("""
         <style>
@@ -130,6 +117,7 @@ if vente_collection and medicament_collection:
             
         </style>
     """, unsafe_allow_html=True)
+
 
     try:
         # Répartir les métriques en colonnes
@@ -178,12 +166,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # II- SECOND LINE OF SCORECARD
-if medicament_collection and employe_collection:
+if dashboard_views.medicament_collection and dashboard_views.employe_collection:
     # 2.1. Nombre total de médicaments
-    nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
+    nb_total_medicaments = dashboard_views.medicament_collection.count_distinct_agg(field_name="id_medicament")
     
     # 2.2. Total des pertes dues aux médicaments invendus
-    pertes_medicaments = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_valeur_perte, title="Calcul des pertes dues aux médicaments invendus")
+    pertes_medicaments = dashboard_views.medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_valeur_perte, title="Calcul des pertes dues aux médicaments invendus")
     try:
         total_pertes_medicaments = pertes_medicaments[0]["perte_totale"] if pertes_medicaments else 0
     except Exception as e:
@@ -191,14 +179,25 @@ if medicament_collection and employe_collection:
         total_pertes_medicaments = 0
 
     # 2.4. Nombre total de fournisseur
-    nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
+    nb_total_fournisseurs = dashboard_views.medicament_collection.count_distinct_agg(field_name="fournisseur")
 
     
     # 2.5. Médicaments expirés ou bientôt expirés
-    medicament_collection = medicament_collection.get_collection()
-    # medicaments_expires = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_medicaments_expirants, title="Récupération des médicaments expirés ou bientôt expirés")
-    medicaments_expires = list(medicament_collection.aggregate(mongodb_pipelines.pipeline_expirations))
+    medicaments_expires = dashboard_views.medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_expirations, title="Récupération des médicaments expirés ou bientôt expirés")
 
+
+    
+    rows_html = ""
+    for row_medicament in medicaments_expires[:7]:
+        rows_html += f"""
+        <tr>
+            <td>{row_medicament['nom']}</td>
+            <td>{row_medicament['arrival_date'].strftime('%d-%m-%Y')}</td>
+            <td style="color:red;">{row_medicament['date_expiration'].strftime('%d-%m-%Y')}</td>
+            <td>{row_medicament['prix_unitaire']} Ar</td>
+            <td>{row_medicament['Quantity_arrival']}</td>
+        </tr>
+        """
 
     medicament = df["medicament"]
     stock = df["stock"]
@@ -341,35 +340,19 @@ if medicament_collection and employe_collection:
         """, unsafe_allow_html=True)
 
         # Contenu HTML du tableau
-        html_table = """
+        html_table = f"""
             <table>
                 <thead>
                     <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Points</th>
-                        <th>Team</th>
+                        <th>Nom</th>
+                        <th>Date d'arrivée</th>
+                        <th>Date d'expiration</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité restante</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Domenic</td>
-                        <td>88,110</td>
-                        <td>dcode</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Sally</td>
-                        <td>72,400</td>
-                        <td>Students</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nick</td>
-                        <td>52,300</td>
-                        <td>dcode</td>
-                    </tr>
+                {rows_html}
                 </tbody>
             </table>
         """
@@ -426,6 +409,7 @@ st.markdown("""
         """, unsafe_allow_html=True)
 
         # Contenu HTML du tableau
+
 html_table = """
             <table>
                 <thead>
