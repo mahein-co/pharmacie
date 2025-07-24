@@ -10,6 +10,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 from data.mongodb_client import MongoDBClient
+from pipelines import pipelines
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -27,6 +28,9 @@ with st.sidebar:
     if st.button("Recharger les données", key="reload", help="Cliquez pour recharger les données", use_container_width=True):
         st.cache_data.clear()
     st.sidebar.image("images/logoMahein.png", caption="", use_container_width=True)
+
+#initiation a mongoDB 
+employe_collection = MongoDBClient(collection_name="employe")
 
 
 
@@ -66,17 +70,31 @@ st.markdown("""
 with st.container():
 
     st.markdown("<h3>📊 Indicateurs clés des performances</h3>", unsafe_allow_html=True)
-    # Données d'exemple
-    data = pd.DataFrame({
-            'Nom': ['Alice', 'Bob', 'Charlie', 'Diana', 'Ethan'],
-            'Salaire': [3000, 3500, 4000, 3200, 3800],
-            'Age': [28, 34, 30, 29, 40]
-            })
 
-        # Calculs
-    effectif_total = len(data)
-    salaire_moyen = round(data['Salaire'].mean(), 2)
-    age_moyen = round(data['Age'].mean(), 1)
+    if employe_collection:
+    
+        #2--Salaire moyen 
+        salaire_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines.Salaire_moyen,title="salaire moyen")
+
+        try:
+            salaire_moyen = salaire_moyen[0]["salaire_moyen"] if salaire_moyen else 0
+        except Exception as e:
+            salaire_moyen = 0
+        print("salaire_moyen: ",salaire_moyen)
+
+        # 1--Nombre total employers 
+        Nb_employers = employe_collection.count_distinct_agg(field_name="id_employe")
+
+        #3-- Age moyen 
+
+        age_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines.Age_moyen,title="age moyen")
+
+        try:
+            age_moyen = age_moyen[0]["age_moyen"] if age_moyen else 0
+        except Exception as e:
+            age_moyen = 0
+        print("age_moyen: ",age_moyen)
+    
         
 
         # CSS sombre moderne
@@ -111,7 +129,7 @@ with st.container():
             st.markdown(f"""
                 <div class="scorecard">
                     <h4>Effectif total d’employés</h4>
-                    <p>{effectif_total}</p>
+                    <p>{Nb_employers}</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -119,7 +137,7 @@ with st.container():
             st.markdown(f"""
                 <div class="scorecard">
                     <h4>Salaire moyen</h4>
-                    <p>{salaire_moyen} €</p>
+                    <p>{salaire_moyen} Ar</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -136,26 +154,29 @@ with st.container():
 
 st.set_page_config(layout="wide")
 
-# Données fictives
-df_employes = pd.DataFrame({
-    'Nom': ['Alice', 'Bob', 'Charlie', 'Diana', 'Ethan', 'Fatima', 'Georges', 'Hana', 'Ivan', 'Julia'],
-    'Catégorie': ['Cadre', 'Technicien', 'Cadre', 'Employé', 'Employé', 'Cadre', 'Technicien', 'Employé', 'Employé', 'Cadre'],
-    'Départ': ['Stagiaire', 'Stagiaire', 'Employé', 'Employé', 'Stagiaire', 'Employé', 'Stagiaire', 'Employé', 'Employé', 'Stagiaire'],
-    'Actuel': ['Cadre', 'Technicien', 'Cadre', 'Technicien', 'Employé', 'Cadre', 'Cadre', 'Employé', 'Technicien', 'Cadre']
-})
+
 
 # Conteneur principal avec deux colonnes
 with st.container():
     col1, col2 = st.columns(2)
 
-    # -----------------------
-    # 📊 CAMEMBERT avec px
-    # -----------------------
+
+    if employe_collection:
+    # Récupération des données via pipeline
+        eff_categorie = employe_collection.make_specific_pipeline(pipeline=pipelines.Eff_categorie, title="effectif par categorie")
+        eff_fonction = employe_collection.make_specific_pipeline(pipeline=pipelines.Eff_fonction,title="effectif par fonction")
+    
+    # Convertir en DataFrame
+    df_cat = pd.DataFrame(eff_categorie)
+    df_cat.columns = ['Catégorie', 'Effectif']
+
+    #Convertir en DataFrame
+    df_fct = pd.DataFrame(eff_fonction)
+    df_fct.columns = ['Fonction','Effectif']
+
+    # Affichage dans Streamlit
     with col1:
         st.markdown("<h3>Effectif total d’employés par catégorie</h3>", unsafe_allow_html=True)
-
-        df_cat = df_employes['Catégorie'].value_counts().reset_index()
-        df_cat.columns = ['Catégorie', 'Effectif']
 
         fig_pie = px.pie(df_cat,
                          names='Catégorie',
@@ -166,34 +187,100 @@ with st.container():
         fig_pie.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_pie, use_container_width=True)
 
+
     # -----------------------
     # 🔀 SANKEY (pas possible avec px, on utilise go)
     # -----------------------
     with col2:
-        st.markdown("<h3>Évolution de carrière</h3>", unsafe_allow_html=True)
+        st.markdown("<h3>Effectif total par fonction</h3>", unsafe_allow_html=True)
 
-        flux = df_employes.groupby(['Départ', 'Actuel']).size().reset_index(name='Count')
-        labels = list(set(flux['Départ']).union(set(flux['Actuel'])))
-        label_to_index = {label: i for i, label in enumerate(labels)}
+        fig_pie = px.pie(df_fct,
+                         names='Fonction',
+                         values='Effectif',
+                         hole=0.4,
+                         color_discrete_sequence=px.colors.sequential.Agsunset)
 
-        sources = [label_to_index[d] for d in flux['Départ']]
-        targets = [label_to_index[a] for a in flux['Actuel']]
-        values = flux['Count']
+        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+        st.plotly_chart(fig_pie, use_container_width=True)
+with st.container():
+    st.markdown("<h3>Evolution de fonction</h3>", unsafe_allow_html=True)
 
-        fig_sankey = go.Figure(data=[go.Sankey(
-            node=dict(
-                pad=20,
-                thickness=20,
-                line=dict(color="black", width=0.5),
-                label=labels,
-                color="lightgreen"
-            ),
-            link=dict(
-                source=sources,
-                target=targets,
-                value=values,
-                color="rgba(0,255,136,0.4)"
-            ))])
+    
+    # 🔹 Exemple : Données du pipeline MongoDB
+    data = [
+        {"annee": 2017, "fonction": "Comptable", "effectif": 2},
+        {"annee": 2017, "fonction": "Gérant", "effectif": 1},
+        {"annee": 2019, "fonction": "Pharmacien assistant", "effectif": 2},
+        {"annee": 2020, "fonction": "Comptable", "effectif": 1},
+        {"annee": 2022, "fonction": "Agent de comptoir", "effectif": 2},
+        {"annee": 2024, "fonction": "Comptable", "effectif": 1},
+        {"annee": 2023, "fonction": "Pharmacien titulaire", "effectif": 1}
+    ]
 
-        fig_sankey.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-        st.plotly_chart(fig_sankey, use_container_width=True)
+    df = pd.DataFrame(data)
+
+    # 🔸 Créer source / target labels
+    df["source"] = df["annee"].astype(str)
+    df["target"] = df["annee"].astype(str) + " - " + df["fonction"]
+
+    # 🔸 Labels uniques
+    labels = pd.unique(df[["source", "target"]].values.ravel().tolist())
+
+    # 🔸 Mapping label → index
+    label_map = {label: i for i, label in enumerate(labels)}
+    df["source_id"] = df["source"].map(label_map)
+    df["target_id"] = df["target"].map(label_map)
+
+    # 🔸 Sankey figure
+    fig = go.Figure(go.Sankey(
+        arrangement="snap",
+        node=dict(
+            pad=15,
+            thickness=20,
+            line=dict(color="black", width=0.5),
+            label=labels,
+            color="lightblue"
+        ),
+        link=dict(
+            source=df["source_id"],
+            target=df["target_id"],
+            value=df["effectif"],
+            color="rgba(31, 119, 180, 0.4)"
+        )
+    ))
+
+    fig.update_layout(title_text="📈 Évolution des fonctions par année d’embauche", font_size=12)
+
+    # 🔸 Affichage dans Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+
+
+with st.container():
+    st.markdown("<h3>Graphe en étoile</h3>", unsafe_allow_html=True)
+
+    # Exemple de données
+    data = {
+        'categorie': ['Antalgique', 'Anti-inflammatoire', 'Antibiotique', 'Complément'],
+        'nb_vente': [120, 90, 150, 70]
+    }
+
+    df = pd.DataFrame(data)
+
+    # Créer le graphe en étoile
+    fig = px.line_polar(df,
+                        r='nb_vente',
+                        theta='categorie',
+                        line_close=True,
+                        title='Nombre de ventes par catégorie (Graphe en étoile)',
+                        markers=True)
+
+    # Personnalisation
+    fig.update_traces(fill='toself')
+    fig.update_layout(polar=dict(
+        radialaxis=dict(visible=True)
+    ))
+
+    # Afficher le graphique dans Streamlit
+    st.plotly_chart(fig)
+
