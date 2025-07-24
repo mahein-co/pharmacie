@@ -248,8 +248,6 @@ pipeline_valeur_perte = [
 ]
 
 
-
-
 # 6. Nombre de medicaments expirés
 pipeline_medicaments_expirants = [
     {
@@ -296,6 +294,30 @@ pipeline_medicaments_expirants = [
     }
 ]
 
+# pipeline_expirations = [
+#     {
+#         "$match": {
+#             "date_expiration": {
+#                 "$lte": in_30_days  # Médicaments expirés ou expirant dans les 30 jours
+#             }
+#         }
+#     },
+#     {
+#         "$project": {
+#             "_id": 0,
+#             "nom": 1,
+#             "date_expiration": 1,
+#             "arrival_date": 1,
+#             "categorie": 1,
+#             "lot_ID": 1,
+#             "fournisseur": 1,
+#             "Quantity_arrival": 1,
+#             "prix_unitaire": 1
+#         }
+#     }
+# ]
+
+
 pipeline_expirations = [
     {
         "$match": {
@@ -305,16 +327,37 @@ pipeline_expirations = [
         }
     },
     {
+        "$lookup": {
+            "from": "vente",
+            "localField": "id_medicament",
+            "foreignField": "id_medicament",
+            "as": "ventes"
+        }
+    },
+    {
+        "$addFields": {
+            "total_vendu": { "$sum": "$ventes.quantite" },
+            "quantite_restante": {
+                "$subtract": [
+                    "$Quantity_arrival",
+                    { "$ifNull": [{ "$sum": "$ventes.quantite" }, 0] }
+                ]
+            }
+        }
+    },
+    {
         "$project": {
             "_id": 0,
             "nom": 1,
-            "date_expiration": 1,
             "categorie": 1,
-            "lot_ID": 1,
             "fournisseur": 1,
-            "Quantity_arrival": 1
+            "lot_ID": 1,
+            "date_expiration": 1,
+            "arrival_date": 1,
+            "prix_unitaire": 1,
+            "Quantity_arrival": 1,
+            "total_vendu": 1,
+            "quantite_restante": 1
         }
     }
 ]
-
-
