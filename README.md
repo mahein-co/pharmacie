@@ -28,3 +28,7 @@ MONGO_CLUSTER
 MONGO_PROJECT_ID
 MONGO_PUBLIC_KEY
 MONGO_PRIVATE_KEY
+
+# Lancer l'appilcation
+
+streamlit run 1_DASHBOARD.py
