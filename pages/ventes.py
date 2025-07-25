@@ -8,7 +8,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
 from data.mongodb_client import MongoDBClient
+from pipelines import pipelines_ventes
+from views import dashboard_views
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -29,7 +32,10 @@ with st.sidebar:
 
 
 
-
+#initiation a mongoDB 
+vente_collection = MongoDBClient(collection_name="vente")
+employe_collection = MongoDBClient(collection_name="employe")
+medicament_collection = MongoDBClient(collection_name="medicament")
 
 # ventes
 
@@ -64,17 +70,12 @@ st.markdown("""
 with st.container():
     st.markdown("<h3>📊 Indicateurs clés</h3>", unsafe_allow_html=True)
 
-    # Données d'exemple
-    # Exemple de données de ventes
-    data = pd.DataFrame({
-        'vente_id': [1, 2, 3, 4, 5],
-        'montant': [15000, 20000, 12000, 18000, 22000]
-    })
+    #2--nombres de ventes
+    nombre_ventes = vente_collection.count_distinct_agg(field_name="id_vente")
 
-    chiffre_affaires_total = data['montant'].sum()
-    nombre_ventes = data['vente_id'].nunique()
-    panier_moyen = round(chiffre_affaires_total / nombre_ventes, 2)
-
+    #panier_moyen
+    panier_moyen =  round(dashboard_views.total_chiffre_affaire / nombre_ventes, 2)
+    
     # CSS pour les scorecards
     st.markdown("""
         <style>
@@ -100,22 +101,23 @@ with st.container():
         </style>
     """, unsafe_allow_html=True)
 
+    
+
     # Affichage des 3 scorecards dans des colonnes
     col1, col2, col3 = st.columns(3)
-
     with col1:
         st.markdown(f"""
             <div class="scorecard">
-                <h4>💰 Chiffre d'affaires total</h4>
-                <p>{chiffre_affaires_total:,.2f}</p>
+                <h4>💰 Chiffre d'affaires total(MGA)</h4>
+                <p>{dashboard_views.total_chiffre_affaire}</p>
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
         st.markdown(f"""
             <div class="scorecard">
-                <h4>🧺 Panier moyen</h4>
-                <p>{f"{panier_moyen:,.0f} MGA"}</p>
+                <h4>🧺 Panier moyen(MGA)</h4>
+                <p>{panier_moyen}</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -123,10 +125,9 @@ with st.container():
         st.markdown(f"""
             <div class="scorecard">
                 <h4>🛒 Nombre de ventes</h4>
-                <p>{nombre_ventes:,.2f}</p>
+                <p>{nombre_ventes}</p>
             </div>
         """, unsafe_allow_html=True)
-
 
 
 # Données exemples
@@ -135,27 +136,81 @@ ventes_mensuelles = pd.DataFrame({
     'Nombre de ventes': [120, 150, 170, 160, 180, 210]
 })
 
-top_vendeurs = pd.DataFrame({
-    'Vendeur': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
-    'Ventes': [320, 280, 260, 240, 220]
-})
+
+# Top 3 vendeur 
+top_3_vendeur = vente_collection.make_specific_pipeline(pipeline=pipelines_ventes.pipeline_top_vendeurs, title="Recuperation de top vendeur 3")
+
+# Vendeur non habilite
+vendeur_non_habilite = vente_collection.make_specific_pipeline(pipeline=pipelines_ventes.pipeline_vendeurs_non_habilite, title="Recuperation de vendeurs non habilités")
+
+# Medicaments les plus vendus
+medicaments_plus_vendus = vente_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicaments_plus_vendus,
+    title="Recuperation medicaments plus vendus"
+)
+# Medicaments les moins vendus
+medicaments_moins_vendus = vente_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicaments_moins_vendus,
+    title="Recuperation medicaments moins vendus"
+)
+
+# Medicament le plus cher
+medicaments_plus_cher = medicament_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicament_plus_cher,
+    title="Recuperation de medicament le plus cher"
+)
+
+print("medicaments_plus_cher: ", medicaments_plus_cher)
+
+# Medicament le plus cher
+medicaments_moins_cher = medicament_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicament_moins_cher,
+    title="Recuperation de medicament le moins cher"
+)
+print("medicaments_moins_cher: ", medicaments_moins_cher)
+
+# Medicament le plus rentable
+medicament_plus_rentable = medicament_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicament_plus_rentable,
+    title="Recuperation de medicament le plus rentable"
+)
+print("medicament_plus_rentable: ", medicament_plus_rentable)
+
+
+# Medicament le moins rentable
+medicament_moins_rentable = medicament_collection.make_specific_pipeline(
+    pipeline=pipelines_ventes.pipeline_medicament_moins_rentable,
+    title="Recuperation de medicament le moins rentable"
+)
+print("medicament_moins_rentable: ", medicament_moins_rentable)
+
+
+# Medicament le moins cher 
 
 # Conteneur Streamlit
 with st.container():
     col1, col2 = st.columns(2)
 
+    # with col1:
+    #     st.markdown("<h3>Évolution du nombre total de ventes</h3>", unsafe_allow_html=True)
+    #     fig_line = px.line(ventes_mensuelles, x='Mois', y='Nombre de ventes', markers=True,
+    #                        line_shape='linear', color_discrete_sequence=['#2d6a4f'])
+    #     fig_line.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+    #     st.plotly_chart(fig_line, use_container_width=True)
+
     with col1:
-        st.markdown("<h3>Évolution du nombre total de ventes</h3>", unsafe_allow_html=True)
-        fig_line = px.line(ventes_mensuelles, x='Mois', y='Nombre de ventes', markers=True,
-                           line_shape='linear', color_discrete_sequence=['#2d6a4f'])
-        fig_line.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.markdown("<h3>Top vendeurs</h3>", unsafe_allow_html=True)
+        fig_barh = px.bar(vendeur_non_habilite[-3:],
+                          x='total_quantite_vendue', y='nom', orientation='h',
+                          color='total_quantite_vendue', color_continuous_scale='reds')
+        fig_barh.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', coloraxis_showscale=False)
+        st.plotly_chart(fig_barh, use_container_width=True)
 
     with col2:
         st.markdown("<h3>Top vendeurs</h3>", unsafe_allow_html=True)
-        fig_barh = px.bar(top_vendeurs.sort_values('Ventes'),
-                          x='Ventes', y='Vendeur', orientation='h',
-                          color='Ventes', color_continuous_scale='greens')
+        fig_barh = px.bar(top_3_vendeur,
+                          x='total_quantite_vendue', y='nom', orientation='h',
+                          color='total_quantite_vendue', color_continuous_scale='greens')
         fig_barh.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', coloraxis_showscale=False)
         st.plotly_chart(fig_barh, use_container_width=True)
 
@@ -163,18 +218,19 @@ with st.container():
 
 
 # Données d'exemple
-data_ventes = pd.DataFrame({
-    'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine', 'Doliprane', 'Zyrtec'],
-    'Quantité vendue': [300, 250, 100, 80, 270, 60]
-})
+# data_ventes = pd.DataFrame({
+#     'Médicament': ['Paracétamol', 'Ibuprofène', 'Amoxicilline', 'Aspirine', 'Doliprane', 'Zyrtec'],
+#     'Quantité vendue': [300, 250, 100, 80, 270, 60]
+# })
 
 # Top 3 les plus vendus
-top_3 = data_ventes.sort_values(by='Quantité vendue', ascending=False).head(3)
-top_3['Label'] = top_3['Médicament'] + ' 🔥'
+# top_3 = data_ventes.sort_values(by='Quantité vendue', ascending=False).head(3)
+# top_3['Label'] = top_3['Médicament'] + ' 🔥'
 
-# Top 3 les moins vendus
-bottom_3 = data_ventes.sort_values(by='Quantité vendue', ascending=True).head(3)
-bottom_3['Label'] = bottom_3['Médicament'] + ' ❄️'
+# # Top 3 les moins vendus
+# bottom_3 = data_ventes.sort_values(by='Quantité vendue', ascending=True).head(3)
+# bottom_3['Label'] = bottom_3['Médicament'] + ' ❄️'
+
 
 # Affichage
 with st.container():
@@ -182,9 +238,9 @@ with st.container():
 
     with col1:
         st.markdown("<h3>Top 3 Médicaments les plus vendus</h3>", unsafe_allow_html=True)
-        fig_top = px.bar(top_3.sort_values(by='Quantité vendue'), 
-                         x='Quantité vendue', y='Label',
-                         orientation='h', color='Quantité vendue',
+        fig_top = px.bar(medicaments_plus_vendus, 
+                         x='quantite_totale_vendue', y='nom',
+                         orientation='h', color='quantite_totale_vendue',
                          color_continuous_scale='greens')
         fig_top.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
@@ -195,18 +251,16 @@ with st.container():
 
     with col2:
         st.markdown("<h3>Top 3 Médicaments les moins vendus</h3>", unsafe_allow_html=True)
-        fig_bottom = px.bar(bottom_3.sort_values(by='Quantité vendue'), 
-                            x='Quantité vendue', y='Label',
-                            orientation='h', color='Quantité vendue',
-                            color_continuous_scale='greens')
+        fig_bottom = px.bar(medicaments_moins_vendus, 
+                            x='quantite_totale_vendue', y='nom',
+                            orientation='h', color='quantite_totale_vendue',
+                            color_continuous_scale='reds')
         fig_bottom.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             coloraxis_showscale=False
         )
         st.plotly_chart(fig_bottom, use_container_width=True)
-
-
 
 
 

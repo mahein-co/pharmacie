@@ -8,6 +8,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+from pipelines import pipelines_fournisseurs
+from data.mongodb_client import MongoDBClient
+
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
@@ -29,6 +32,18 @@ with st.sidebar:
 
 
 # fourniseurs
+overview_collection = MongoDBClient(collection_name="overview")
+
+
+#requete 
+taux_retard = overview_collection.make_specific_pipeline(pipeline=pipelines_fournisseurs.pipeline_taux_retard,title="recuperation taux retard")
+print("taux retard: ",taux_retard)
+
+retard_moyen = overview_collection.make_specific_pipeline(pipeline=pipelines_fournisseurs.pipeline_retard_moyen,title="recuperation retard moyen")
+print("retard_moyen: ",retard_moyen)
+
+nb_commandes = overview_collection.make_specific_pipeline(pipeline=pipelines_fournisseurs.pipeline_nombre_commandes,title="recuperation nombre commandes")
+print("nb_commandes: ",nb_commandes)
 
 
 st.markdown("<h2 style='color: green;'>Logistique & Fournisseurs</h2>", unsafe_allow_html=True)

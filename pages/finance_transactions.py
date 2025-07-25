@@ -1,13 +1,17 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import duckdb
-from utils import load_data
-from db import init_duckdb
+# import duckdb
+# from utils import load_data
+# from db import init_duckdb
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import numpy as np
 import json
+
+from data.mongodb_client import MongoDBClient
+from views import dashboard_views
+from pipelines import pipelines_finance
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -18,7 +22,18 @@ st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs
 #     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
 
 # Chargement des données
-df = load_data()
+# df = load_data()
+
+overview_collection = MongoDBClient(collection_name="overview")
+vente_collection = MongoDBClient(collection_name="vente")
+medicament_collection = MongoDBClient(collection_name="medicament")
+
+documents_overview = overview_collection.find_all_documents()
+
+df_overview = pd.DataFrame(list(documents_overview))
+
+print("shape df_overview : ", df_overview.columns)
+
 
 # Sidebar
 with st.sidebar:
@@ -27,6 +42,15 @@ with st.sidebar:
     st.sidebar.image("images/logoMahein.png", caption="", use_container_width=True)
 
 
+#requette 
+Plus_faibe_marge = overview_collection.make_specific_pipeline(pipeline=pipelines_finance.pipeline_plus_faible_marge,title="recuperation plus faible marge")
+print("plus faible marge: ",Plus_faibe_marge)
+
+plus_fort_marge = overview_collection.make_specific_pipeline(pipeline=pipelines_finance.pipeline_plus_forte_marge,title="recuperation plus fort marge")
+print("plus fort marge: ",plus_fort_marge)
+
+marge_moyenne = overview_collection.make_specific_pipeline(pipeline=pipelines_finance.pipeline_marge_moyenne,title="recuperation marge moyenne")
+print("marge moyenne: ",marge_moyenne)
 
 
 # transaction
@@ -127,14 +151,14 @@ with st.container():
         st.markdown(f"""
             <div class="metric-box">
                 <div class="metric-label">💼 Total Chiffre d'Affaire</div>
-                <div class="metric-value">{total_ca:,.0f} Ar</div>
+                <div class="metric-value">{dashboard_views.total_chiffre_affaire} Ar</div>
             </div>
         """, unsafe_allow_html=True)
 
         st.markdown(f"""
             <div class="metric-box">
                 <div class="metric-label">📅 CA ({filtre} Actuel)</div>
-                <div class="metric-value">{dernier_val:,.0f} Ar</div>
+                <div class="metric-value">{dashboard_views.total_chiffre_affaire} Ar</div>
             </div>
         """, unsafe_allow_html=True)
 
@@ -266,7 +290,7 @@ with st.container():
 with st.container():
     # Exemple de données : dates et pertes totales (en valeur monétaire)
     data = pd.DataFrame({
-        'Date': pd.date_range(start='2024-01-01', periods=12, freq='M'),
+        'Date': pd.date_range(start='2024-01-01', periods=12, freq='ME'),
         'Pertes_totales': [500, 700, 650, 800, 900, 1200, 1100, 1150, 1300, 1400, 1500, 1600]
     })
 

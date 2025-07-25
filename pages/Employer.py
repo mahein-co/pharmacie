@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import plotly.graph_objects as go
 
+
 from data.mongodb_client import MongoDBClient
 from pipelines import pipelines
 
@@ -32,7 +33,7 @@ with st.sidebar:
 #initiation a mongoDB 
 employe_collection = MongoDBClient(collection_name="employe")
 
-
+employe_documents = employe_collection.find_all_documents()
 
 
 st.markdown("<h2 style='color: green;'>EMPLOYERS</h2>", unsafe_allow_html=True)
@@ -256,31 +257,9 @@ with st.container():
 
 
 
-with st.container():
-    st.markdown("<h3>Graphe en étoile</h3>", unsafe_allow_html=True)
+    
 
-    # Exemple de données
-    data = {
-        'categorie': ['Antalgique', 'Anti-inflammatoire', 'Antibiotique', 'Complément'],
-        'nb_vente': [120, 90, 150, 70]
-    }
 
-    df = pd.DataFrame(data)
 
-    # Créer le graphe en étoile
-    fig = px.line_polar(df,
-                        r='nb_vente',
-                        theta='categorie',
-                        line_close=True,
-                        title='Nombre de ventes par catégorie (Graphe en étoile)',
-                        markers=True)
-
-    # Personnalisation
-    fig.update_traces(fill='toself')
-    fig.update_layout(polar=dict(
-        radialaxis=dict(visible=True)
-    ))
-
-    # Afficher le graphique dans Streamlit
-    st.plotly_chart(fig)
+    
 

@@ -11,7 +11,7 @@ employe_collection = MongoDBClient(collection_name="employe")
 chiffre_affaire = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_chiffre_affaire, title="Calcul du chiffre d'affaire")
 try:
     total_chiffre_affaire = chiffre_affaire[0]["montant_total"] if chiffre_affaire else 0
-    total_chiffre_affaire = f"{total_chiffre_affaire:,}".replace(",", " ")
+    # total_chiffre_affaire = f"{total_chiffre_affaire:,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire = 0
 
@@ -24,7 +24,7 @@ except Exception as e:
     
 # 3. nombre total de vente
 nombre_total_vente = vente_collection.count_distinct_agg(field_name="id_vente")
-nombre_total_vente = f"{nombre_total_vente:,}".replace(",", " ")
+# nombre_total_vente = f"{nombre_total_vente:,}".replace(",", " ")
 
 # 4. nombre total d'alimentation
 nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
