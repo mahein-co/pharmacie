@@ -100,6 +100,7 @@ if dashboard_views.vente_collection and dashboard_views.medicament_collection:
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
+
 # II- SECOND LINE OF SCORECARD
 if dashboard_views.medicament_collection and dashboard_views.employe_collection:
     rows_html = ""
@@ -209,7 +210,8 @@ if dashboard_views.medicament_collection and dashboard_views.employe_collection:
         """
 
         # Affichage HTML personnalisé
-        st.markdown(html_table, unsafe_allow_html=True)
+        # st.markdown(html_table, unsafe_allow_html=True)
+        st.markdown(dashboard_views.table_html, unsafe_allow_html=True)
 
 
 
