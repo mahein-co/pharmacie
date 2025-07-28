@@ -1,59 +1,47 @@
-import streamlit as st
+import streamlit as st 
 from data.mongodb_client import MongoDBClient
-from data import mongodb_pipelines
+from views import employe_views 
+from pipelines import pipelines_employe
 
-# Initialisation a MongoDB
-vente_collection = MongoDBClient(collection_name="vente")
-medicament_collection = MongoDBClient(collection_name="medicament")
+
+
+
+#importation DATABASE via MongoDB
 employe_collection = MongoDBClient(collection_name="employe")
+employe_documents = employe_collection.find_all_documents()
 
-# 1. chiffre d'affaire total
-chiffre_affaire = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_chiffre_affaire, title="Calcul du chiffre d'affaire")
+
+#requete
+
+
+#2--Salaire moyen 
+salaire_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Salaire_moyen,title="salaire moyen")
+
 try:
-    total_chiffre_affaire = chiffre_affaire[0]["montant_total"] if chiffre_affaire else 0
-    total_chiffre_affaire_str = f"{total_chiffre_affaire:,}".replace(",", " ")
+    salaire_moyen = salaire_moyen[0]["salaire_moyen"] if salaire_moyen else 0
+    salaire_moyen = round(salaire_moyen)
+    salaire_moyen = f"{salaire_moyen:,}".replace(",", " ")
 except Exception as e:
-    total_chiffre_affaire = 0
+    salaire_moyen = 0
 
-# # 2. valeur totale du stock
-# valeur_stock = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_somme_valeur_stock, title="Calcul de la valeur totale du stock")
-# try:
-#     valeur_totale_stock = valeur_stock[0]["valeur_totale_stock"] if valeur_stock else 0
-# except Exception as e:
-#     valeur_totale_stock = 0
-    
-# 3. nombre total de vente
-nombre_total_vente = vente_collection.count_distinct_agg(field_name="id_vente")
-nombre_total_vente_str = f"{nombre_total_vente:,}".replace(",", " ")
+# 1--Nombre total employers 
+Nb_employers = employe_collection.count_distinct_agg(field_name="id_employe")
 
-# 4. nombre total d'alimentation
-nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
+#3-- Age moyen 
+
+age_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Age_moyen,title="age moyen")
+
 try:
-    nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
-except Exception as e :
-    nombre_total_alimentation = 0
-
-# II- SECOND LINE OF SCORECARD
- # 2.1. Nombre total de médicaments
-nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
-    
-# 2.2. Total des pertes dues aux médicaments invendus
-pertes_medicaments = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_valeur_perte, title="Calcul des pertes dues aux médicaments invendus")
-try:
-  total_pertes_medicaments = pertes_medicaments[0]["perte_totale"] if pertes_medicaments else 0
+    age_moyen = age_moyen[0]["age_moyen"] if age_moyen else 0
 except Exception as e:
-  st.error(f"❌ Erreur lors du calcul des pertes dues aux médicaments invendus : {e}")
-  total_pertes_medicaments = 0
-
-# 2.4. Nombre total de fournisseur
-nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
-
+    age_moyen = 0
     
-# 2.5. Médicaments expirés ou bientôt expirés
-medicaments_expires = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_expirations, title="Récupération des médicaments expirés ou bientôt expirés")
+        
 
 
-# STYLES
+
+# CSS sombre moderne
+
 custom_css = """
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
@@ -338,48 +326,19 @@ kpis_style = """
 </style>
 """
 
-
-
-# ========== KPI Cards ===============
 kpis_html = f"""
 <div class="kpi-container">
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Finance</p>
-        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Nombre Total Employé</p>
+        <p class="kpi-value" style="font-size:2rem;">{Nb_employers}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Ventes (Unités)</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente_str}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Salaire Moyen (MGA)</p>
+        <p class="kpi-value" style="font-size:2rem;">{salaire_moyen}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Orders</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_total_alimentation}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Age moyen</p>
+        <p class="kpi-value" style="font-size:2rem;">{round(age_moyen)}</p>
     </div>
 </div>
 """
-
-
-
-# # Exemples d'utilisation
-# st.markdown(f"""
-# <div class="container">
-#     <div class="card pink">
-#         <h1>{dashboard_views.total_chiffre_affaire}&nbsp;MGA</h1>
-#         <p>Chiffre d'affaire total</p>
-#     </div>
-#     <div class="card blue">
-#         <h1>118.7 k</h1>
-#         <p>Total ventes</p>
-#     </div>
-#     <div class="card orange">
-#         <h1>56.3 k</h1>
-#         <p>Total alimentations</p>
-#     </div>
-#     <div class="card purple">
-#         <h1>2 114</h1>
-#         <p>Total médicaments</p>
-#     </div>
-# </div>
-# """, unsafe_allow_html=True)
-
-

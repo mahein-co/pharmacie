@@ -314,17 +314,14 @@ kpis_html = f"""
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;"> Chiffre d'affaires total(MGA)</p>
         <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire}</p>
-        <p class="kpi-change positive">↑ 15.6%</p>
     </div>
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Panier moyen</p>
         <p class="kpi-value" style="font-size:2rem;">{panier_moyen}</p>
-        <p class="kpi-change negative">↓ 6.2%</p>
     </div>
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Nombre de ventes</p>
         <p class="kpi-value" style="font-size:2rem;">{nombre_ventes}</p>
-        <p class="kpi-change positive">↑ 3.5%</p>
     </div>
 </div>
 """
