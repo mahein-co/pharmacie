@@ -3,6 +3,15 @@ import plotly.graph_objects as go
 import pandas as pd
 from streamlit.components.v1 import html
 
+#import vues
+from views import vente_views
+
+
+
+
+
+
+
 # ========== CSS Style ===============
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -21,6 +30,10 @@ html("""
 </style>
 <div class="box">Vente</div>
 """)
+
+
+st.markdown(vente_views.custom_css, unsafe_allow_html=True)
+st.markdown(vente_views.kpis_html, unsafe_allow_html=True)
 
 
 
