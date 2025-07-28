@@ -210,6 +210,53 @@ body {
 </style>
 """
 
+# talbe style
+table_css = """
+<style>
+.table-container {
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th, .table-container td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.table-container thead {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.table-container tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.badge.green { background-color: #1abc9c; }     /* + positive */
+.badge.red { background-color: #e74c3c; }       /* - negative */
+.badge.grey { background-color: #95a5a6; }      /* 0% change */
+</style>
+"""
+
 kpis_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&display=swap');
@@ -338,8 +385,6 @@ kpis_style = """
 </style>
 """
 
-
-
 # ========== KPI Cards ===============
 kpis_html = f"""
 <div class="kpi-container">
@@ -358,6 +403,65 @@ kpis_html = f"""
 </div>
 """
 
+
+table_html = """
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>08/07/23 - 14/07/23</th>
+            <th>01/07/23 - 07/07/23</th>
+            <th>∆</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Impressions</td>
+            <td>12</td>
+            <td>12</td>
+            <td><span class="badge grey">↔ 0%</span></td>
+        </tr>
+        <tr>
+            <td>Clics</td>
+            <td>572</td>
+            <td>487</td>
+            <td><span class="badge green">+18%</span></td>
+        </tr>
+        <tr>
+            <td>Visiteurs uniques</td>
+            <td>362</td>
+            <td>348</td>
+            <td><span class="badge green">+4%</span></td>
+        </tr>
+        <tr>
+            <td>Leads</td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge grey">↔ 0%</span></td>
+        </tr>
+        <tr>
+            <td>Ventes</td>
+            <td>3</td>
+            <td>0</td>
+            <td><span class="badge green">+∞%</span></td>
+        </tr>
+        <tr>
+            <td>Valeur de la commande</td>
+            <td>0€</td>
+            <td>213,12€</td>
+            <td><span class="badge red">-100%</span></td>
+        </tr>
+        <tr>
+            <td>Commissions</td>
+            <td>2,13€</td>
+            <td>0€</td>
+            <td><span class="badge green">+100%</span></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+"""
 
 
 # # Exemples d'utilisation
