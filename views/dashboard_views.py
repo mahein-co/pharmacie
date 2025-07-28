@@ -11,7 +11,7 @@ employe_collection = MongoDBClient(collection_name="employe")
 chiffre_affaire = vente_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_chiffre_affaire, title="Calcul du chiffre d'affaire")
 try:
     total_chiffre_affaire = chiffre_affaire[0]["montant_total"] if chiffre_affaire else 0
-    # total_chiffre_affaire = f"{total_chiffre_affaire:,}".replace(",", " ")
+    total_chiffre_affaire_str = f"{total_chiffre_affaire:,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire = 0
 
@@ -24,7 +24,7 @@ except Exception as e:
     
 # 3. nombre total de vente
 nombre_total_vente = vente_collection.count_distinct_agg(field_name="id_vente")
-# nombre_total_vente = f"{nombre_total_vente:,}".replace(",", " ")
+nombre_total_vente_str = f"{nombre_total_vente:,}".replace(",", " ")
 
 # 4. nombre total d'alimentation
 nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
@@ -32,6 +32,25 @@ try:
     nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
 except Exception as e :
     nombre_total_alimentation = 0
+
+# II- SECOND LINE OF SCORECARD
+ # 2.1. Nombre total de médicaments
+nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
+    
+# 2.2. Total des pertes dues aux médicaments invendus
+pertes_medicaments = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_valeur_perte, title="Calcul des pertes dues aux médicaments invendus")
+try:
+  total_pertes_medicaments = pertes_medicaments[0]["perte_totale"] if pertes_medicaments else 0
+except Exception as e:
+  st.error(f"❌ Erreur lors du calcul des pertes dues aux médicaments invendus : {e}")
+  total_pertes_medicaments = 0
+
+# 2.4. Nombre total de fournisseur
+nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
+
+    
+# 2.5. Médicaments expirés ou bientôt expirés
+medicaments_expires = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_expirations, title="Récupération des médicaments expirés ou bientôt expirés")
 
 
 # STYLES
@@ -370,19 +389,16 @@ kpis_style = """
 kpis_html = f"""
 <div class="kpi-container">
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Finance (MGA)</p>
-        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire}</p>
-        <p class="kpi-change positive">↑ 15.6%</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Total Finance</p>
+        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
     </div>
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Total Ventes (Unités)</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente}</p>
-        <p class="kpi-change negative">↓ 6.2%</p>
+        <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente_str}</p>
     </div>
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Total Orders</p>
         <p class="kpi-value" style="font-size:2rem;">{nombre_total_alimentation}</p>
-        <p class="kpi-change positive">↑ 3.5%</p>
     </div>
 </div>
 """

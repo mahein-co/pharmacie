@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 
 from data.mongodb_client import MongoDBClient
-from pipelines import pipelines
+from pharmacie.pipelines import pipelines_employe
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -75,26 +75,24 @@ with st.container():
     if employe_collection:
     
         #2--Salaire moyen 
-        salaire_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines.Salaire_moyen,title="salaire moyen")
+        salaire_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Salaire_moyen,title="salaire moyen")
 
         try:
             salaire_moyen = salaire_moyen[0]["salaire_moyen"] if salaire_moyen else 0
         except Exception as e:
             salaire_moyen = 0
-        print("salaire_moyen: ",salaire_moyen)
 
         # 1--Nombre total employers 
         Nb_employers = employe_collection.count_distinct_agg(field_name="id_employe")
 
         #3-- Age moyen 
 
-        age_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines.Age_moyen,title="age moyen")
+        age_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Age_moyen,title="age moyen")
 
         try:
             age_moyen = age_moyen[0]["age_moyen"] if age_moyen else 0
         except Exception as e:
             age_moyen = 0
-        print("age_moyen: ",age_moyen)
     
         
 
@@ -164,8 +162,8 @@ with st.container():
 
     if employe_collection:
     # Récupération des données via pipeline
-        eff_categorie = employe_collection.make_specific_pipeline(pipeline=pipelines.Eff_categorie, title="effectif par categorie")
-        eff_fonction = employe_collection.make_specific_pipeline(pipeline=pipelines.Eff_fonction,title="effectif par fonction")
+        eff_categorie = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Eff_categorie, title="effectif par categorie")
+        eff_fonction = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Eff_fonction,title="effectif par fonction")
     
     # Convertir en DataFrame
     df_cat = pd.DataFrame(eff_categorie)

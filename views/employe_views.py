@@ -1,28 +1,46 @@
-import streamlit as st
+import streamlit as st 
 from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_ventes
-from views import dashboard_views
+from views import employe_views 
+from pipelines import pipelines_employe
 
 
 
 
-
-
-
-#initiation a mongoDB 
-vente_collection = MongoDBClient(collection_name="vente")
+#importation DATABASE via MongoDB
 employe_collection = MongoDBClient(collection_name="employe")
-medicament_collection = MongoDBClient(collection_name="medicament")
-
-#3--nombres de ventes
-nombre_ventes = vente_collection.count_distinct_agg(field_name="id_vente")
-
-#2--panier_moyen
-panier_moyen =  round(dashboard_views.total_chiffre_affaire / nombre_ventes, 2)
+employe_documents = employe_collection.find_all_documents()
 
 
+#requete
 
 
+#2--Salaire moyen 
+salaire_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Salaire_moyen,title="salaire moyen")
+
+try:
+    salaire_moyen = salaire_moyen[0]["salaire_moyen"] if salaire_moyen else 0
+    salaire_moyen = round(salaire_moyen)
+    salaire_moyen = f"{salaire_moyen:,}".replace(",", " ")
+except Exception as e:
+    salaire_moyen = 0
+
+# 1--Nombre total employers 
+Nb_employers = employe_collection.count_distinct_agg(field_name="id_employe")
+
+#3-- Age moyen 
+
+age_moyen = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Age_moyen,title="age moyen")
+
+try:
+    age_moyen = age_moyen[0]["age_moyen"] if age_moyen else 0
+except Exception as e:
+    age_moyen = 0
+    
+        
+
+
+
+# CSS sombre moderne
 
 custom_css = """
 <style>
@@ -308,21 +326,19 @@ kpis_style = """
 </style>
 """
 
-# ========== KPI Cards ===============
 kpis_html = f"""
 <div class="kpi-container">
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;"> Chiffre d'affaires total(MGA)</p>
-        <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Nombre Total Employé</p>
+        <p class="kpi-value" style="font-size:2rem;">{Nb_employers}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Panier moyen</p>
-        <p class="kpi-value" style="font-size:2rem;">{panier_moyen}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Salaire Moyen (MGA)</p>
+        <p class="kpi-value" style="font-size:2rem;">{salaire_moyen}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Nombre de ventes</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_ventes}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Age moyen</p>
+        <p class="kpi-value" style="font-size:2rem;">{round(age_moyen)}</p>
     </div>
 </div>
 """
-
