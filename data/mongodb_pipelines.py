@@ -149,25 +149,13 @@ pipeline_ventes_completes = [
 # 3. Chiffre d'affaire total
 pipeline_chiffre_affaire = [
     {
-        "$lookup": {
-            "from": "medicament",
-            "localField": "id_medicament",
-            "foreignField": "id_medicament",
-            "as": "medicament_info"
-        }
-    },
-    { "$unwind": "$medicament_info" },
-    {
-        "$project": {
-            "quantite": 1,
-            "prix_unitaire": "$medicament_info.prix_unitaire",
-            "montant_vente": { "$multiply": ["$quantite", "$medicament_info.prix_unitaire"] }
-        }
-    },
-    {
         "$group": {
             "_id": None,
-            "montant_total": { "$sum": "$montant_vente" }
+            "chiffre_affaire_total": {
+                "$sum": {
+                    "$multiply": ["$quantite", "$prix_vente"]
+                }
+            }
         }
     }
 ]
