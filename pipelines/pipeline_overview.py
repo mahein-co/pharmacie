@@ -19,12 +19,11 @@ overview_collection = MongoDBClient(collection_name="overview")
 # overview_docs = overview_collection.find_all_documents()
 
 # Création d'un DataFrame à partir des documents
-# overview_df = pd.DataFrame(list(overview_docs))
+# df = pd.DataFrame(overview_docs)
 
 
 # KPIs 
 # 1. Chiffre d'affaires total
-# chiffe_affaire_total = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
 pipeline_chiffre_affaire_total = [
     {
         "$match": {
@@ -48,8 +47,14 @@ pipeline_chiffre_affaire_total = [
     }
 ]
 
-# 2. Valeur total des stocks 
+# 2. Valeur total des stocks
 pipeline_valeur_totale_stock = [
+    {
+        "$match": {
+            "date_vente": { "$gt": TODAY },
+            "quantite_restante": { "$gt": 0 }
+        }
+    },
     {
         "$group": {
             "_id": None,
@@ -66,7 +71,7 @@ pipeline_valeur_totale_stock = [
 pipeline_medicament_expired = [
     {
         "$match": {
-            "date_expiration": { "$lt": TODAY }
+            "date_vente": { "$lt": TODAY }
         }
     },
     {
@@ -102,7 +107,7 @@ pipeline_medicament_bientot_expire = [
     }
 ]
 
-# upcoming_expiry = overview_df[(pd.to_datetime(overview_df['date_expiration']) > TODAY) & (pd.to_datetime(overview_df['date_expiration']) <= three_months_later)]
+# upcoming_expiry = df[(pd.to_datetime(df['date_expiration']) > TODAY) & (pd.to_datetime(df['date_expiration']) <= three_months_later)]
 # upcoming_expiry_grouped = upcoming_expiry.groupby('nom_medicament').agg({
 #     'date_expiration': 'first',
 #     'prix_unitaire': 'first',
@@ -116,7 +121,7 @@ pipeline_medicament_bientot_expire = [
 pipeline_pertes_expiration = [
     {
         "$match": {
-            "date_expiration": { "$lt": TODAY - timedelta(days=770) },
+            "date_vente": { "$lt": TODAY },
             "quantite_restante": { "$gt": 0 }
         }
     },
@@ -136,7 +141,7 @@ pipeline_pertes_expiration = [
 ]
 
 # 6. Nombre total d'employés
-# total_employees = overview_df['nom_employe'].nunique()
+# total_employees = df['nom_employe'].nunique()
 
 # 7. Nombre total d'approvisionnements
 total_approvisionnements = overview_collection.count_distinct_agg(field_name="lot_id")
@@ -168,10 +173,10 @@ pipeline_quantite_totale_approvisionnement = [
 total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 # # 10. Nombre total de fournisseurs
-# total_suppliers = overview_df['fournisseur'].nunique()
+# total_suppliers = df['fournisseur'].nunique()
 
 # # 11. Médicaments en surplus (>500 unités)
-# surplus_stock = overview_df[(overview_df['quantite_restante'] > 500) & (pd.to_datetime(overview_df['date_expiration']) > pd.to_datetime('today'))]
+# surplus_stock = df[(df['quantite_restante'] > 500) & (pd.to_datetime(df['date_expiration']) > pd.to_datetime('today'))]
 # surplus_stock_grouped = surplus_stock.groupby('nom_medicament').agg({
 #     'prix_unitaire': 'first',
 #     'quantite_restante': 'first',
@@ -180,7 +185,7 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 
 # # 12. Medicaments critical en stock
-# critical_stock = overview_df[(overview_df['quantite_restante'] < 70) & (pd.to_datetime(overview_df['date_expiration']) > pd.to_datetime('today'))]
+# critical_stock = df[(df['quantite_restante'] < 70) & (pd.to_datetime(df['date_expiration']) > pd.to_datetime('today'))]
 # critical_stock = critical_stock.sort_values(by="quantite_restante", ascending=False)
 # critical_stock_grouped = critical_stock.groupby('nom_medicament').agg({
 #     'prix_unitaire': 'first',
@@ -190,28 +195,28 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 # # 13. Repture de stock sur les 3 derniers mois
 # three_months_ago = TODAY - timedelta(days=90)
-# last_month_sales = overview_df[pd.to_datetime(overview_df['date_de_vente']) >= three_months_ago]
+# last_month_sales = df[pd.to_datetime(df['date_de_vente']) >= three_months_ago]
 # stock_outs = last_month_sales[last_month_sales['quantite_restante'] == 0]
 # stock_outs_by_medicine = stock_outs.groupby('nom_medicament').size().reset_index(name='stock_out_count')
 
 # # 14. Médicament avec la plus forte rotation
-# high_rotation_medicine = overview_df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=False).head(1)
+# high_rotation_medicine = df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=False).head(1)
 
 # # 15. Médicament avec la plus faible rotation
-# low_rotation_medicine = overview_df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=True).head(1)
+# low_rotation_medicine = df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=True).head(1)
 
 # # 16. Médicaments les plus vendus (Top 3)
-# top_3_best_selling_medicines = overview_df.groupby('nom_medicament')['quantite'].sum().nlargest(3)
+# top_3_best_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nlargest(3)
 
 # # 17. Médicaments les moins vendus (Bottom 3)
-# bottom_3_least_selling_medicines = overview_df.groupby('nom_medicament')['quantite'].sum().nsmallest(3)
+# bottom_3_least_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nsmallest(3)
 
 # # 18. Chiffre d’affaires par jour/semaine/mois
-# overview_df['chiffre_affaires'] = overview_df['quantite'] * overview_df['prix_unitaire']
+# df['chiffre_affaires'] = df['quantite'] * df['prix_unitaire']
 
-# daily_revenue = overview_df.resample('D', on='date_de_vente')['chiffre_affaires'].sum()
-# weekly_revenue = overview_df.resample('W', on='date_de_vente')['chiffre_affaires'].sum()
-# monthly_revenue = overview_df.resample('M', on='date_de_vente')['chiffre_affaires'].sum()
+# daily_revenue = df.resample('D', on='date_de_vente')['chiffre_affaires'].sum()
+# weekly_revenue = df.resample('W', on='date_de_vente')['chiffre_affaires'].sum()
+# monthly_revenue = df.resample('M', on='date_de_vente')['chiffre_affaires'].sum()
 
 # # plt.figure(figsize=(12, 6))
 # # plt.plot(daily_revenue, label='Daily Revenue')
@@ -240,8 +245,8 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 
 # # 19. Marge bénéficiaire moyenne
-# total_profit = (overview_df['quantite'] * overview_df['marge_prix']).sum()
-# total_revenue = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
+# total_profit = (df['quantite'] * df['marge_prix']).sum()
+# total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
 
 # if total_revenue > 0:
 #     average_profit_margin = (total_profit / total_revenue) * 100
@@ -249,29 +254,29 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 #     average_profit_margin = 0
 
 # # 20. Médicament qui rapporte le plus
-# overview_df['profit'] = overview_df['quantite'] * overview_df['marge_prix']
-# most_profitable_medicine = overview_df.groupby('nom_medicament')['profit'].sum().idxmax()
-# total_profit = overview_df.groupby('nom_medicament')['profit'].sum().max()
+# df['profit'] = df['quantite'] * df['marge_prix']
+# most_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmax()
+# total_profit = df.groupby('nom_medicament')['profit'].sum().max()
 
 
 # # 21. Medicament qui rapporte le moins
-# least_profitable_medicine = overview_df.groupby('nom_medicament')['profit'].sum().idxmin()
-# total_profit = overview_df.groupby('nom_medicament')['profit'].sum().min()
+# least_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmin()
+# total_profit = df.groupby('nom_medicament')['profit'].sum().min()
 
 # # 22. Médicament avec la plus faible marge
-# lowest_margin_medicine = overview_df.groupby('nom_medicament')['marge_prix'].mean().idxmin()
-# lowest_margin_value = overview_df.groupby('nom_medicament')['marge_prix'].mean().min()
-# average_selling_price = overview_df[overview_df['nom_medicament'] == lowest_margin_medicine]['prix_unitaire'].mean()
+# lowest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmin()
+# lowest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().min()
+# average_selling_price = df[df['nom_medicament'] == lowest_margin_medicine]['prix_unitaire'].mean()
 # margin_percentage = (lowest_margin_value / average_selling_price) * 100
 
 # # 23. Médicament avec la plus forte marge
-# highest_margin_medicine = overview_df.groupby('nom_medicament')['marge_prix'].mean().idxmax()
-# highest_margin_value = overview_df.groupby('nom_medicament')['marge_prix'].mean().max()
-# average_selling_price = overview_df[overview_df['nom_medicament'] == highest_margin_medicine]['prix_unitaire'].mean()
+# highest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmax()
+# highest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().max()
+# average_selling_price = df[df['nom_medicament'] == highest_margin_medicine]['prix_unitaire'].mean()
 # margin_percentage = (highest_margin_value / average_selling_price) * 100
 
 # # 24. Evolution Total des pertes
-# expired_medicines = overview_df[(pd.to_datetime(overview_df['date_expiration']) < pd.to_datetime('today')) & (overview_df['quantite_restante'] > 0)].copy()
+# expired_medicines = df[(pd.to_datetime(df['date_expiration']) < pd.to_datetime('today')) & (df['quantite_restante'] > 0)].copy()
 # expired_medicines['date_expiration'] = pd.to_datetime(expired_medicines['date_expiration'])
 # expired_medicines.set_index('date_expiration', inplace=True)
 # monthly_losses = expired_medicines.resample('M')['valeur_stock'].sum().reset_index()
@@ -285,17 +290,17 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 # # plt.show()
 
 # # 25. Taux de livraison en retard des fournisseurs
-# late_deliveries = overview_df[overview_df['retard_jour'] > 0]
+# late_deliveries = df[df['retard_jour'] > 0]
 # late_deliveries_by_supplier = late_deliveries.groupby('fournisseur').size()
-# total_deliveries_by_supplier = overview_df.groupby('fournisseur').size()
+# total_deliveries_by_supplier = df.groupby('fournisseur').size()
 # late_delivery_rate = (late_deliveries_by_supplier / total_deliveries_by_supplier) * 100
 
 # # 26. Temps moyen de livraison
-# average_delivery_time = overview_df.groupby('fournisseur')['retard_jour'].mean()
+# average_delivery_time = df.groupby('fournisseur')['retard_jour'].mean()
 
 # # 27. Nombre de médicaments en stock + Valeur financière du stock
 # three_months_ago = TODAY - timedelta(days=30)
-# last_3_months_data = overview_df[pd.to_datetime(overview_df['date_de_vente']) >= three_months_ago]
+# last_3_months_data = df[pd.to_datetime(df['date_de_vente']) >= three_months_ago]
 # stock_summary = last_3_months_data.groupby('nom_medicament').agg({
 #     'quantite_restante': 'last',
 #     'valeur_stock': 'last'
@@ -303,27 +308,27 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 
 # # 28. Panier moyen par vente
-# total_revenue = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
-# total_sales = len(overview_df['id_vente'].unique())
+# total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
+# total_sales = len(df['id_vente'].unique())
 # average_basket_value = total_revenue / total_sales
 
 # # 29. Top vendeur
-# top_3_employees = overview_df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).nlargest(3)
-# employee_revenue = overview_df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
-# employee_info = overview_df[['nom_employe', 'fonction']].drop_duplicates()
+# top_3_employees = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).nlargest(3)
+# employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
+# employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
 # top_employees = pd.merge(employee_revenue, employee_info, on='nom_employe').nlargest(3, 'total_revenue')
 # # top_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
 # # plt.gca().spines[['top', 'right',]].set_visible(False)
 
 # # 30. Vendeur non habilité
-# employee_revenue = overview_df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
-# employee_info = overview_df[['nom_employe', 'fonction']].drop_duplicates()
+# employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
+# employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
 # bottom_employees = pd.merge(employee_revenue, employee_info, on='nom_employe').nsmallest(3, 'total_revenue')
 # # bottom_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
 # # plt.gca().spines[['top', 'right',]].set_visible(False)
 
 # # 31. Mois avec le plus d’approvisionnements
-# monthly_arrivals = overview_df.resample('M', on='arrival_date')['quantity_arrival'].sum()
+# monthly_arrivals = df.resample('M', on='arrival_date')['quantity_arrival'].sum()
 # top_3_months = monthly_arrivals.sort_values(ascending=False).head(3)
 
 # 
