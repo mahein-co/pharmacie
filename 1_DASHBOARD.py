@@ -300,7 +300,7 @@ else:
 #         # Affichage HTML personnalisé
 # st.markdown(html_table, unsafe_allow_html=True)
 
-# try:
+# # try:
 
 #     except Exception as e:
 #         st.error(f"❌ Erreur lors du calcul des statistiques : {e}")

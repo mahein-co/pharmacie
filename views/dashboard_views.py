@@ -9,6 +9,8 @@ vente_collection = MongoDBClient(collection_name="vente")
 overview_collection = MongoDBClient(collection_name="overview")
 medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
+overview_collection = MongoDBClient(collection_name="overview")
+
 
 # 1. chiffre d'affaire total
 chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
