@@ -6,10 +6,9 @@ from pipelines import pipeline_overview
 
 # Initialisation a MongoDB
 vente_collection = MongoDBClient(collection_name="vente")
-overview_collection = MongoDBClient(collection_name="overview")
+overview_collection = pipeline_overview.overview_collection
 medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
-overview_collection = MongoDBClient(collection_name="overview")
 
 
 # 1. chiffre d'affaire total
@@ -55,12 +54,17 @@ try:
 except Exception as e:
   total_pertes_medicaments = 0
 
-# # 2.4. Nombre total de fournisseur
+# 2.4. Nombre total de fournisseur
 # nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
 
     
-# # 2.5. Médicaments expirés ou bientôt expirés
-# medicaments_expires = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_expirations, title="Récupération des médicaments expirés ou bientôt expirés")
+# 2.5. Médicaments expirés
+medicaments_expires = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicament_expired, 
+  title="Récupération des médicaments expirés ou bientôt expirés"
+)
+
+# 2.6. Medicament bientôt expirés
 
 
 # STYLES
@@ -73,6 +77,13 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #ffffff !important;
+}
+.subtitle{
+  font-family: "Quicksand", sans-serif;
+  font-weight: bold;
+  color: #fefefe;
+  font-size: 1.8rem;
+  margin-top: 2rem;
 }
 
 .main {
@@ -216,7 +227,9 @@ body {
 .card.pink { background-color: #f28ca3; }
 .card.blue { background-color: #3f3d9b; }
 .card.orange { background-color: #f6b352; }
+.card.green { background-color: #1abc9c; color: #1f1f1f; }
 .card.purple { background-color: #b8a4e4; color: #1f1f1f; }
+.card.red { background-color: #e74c3c; color: #1f1f1f; }
 </style>
 """
 
@@ -227,10 +240,19 @@ table_css = """
     font-family: Arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    color: #0aa;
     margin: 20px 0;
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     border-radius: 8px;
     overflow: hidden;
+}
+.table-container .subtitle{
+  font-family: "Quicksand", sans-serif;
+  font-weight: bold;
+  color: #95a5a6;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .table-container table {
@@ -247,7 +269,6 @@ table_css = """
     background-color: #f8f9fa;
     font-weight: bold;
 }
-
 .table-container tr:nth-child(even) {
     background-color: #f4f4f4;
 }
@@ -297,8 +318,9 @@ kpis_style = """
   text-align: center;
 }
 .kpi-title {
-  color: #888;
   margin: 0;
+  color:#fff; 
+  font-weight:bold;
   font-size: 3rem;
 }
 .kpi-value {
@@ -398,15 +420,15 @@ kpis_style = """
 # ========== KPI Cards ===============
 three_first_kpis_html = f"""
 <div class="kpi-container">
-    <div class="kpi-card">
+    <div class="kpi-card card green">
         <p class="kpi-title" style="font-size:1.2rem;">Total Finance</p>
-        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} <span class="badge grey">MGA</span></p>
+        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card card pink">
         <p class="kpi-title" style="font-size:1.2rem;">Total Ventes (Unités)</p>
         <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente_str}</p>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card card blue">
         <p class="kpi-title" style="font-size:1.2rem;">Total Approvisionnement</p>
         <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.total_approvisionnements}</p>
     </div>
@@ -415,18 +437,18 @@ three_first_kpis_html = f"""
 
 three_second_kpis_html = f"""
 <div class="kpi-container">
-    <div class="kpi-card">
+    <div class="kpi-card card red">
       <div class="kpi-title" style="font-size:1.2rem;">
           Total Pertes
           <span style="font-size:0.9rem;">(Médicaments invendus)</span>
       </div>
       <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments/4):,}".replace(",", " ")}&nbsp;MGA</div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card card purple">
         <p class="kpi-title" style="font-size:1.2rem;">Valeur Stock</p>
         <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock/5):,}".replace(",", " ")}&nbsp;MGA</p>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card card orange">
         <p class="kpi-title" style="font-size:1.2rem;">Total Médicaments</p>
         <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
     </div>
@@ -434,59 +456,36 @@ three_second_kpis_html = f"""
 """
 
 
-table_html = """
-<div class="table-container">
+table_medicaments_expired_html = """
+<div class="table-container kpi-card">
+<h2 class="subtitle">Médicaments expirés ou bientôt expirés</h2>
 <table>
     <thead>
         <tr>
-            <th></th>
-            <th>08/07/23 - 14/07/23</th>
-            <th>01/07/23 - 07/07/23</th>
-            <th>∆</th>
+            <th>Médicament</th>
+            <th>Date d'expiration</th>
+            <th>Quantité restante</th>
+            <th>Status d'expiration</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Impressions</td>
-            <td>12</td>
-            <td>12</td>
-            <td><span class="badge grey">↔ 0%</span></td>
-        </tr>
-        <tr>
-            <td>Clics</td>
-            <td>572</td>
-            <td>487</td>
-            <td><span class="badge green">+18%</span></td>
-        </tr>
-        <tr>
-            <td>Visiteurs uniques</td>
-            <td>362</td>
-            <td>348</td>
-            <td><span class="badge green">+4%</span></td>
-        </tr>
-        <tr>
             <td>Leads</td>
             <td>0</td>
             <td>0</td>
-            <td><span class="badge grey">↔ 0%</span></td>
-        </tr>
-        <tr>
-            <td>Ventes</td>
-            <td>3</td>
-            <td>0</td>
-            <td><span class="badge green">+∞%</span></td>
+            <td><span class="badge grey">Dans 15 jours</span></td>
         </tr>
         <tr>
             <td>Valeur de la commande</td>
             <td>0€</td>
             <td>213,12€</td>
-            <td><span class="badge red">-100%</span></td>
+            <td><span class="badge red">Déjà expiré</span></td>
         </tr>
         <tr>
             <td>Commissions</td>
             <td>2,13€</td>
             <td>0€</td>
-            <td><span class="badge green">+100%</span></td>
+            <td><span class="badge green">Dans 30 jours</span></td>
         </tr>
     </tbody>
 </table>
