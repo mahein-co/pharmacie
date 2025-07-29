@@ -1,6 +1,6 @@
 import streamlit as st
 from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_ventes
+from pipelines import pipelines_ventes, pipeline_overview
 from views import dashboard_views
 
 
@@ -18,7 +18,7 @@ medicament_collection = MongoDBClient(collection_name="medicament")
 nombre_ventes = vente_collection.count_distinct_agg(field_name="id_vente")
 
 #2--panier_moyen
-panier_moyen =  round(dashboard_views.total_chiffre_affaire / nombre_ventes, 2)
+panier_moyen =  round(pipeline_overview.chiffe_affaire_total / nombre_ventes, 2)
 
 
 
