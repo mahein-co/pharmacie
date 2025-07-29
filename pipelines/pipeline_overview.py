@@ -3,12 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from data.mongodb_client import MongoDBClient
 
 # CONSTANTS
 TODAY = datetime.today()
+# TODAY = datetime.now(timezone.utc)
 dans_30_jours = TODAY + timedelta(days=30)
 
 # COLLECTION
@@ -50,26 +51,19 @@ pipeline_chiffre_affaire_total = [
 # 2. Valeur total des stocks 
 pipeline_valeur_totale_stock = [
     {
-        "$match": {
-            "date_expiration": { "$gt": TODAY }
-        }
-    },
-    {
         "$group": {
             "_id": None,
             "valeur_stock_totale": {
                 "$sum": {
-                    "$multiply": ["$quantite_restante", "$prix_vente"]
+                    "$multiply": ["$quantite_restante", "$prix_unitaire"]
                 }
             }
         }
     }
 ]
-# valid_stock = overview_df[pd.to_datetime(overview_df['date_expiration']) > TODAY]
-# total_stock_value = valid_stock['valeur_stock'].sum()
 
 # 3. Medicaments déjà expirés
-pipeline_expired = [
+pipeline_medicament_expired = [
     {
         "$match": {
             "date_expiration": { "$lt": TODAY }
@@ -85,13 +79,10 @@ pipeline_expired = [
         }
     }
 ]
-# df_expired_medcines = overview_df.groupby('nom_medicament')[['quantite_restante', 'prix_unitaire', 'date_expiration']].first()
-# df_expired_medcines["valeur_stock"] = df_expired_medcines["quantite_restante"] * df_expired_medcines["prix_unitaire"]
-# df_expired_medcines = df_expired_medcines.sort_values(by="valeur_stock", ascending=False)
 
 # 4. Medicament bientôt expirés (dans 3 mois)
 three_months_later = TODAY + timedelta(days=120)
-pipeline_bientot_expire = [
+pipeline_medicament_bientot_expire = [
     {
         "$match": {
             "date_expiration": {
@@ -125,7 +116,7 @@ pipeline_bientot_expire = [
 pipeline_pertes_expiration = [
     {
         "$match": {
-            "date_expiration": { "$lt": TODAY },
+            "date_expiration": { "$lt": TODAY - timedelta(days=770) },
             "quantite_restante": { "$gt": 0 }
         }
     },
@@ -143,17 +134,35 @@ pipeline_pertes_expiration = [
         }
     }
 ]
-# expired_medicines = overview_df[pd.to_datetime(overview_df['date_expiration']) < TODAY]
 
-# # 6. Nombre total d'employés
+# 6. Nombre total d'employés
 # total_employees = overview_df['nom_employe'].nunique()
 
-# # 7. Nombre total d'approvisionnements
+# 7. Nombre total d'approvisionnements
 total_approvisionnements = overview_collection.count_distinct_agg(field_name="lot_id")
-# total_approvisionnements = overview_df['lot_id'].nunique()
 
-# # 8. Quantité totale de médicaments approvisionnés
-# quantity_by_medicine = overview_df.groupby('nom_medicament')['quantity_arrival'].sum().reset_index()
+# 8. Quantité totale de médicaments approvisionnés
+pipeline_quantite_totale_approvisionnement = [
+    {
+        "$match": {
+            "quantity_arrival": { "$ne": None }
+        }
+    },
+    {
+        "$project": {
+            "quantity_arrival": { "$toDouble": "$quantity_arrival" }
+        }
+    },
+    {
+        "$group": {
+            "_id": None,
+            "quantite_totale_approvisionnee": {
+                "$sum": "$quantity_arrival"
+            }
+        }
+    }
+]
+
 
 # # 9. Nombre total de ventes
 total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
