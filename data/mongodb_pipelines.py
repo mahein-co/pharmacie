@@ -11,81 +11,17 @@ in_30_days = today + timedelta(days=30)
 # 1. Valeur totale du stock
 pipeline_valeur_totale_stock = [
     {
-        "$lookup": {
-            "from": "vente",
-            "localField": "id_medicament",
-            "foreignField": "id_medicament",
-            "as": "ventes"
-        }
-    },
-    {
-        "$addFields": {
-            "total_ventes": { 
-                "$sum": "$ventes.quantite"
-            }
-        }
-    },
-    {
-        "$project": {
-            "nom": 1,
-            "prix_unitaire": 1,
-            "Quantity_arrival": 1,
-            "total_ventes": { "$ifNull": ["$total_ventes", 0] },
-            "stock_restant": {
-                "$subtract": ["$Quantity_arrival", { "$ifNull": ["$total_ventes", 0] }]
-            }
-        }
-    },
-    {
-        "$addFields": {
-            "valeur_stock_restant": {
-                "$multiply": ["$stock_restant", "$prix_unitaire"]
-            }
+        "$match": {
+            "date_expiration": { "$gt": today }
         }
     },
     {
         "$group": {
             "_id": None,
-            "valeur_totale_stock": { "$sum": "$valeur_stock_restant" }
-        }
-    }
-]
-
-pipeline_somme_valeur_stock = [
-    {
-        "$lookup": {
-            "from": "vente",
-            "localField": "id_medicament",
-            "foreignField": "id_medicament",
-            "as": "ventes"
-        }
-    },
-    {
-        "$addFields": {
-            "total_ventes": {
-                "$sum": "$ventes.quantite"
-            }
-        }
-    },
-    {
-        "$addFields": {
-            "total_ventes": { "$ifNull": ["$total_ventes", 0] },
-            "stock_restant": {
-                "$subtract": ["$Quantity_arrival", { "$ifNull": ["$total_ventes", 0] }]
-            },
-            "valeur_stock": {
-                "$multiply": [
-                    { "$subtract": ["$Quantity_arrival", { "$ifNull": ["$total_ventes", 0] }] },
-                    "$prix_unitaire"
-                ]
-            }
-        }
-    },
-    {
-        "$group": {
-            "_id": None,
-            "valeur_totale_stock": {
-                "$sum": "$valeur_stock"
+            "valeur_stock_totale": {
+                "$sum": {
+                    "$multiply": ["$quantite_restante", "$prix_vente"]
+                }
             }
         }
     }

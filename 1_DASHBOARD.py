@@ -38,8 +38,7 @@ from itertools import product
 from pipelines import pipelines_ventes
 
 # views
-from views import dashboard_views
-
+from views import dashboard_views 
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -101,7 +100,7 @@ else:
     st.error("Il est impossible de charger les données depuis la database.")
 
 
-# II- SECOND LINE OF SCORECARD
+# # II- SECOND LINE OF SCORECARD
 # if dashboard_views.medicament_collection and dashboard_views.employe_collection:
 #     rows_html = ""
 #     for row_medicament in dashboard_views.medicaments_expires[:7]:
@@ -223,7 +222,7 @@ else:
 
 
 # st.markdown("Vendeur non habilité")
-# CSS personnalisé
+# # CSS personnalisé
 # st.markdown("""
 #             <style>
 #                     /* Fond noir général */
@@ -308,20 +307,20 @@ else:
 #     st.error("❌ Les données 'medicament', 'stock' et 'detailVente' ne sont pas présentes dans le DataFrame.")
 
 
- # Import et récupération depuis MongoDB
-employe_collection = MongoDBClient(collection_name="employe")
-# overview_collection = MongoDBClient(collection_name="overview")
-medicament_collection = MongoDBClient(collection_name="medicament")
-vente_collection = MongoDBClient(collection_name="vente")
+#  # Import et récupération depuis MongoDB
+# employe_collection = MongoDBClient(collection_name="employe")
+# # overview_collection = MongoDBClient(collection_name="overview")
+# medicament_collection = MongoDBClient(collection_name="medicament")
+# vente_collection = MongoDBClient(collection_name="vente")
 
-medicament_documents = medicament_collection.find_all_documents()
-employe_documents = employe_collection.find_all_documents()
-vente_documents = vente_collection.find_all_documents()
-# overview_documents = overview_collection.find_all_documents()
-vente_medicament_requete = vente_collection.make_specific_pipeline(
-    pipeline=pipelines_ventes.pipeline_overview_medicament_vente,
-    title="Overview entre vente et médicament"
-) 
+# medicament_documents = medicament_collection.find_all_documents()
+# employe_documents = employe_collection.find_all_documents()
+# vente_documents = vente_collection.find_all_documents()
+# # overview_documents = overview_collection.find_all_documents()
+# vente_medicament_requete = vente_collection.make_specific_pipeline(
+#     pipeline=pipelines_ventes.pipeline_overview_medicament_vente,
+#     title="Overview entre vente et médicament"
+# ) 
 
 
 # df_employe = pd.DataFrame(list(employe_documents))

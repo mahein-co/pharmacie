@@ -20,25 +20,11 @@ overview_collection = MongoDBClient(collection_name="overview")
 # Création d'un DataFrame à partir des documents
 # overview_df = pd.DataFrame(list(overview_docs))
 
-# overview_df["arrival_date"] = pd.to_datetime(overview_df["arrival_date"])
-# overview_df["date_de_vente"] = pd.to_datetime(overview_df["date_de_vente"])
 
 # KPIs 
 # 1. Chiffre d'affaires total
 # chiffe_affaire_total = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
-# pipeline_chiffre_affaire = [
-#     {
-#         "$group": {
-#             "_id": None,
-#             "chiffre_affaire_total": {
-#                 "$sum": {
-#                     "$multiply": ["$quantite", "$prix_unitaire"]
-#                 }
-#             }
-#         }
-#     }
-# ]
-pipeline_chiffre_affaire = [
+pipeline_chiffre_affaire_total = [
     {
         "$match": {
             "quantite": { "$ne": None },
@@ -60,7 +46,6 @@ pipeline_chiffre_affaire = [
         }
     }
 ]
-
 
 # 2. Valeur total des stocks 
 pipeline_valeur_totale_stock = [
@@ -171,7 +156,7 @@ total_approvisionnements = overview_collection.count_distinct_agg(field_name="lo
 # quantity_by_medicine = overview_df.groupby('nom_medicament')['quantity_arrival'].sum().reset_index()
 
 # # 9. Nombre total de ventes
-# total_sales = len(overview_df)
+total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 # # 10. Nombre total de fournisseurs
 # total_suppliers = overview_df['fournisseur'].nunique()
@@ -219,33 +204,33 @@ total_approvisionnements = overview_collection.count_distinct_agg(field_name="lo
 # weekly_revenue = overview_df.resample('W', on='date_de_vente')['chiffre_affaires'].sum()
 # monthly_revenue = overview_df.resample('M', on='date_de_vente')['chiffre_affaires'].sum()
 
-# plt.figure(figsize=(12, 6))
-# plt.plot(daily_revenue, label='Daily Revenue')
-# plt.title('Daily Revenue Over Time')
-# plt.xlabel('Date')
-# plt.ylabel('Revenue')
-# plt.legend()
-# plt.show()
+# # plt.figure(figsize=(12, 6))
+# # plt.plot(daily_revenue, label='Daily Revenue')
+# # plt.title('Daily Revenue Over Time')
+# # plt.xlabel('Date')
+# # plt.ylabel('Revenue')
+# # plt.legend()
+# # plt.show()
 
-# plt.figure(figsize=(12, 6))
-# plt.plot(weekly_revenue, label='Weekly Revenue')
-# plt.title('Weekly Revenue Over Time')
-# plt.xlabel('Date')
-# plt.ylabel('Revenue')
-# plt.legend()
-# plt.show()
+# # plt.figure(figsize=(12, 6))
+# # plt.plot(weekly_revenue, label='Weekly Revenue')
+# # plt.title('Weekly Revenue Over Time')
+# # plt.xlabel('Date')
+# # plt.ylabel('Revenue')
+# # plt.legend()
+# # plt.show()
 
-# plt.figure(figsize=(12, 6))
-# plt.plot(monthly_revenue, label='Monthly Revenue')
-# plt.title('Monthly Revenue Over Time')
-# plt.xlabel('Date')
-# plt.ylabel('Revenue')
-# plt.legend()
-# plt.show()
+# # plt.figure(figsize=(12, 6))
+# # plt.plot(monthly_revenue, label='Monthly Revenue')
+# # plt.title('Monthly Revenue Over Time')
+# # plt.xlabel('Date')
+# # plt.ylabel('Revenue')
+# # plt.legend()
+# # plt.show()
 
 
 
-# 19. Marge bénéficiaire moyenne
+# # 19. Marge bénéficiaire moyenne
 # total_profit = (overview_df['quantite'] * overview_df['marge_prix']).sum()
 # total_revenue = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
 

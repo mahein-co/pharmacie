@@ -6,18 +6,20 @@ from pipelines import pipeline_overview
 
 # Initialisation a MongoDB
 vente_collection = MongoDBClient(collection_name="vente")
+overview_collection = MongoDBClient(collection_name="overview")
 medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
 overview_collection = MongoDBClient(collection_name="overview")
 
 
 # 1. chiffre d'affaire total
-chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire, title="Calcul du chiffre d'affaire")
+chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
+
 try:
   total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
   total_chiffre_affaire_str = f"{total_chiffre_affaire:,}".replace(",", " ")
 except Exception as e:
-  total_chiffre_affaire = 0
+    total_chiffre_affaire_str = 0
 
 # # 2. valeur totale du stock
 valeur_stock = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_valeur_totale_stock, title="Calcul de la valeur totale du stock")
@@ -27,16 +29,15 @@ try:
 except Exception as e:
   valeur_totale_stock = 0
     
-# 3. nombre total de vente
-nombre_total_vente = overview_collection.count_distinct_agg(field_name="id_vente")
-nombre_total_vente_str = f"{nombre_total_vente:,}".replace(",", " ")
+# # 3. nombre total de vente
+nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 
-# 4. nombre total d'alimentation
-# nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
-# try:
-#     nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
-# except Exception as e :
-#     nombre_total_alimentation = 0
+# # 4. nombre total d'alimentation
+# # nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
+# # try:
+# #     nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
+# # except Exception as e :
+# #     nombre_total_alimentation = 0
 
 # # II- SECOND LINE OF SCORECARD
 #  # 2.1. Nombre total de médicaments
