@@ -1,7 +1,6 @@
 import streamlit as st
 from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_ventes, pipeline_overview
-from views import dashboard_views
+from pipelines import pipeline_overview
 
 
 
@@ -9,19 +8,24 @@ from views import dashboard_views
 
 
 
-#initiation a mongoDB 
-# vente_collection = MongoDBClient(collection_name="vente")
-# employe_collection = MongoDBClient(collection_name="employe")
-# medicament_collection = MongoDBClient(collection_name="medicament")
+
+
+
+
+
+
+
+
+# #initiation a mongoDB 
 overview_collection = MongoDBClient(collection_name="overview")
 
-#3--nombres de ventes
-nombre_ventes = overview_collection.count_distinct_agg(field_name="id_vente")
-nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
+commande_moyen = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_commande_moyen,title="recuperation")
 
-#2--panier_moyen
-panier_moyen = round(dashboard_views.total_chiffre_affaire / nombre_ventes, 2)
-panier_moyen_str = f"{panier_moyen:,}".replace(",", " ")
+try:
+    commande_moyen = commande_moyen[0]["moyenne_commandes_par_fournisseur"] if commande_moyen else 0
+except Exception as e :
+    commande_moyen = 0
+
 
 
 
@@ -183,6 +187,53 @@ body {
 </style>
 """
 
+# talbe style
+table_css = """
+<style>
+.table-container {
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th, .table-container td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.table-container thead {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.table-container tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.badge.green { background-color: #1abc9c; }     /* + positive */
+.badge.red { background-color: #e74c3c; }       /* - negative */
+.badge.grey { background-color: #95a5a6; }      /* 0% change */
+</style>
+"""
+
 kpis_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&display=swap');
@@ -311,21 +362,23 @@ kpis_style = """
 </style>
 """
 
+
 # ========== KPI Cards ===============
 kpis_html = f"""
 <div class="kpi-container">
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;"> Chiffre d'affaires total(MGA)</p>
-        <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Total fournisseur</p>
+        <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.nb_fournisseur}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Panier moyen</p>
-        <p class="kpi-value" style="font-size:2rem;">{panier_moyen_str}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Total Approvisionnements</p>
+        <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.total_approvisionnements}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem;">Nombre de ventes</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_ventes_str}</p>
+        <p class="kpi-title" style="font-size:1.2rem;">Commande moyen par fournisseur</p>
+        <p class="kpi-value" style="font-size:2rem;">{commande_moyen}</p>
     </div>
 </div>
 """
+
 

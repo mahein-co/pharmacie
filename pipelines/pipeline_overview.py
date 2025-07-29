@@ -159,7 +159,25 @@ total_approvisionnements = overview_collection.count_distinct_agg(field_name="lo
 total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
 # # 10. Nombre total de fournisseurs
-# total_suppliers = overview_df['fournisseur'].nunique()
+nb_fournisseur = overview_collection.count_distinct_agg(field_name="fournisseur")
+
+##11.commande moyen par fournisseurs
+pipeline_commande_moyen =  [
+    {
+        "$group": {
+            "_id": "$fournisseur",
+            "nombre_commandes": { "$sum": 1 }
+        }
+    },
+    {
+        "$group": {
+            "_id": None,
+            "moyenne_commandes_par_fournisseur": { "$avg": "$nombre_commandes" }
+        }
+    }
+]
+
+
 
 # # 11. Médicaments en surplus (>500 unités)
 # surplus_stock = overview_df[(overview_df['quantite_restante'] > 500) & (pd.to_datetime(overview_df['date_expiration']) > pd.to_datetime('today'))]
