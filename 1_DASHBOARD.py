@@ -92,9 +92,10 @@ html("""
 st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
 
 
-# I- FIRST LINE OF SCORECARD
-if dashboard_views.vente_collection and dashboard_views.medicament_collection:
-    st.markdown(dashboard_views.kpis_html, unsafe_allow_html=True)
+# I- 6 FIRST SCORECARD
+if dashboard_views.vente_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
+    st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
+    st.markdown(dashboard_views.three_second_kpis_html, unsafe_allow_html=True)
 
 else:
     st.error("Il est impossible de charger les données depuis la database.")

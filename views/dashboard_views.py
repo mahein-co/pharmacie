@@ -17,17 +17,19 @@ chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_o
 
 try:
   total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
-  total_chiffre_affaire_str = f"{total_chiffre_affaire:,}".replace(",", " ")
+  total_chiffre_affaire_str = f"{int(total_chiffre_affaire):,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire_str = 0
 
 # # 2. valeur totale du stock
-valeur_stock = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_valeur_totale_stock, title="Calcul de la valeur totale du stock")
+valeur_stock = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
+  title="Calcul de la valeur totale du stock"
+)
 try:
-  valeur_totale_stock = valeur_stock[0]["valeur_stock_totale"] if valeur_stock else 0
-  valeur_totale_stock_str = f"{valeur_totale_stock:,}".replace(",", " ")
+    valeur_totale_stock = valeur_stock[0]["valeur_stock_totale"] if valeur_stock else 0
 except Exception as e:
-  valeur_totale_stock = 0
+    valeur_totale_stock = 0
     
 # # 3. nombre total de vente
 nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
@@ -39,17 +41,19 @@ nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 # # except Exception as e :
 # #     nombre_total_alimentation = 0
 
-# # II- SECOND LINE OF SCORECARD
-#  # 2.1. Nombre total de médicaments
-# nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
+# II- SECOND LINE OF SCORECARD
+# 2.1. Nombre total de médicaments
+nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
     
-# # 2.2. Total des pertes dues aux médicaments invendus
-# total_pertes_medicaments = pipeline_overview.expired_medicines
-# # pertes_medicaments = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_valeur_perte, title="Calcul des pertes dues aux médicaments invendus")
-# # try:
-# # except Exception as e:
-# #   st.error(f"❌ Erreur lors du calcul des pertes dues aux médicaments invendus : {e}")
-# #   total_pertes_medicaments = 0
+# 2.2. Total des pertes dues aux médicaments invendus
+pertes_medicaments = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_pertes_expiration, 
+  title="Calcul des pertes dues aux médicaments invendus"
+)
+try:
+  total_pertes_medicaments = pertes_medicaments[0]["total_pertes"] if pertes_medicaments else 0
+except Exception as e:
+  total_pertes_medicaments = 0
 
 # # 2.4. Nombre total de fournisseur
 # nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
@@ -392,11 +396,11 @@ kpis_style = """
 """
 
 # ========== KPI Cards ===============
-kpis_html = f"""
+three_first_kpis_html = f"""
 <div class="kpi-container">
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Total Finance</p>
-        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
+        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} <span class="badge grey">MGA</span></p>
     </div>
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Total Ventes (Unités)</p>
@@ -405,6 +409,26 @@ kpis_html = f"""
     <div class="kpi-card">
         <p class="kpi-title" style="font-size:1.2rem;">Total Approvisionnement</p>
         <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.total_approvisionnements}</p>
+    </div>
+</div>
+"""
+
+three_second_kpis_html = f"""
+<div class="kpi-container">
+    <div class="kpi-card">
+      <div class="kpi-title" style="font-size:1.2rem;">
+          Total Pertes
+          <span style="font-size:0.9rem;">(Médicaments invendus)</span>
+      </div>
+      <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments/4):,}".replace(",", " ")}&nbsp;MGA</div>
+    </div>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem;">Valeur Stock</p>
+        <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock/5):,}".replace(",", " ")}&nbsp;MGA</p>
+    </div>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem;">Total Médicaments</p>
+        <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
     </div>
 </div>
 """
