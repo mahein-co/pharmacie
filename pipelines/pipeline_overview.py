@@ -9,7 +9,7 @@ from data.mongodb_client import MongoDBClient
 
 # CONSTANTS
 TODAY = datetime.today()
-
+dans_30_jours = TODAY + timedelta(days=30)
 
 # COLLECTION
 overview_collection = MongoDBClient(collection_name="overview")
@@ -28,28 +28,102 @@ overview_df["date_de_vente"] = pd.to_datetime(overview_df["date_de_vente"])
 chiffe_affaire_total = (overview_df['quantite'] * overview_df['prix_unitaire']).sum()
 
 # 2. Valeur total des stocks 
-valid_stock = overview_df[pd.to_datetime(overview_df['date_expiration']) > TODAY]
-total_stock_value = valid_stock['valeur_stock'].sum()
+pipeline_valeur_totale_stock = [
+    {
+        "$match": {
+            "date_expiration": { "$gt": TODAY }
+        }
+    },
+    {
+        "$group": {
+            "_id": None,
+            "valeur_stock_totale": {
+                "$sum": {
+                    "$multiply": ["$quantite_restante", "$prix_vente"]
+                }
+            }
+        }
+    }
+]
+# valid_stock = overview_df[pd.to_datetime(overview_df['date_expiration']) > TODAY]
+# total_stock_value = valid_stock['valeur_stock'].sum()
 
 # 3. Medicaments déjà expirés
-df_expired_medcines = overview_df.groupby('nom_medicament')[['quantite_restante', 'prix_unitaire', 'date_expiration']].first()
-df_expired_medcines["valeur_stock"] = df_expired_medcines["quantite_restante"] * df_expired_medcines["prix_unitaire"]
-df_expired_medcines = df_expired_medcines.sort_values(by="valeur_stock", ascending=False)
+pipeline_expired = [
+    {
+        "$match": {
+            "date_expiration": { "$lt": TODAY }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "nom_medicament": 1,
+            "lot_id": 1,
+            "date_expiration": 1,
+            "quantite_restante": 1
+        }
+    }
+]
+# df_expired_medcines = overview_df.groupby('nom_medicament')[['quantite_restante', 'prix_unitaire', 'date_expiration']].first()
+# df_expired_medcines["valeur_stock"] = df_expired_medcines["quantite_restante"] * df_expired_medcines["prix_unitaire"]
+# df_expired_medcines = df_expired_medcines.sort_values(by="valeur_stock", ascending=False)
 
 # 4. Medicament bientôt expirés (dans 3 mois)
 three_months_later = TODAY + timedelta(days=120)
-upcoming_expiry = overview_df[(pd.to_datetime(overview_df['date_expiration']) > TODAY) & (pd.to_datetime(overview_df['date_expiration']) <= three_months_later)]
-upcoming_expiry_grouped = upcoming_expiry.groupby('nom_medicament').agg({
-    'date_expiration': 'first',
-    'prix_unitaire': 'first',
-    'quantite_restante': 'sum',
-    'valeur_stock': 'sum'
-}).reset_index()
-upcoming_expiry_grouped['jour_restant'] = (pd.to_datetime(upcoming_expiry_grouped['date_expiration']) - datetime.today()).dt.days
-upcoming_expiry_grouped = upcoming_expiry_grouped.sort_values(by="jour_restant", ascending=True)
+pipeline_bientot_expire = [
+    {
+        "$match": {
+            "date_expiration": {
+                "$gte": TODAY,
+                "$lte": three_months_later
+            }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "nom_medicament": 1,
+            "lot_id": 1,
+            "date_expiration": 1,
+            "quantite_restante": 1
+        }
+    }
+]
+
+# upcoming_expiry = overview_df[(pd.to_datetime(overview_df['date_expiration']) > TODAY) & (pd.to_datetime(overview_df['date_expiration']) <= three_months_later)]
+# upcoming_expiry_grouped = upcoming_expiry.groupby('nom_medicament').agg({
+#     'date_expiration': 'first',
+#     'prix_unitaire': 'first',
+#     'quantite_restante': 'sum',
+#     'valeur_stock': 'sum'
+# }).reset_index()
+# upcoming_expiry_grouped['jour_restant'] = (pd.to_datetime(upcoming_expiry_grouped['date_expiration']) - datetime.today()).dt.days
+# upcoming_expiry_grouped = upcoming_expiry_grouped.sort_values(by="jour_restant", ascending=True)
 
 # 5. Total de pertes dues aux medicaments expirés
-expired_medicines = overview_df[pd.to_datetime(overview_df['date_expiration']) < TODAY]
+pipeline_pertes_expiration = [
+    {
+        "$match": {
+            "date_expiration": { "$lt": TODAY },
+            "quantite_restante": { "$gt": 0 }
+        }
+    },
+    {
+        "$project": {
+            "perte": {
+                "$multiply": ["$quantite_restante", "$prix_unitaire"]
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": None,
+            "total_pertes": { "$sum": "$perte" }
+        }
+    }
+]
+# expired_medicines = overview_df[pd.to_datetime(overview_df['date_expiration']) < TODAY]
 
 # 6. Nombre total d'employés
 total_employees = overview_df['nom_employe'].nunique()
