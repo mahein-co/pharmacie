@@ -78,7 +78,7 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #32c979;
+    color: #eee;
     padding: 20px;
     font-family: 'Dancing Script', cursive;
     border-radius: 10px;
@@ -151,6 +151,8 @@ if dashboard_views.medicament_collection and dashboard_views.employe_collection:
         
 
         #Médicaments expirés ou bientôt expirés (alerte)
+        st.markdown(dashboard_views.table_html, unsafe_allow_html=True)
+
         # CSS personnalisé
         st.markdown("Médicaments expirés ou bientôt expirés")
         st.markdown("""
@@ -211,7 +213,6 @@ if dashboard_views.medicament_collection and dashboard_views.employe_collection:
 
         # Affichage HTML personnalisé
         # st.markdown(html_table, unsafe_allow_html=True)
-        st.markdown(dashboard_views.table_html, unsafe_allow_html=True)
 
 
 
