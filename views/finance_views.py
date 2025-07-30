@@ -16,9 +16,6 @@ medicament_collection = MongoDBClient(collection_name="medicament")
 
 
 
-#requete 
-
-
 
 # CSS sombre moderne
 

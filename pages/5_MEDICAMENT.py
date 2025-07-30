@@ -1,9 +1,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from st_aggrid import AgGrid
+from st_aggrid.grid_options_builder import GridOptionsBuilder
 from streamlit.components.v1 import html
-from views import medicament_views
+from views import medicament_views,dashboard_views
 from data.mongodb_client import MongoDBClient
+from pipelines import pipeline_overview
 
 
 
@@ -25,4 +28,118 @@ html("""
 </style>
 <div class="box">Médicament</div>
 """)
+
+st.markdown(medicament_views.custom_css,unsafe_allow_html=True)
+st.markdown(medicament_views.kpis_style,unsafe_allow_html=True)
+if medicament_views.overview_collection :
+  st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
+  st.markdown(medicament_views.table_medicaments_critiques_html,unsafe_allow_html=True)
+  # st.markdown(medicament_views.table_medicaments_surplus_html,unsafe_allow_html=True)
+
+else:
+    st.error("Il est impossible de charger les données depuis la database.")
+
+
+
+# # ✅ Données 
+# data = dashboard_views.medicaments_expires
+# df = pd.DataFrame(data)
+
+# st.title("💊 Tableau des Médicaments")
+
+# # 🎯 Filtres
+# with st.sidebar:
+#     st.header("🔍 Filtres")
+#     medicament_list = df["nom_medicament"].unique()
+#     selected_medicaments = st.multiselect(
+#         "Nom du médicament",
+#         options=medicament_list,
+#         default=medicament_list
+#     )
+
+# # 🎯 Application des filtres
+# filtered_df = df[df["nom_medicament"].isin(selected_medicaments)]
+
+# # 💅 CSS personnalisé
+# st.markdown("""
+#     <style>
+#     .ag-root-wrapper {
+#         border-radius: 20px;
+#         font-family: Arial, sans-serif;
+#         overflow: hidden;
+#         box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+#     }
+#     .ag-header, .ag-cell {
+#         font-family: Arial, sans-serif;
+#     }
+#     </style>
+# """, unsafe_allow_html=True)
+
+# # 🎨 Affichage du tableau avec AgGrid
+# st.subheader("📋 Médicaments filtrés")
+# gb = GridOptionsBuilder.from_dataframe(filtered_df)
+# gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
+# gb.configure_grid_options(domLayout='normal')
+# grid_options = gb.build()
+
+# AgGrid(
+#     filtered_df,
+#     gridOptions=grid_options,
+#     theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
+#     fit_columns_on_grid_load=True,
+#     height=300,
+#     width='100%'
+# )
+
+
+
+# import streamlit as st
+# import pandas as pd
+
+# # 📊 Données de stock (exemple actuel et précédent)
+# data = {
+#     "Médicament": ["Paracétamol", "Ibuprofène", "Amoxicilline", "Aspirine"],
+#     "Stock actuel": [50, 20, 35, 5],
+#     "Stock précédent": [45, 30, 40, 10]
+# }
+
+# df = pd.DataFrame(data)
+
+# # ➕ Calcul de variation %
+# df["Évolution (%)"] = ((df["Stock actuel"] - df["Stock précédent"]) / df["Stock précédent"]) * 100
+# df["Évolution (%)"] = df["Évolution (%)"].round(2)
+
+# # 💡 Fonction pour style d'évolution (avec emoji et couleur)
+# def format_variation(val):
+#     if val > 0:
+#         return f"🟢 +{val}%"
+#     elif val < 0:
+#         return f"🔴 {val}%"
+#     else:
+#         return f"⚪  0%"
+
+# df["Évolution"] = df["Évolution (%)"].apply(format_variation)
+
+# # 🧼 Suppression de la colonne brute
+# df_affichage = df[["Médicament", "Stock actuel", "Stock précédent", "Évolution"]]
+
+# # 🎨 CSS custom pour style carte
+# st.markdown("""
+# <style>
+# .metric-table td {
+#     padding: 0.5em 1em;
+#     font-size: 1.1em;
+# }
+# .metric-table th {
+#     background-color: #f0f2f6;
+#     padding: 0.5em 1em;
+#     font-size: 1.1em;
+# }
+# </style>
+# """, unsafe_allow_html=True)
+
+# # 📋 Affichage HTML simulé
+# st.markdown("<h3>📦 Suivi des stocks par médicament</h3>", unsafe_allow_html=True)
+# st.markdown(df_affichage.to_html(classes="metric-table", index=False, escape=False), unsafe_allow_html=True)
+
 
