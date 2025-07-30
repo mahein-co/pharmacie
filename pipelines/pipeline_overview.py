@@ -152,7 +152,6 @@ pipeline_medicament_bientot_expire = [
     }
 ]
 
-
 # 5. Total de pertes dues aux medicaments expirés
 pipeline_pertes_expiration = [
     {
@@ -289,25 +288,117 @@ pipeline_medicament_critique = [
     }
 ]
 
-# # 13. Repture de stock sur les 3 derniers mois
-# three_months_ago = TODAY - timedelta(days=90)
-# last_month_sales = df[pd.to_datetime(df['date_de_vente']) >= three_months_ago]
-# stock_outs = last_month_sales[last_month_sales['quantite_restante'] == 0]
-# stock_outs_by_medicine = stock_outs.groupby('nom_medicament').size().reset_index(name='stock_out_count')
+# 14. Repture de stock sur les 4 derniers mois
+pipeline_rupture_stock = [
+  {
+    "$match": {
+      "quantite_restante": 0,
+      "date_de_vente": {
+        "$gte": TODAY - timedelta(days=120)
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "lot_id": "$lot_id",
+        "nom_medicament": "$nom_medicament"
+      },
+      "rupture_count": { "$sum": 1 },
+      "derniere_vente": { "$max": "$date_de_vente" },
+      "categorie": { "$first": "$medicament_categorie" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
+  },
+  {
+    "$sort": {
+      "derniere_vente": -1
+    }
+  }
+]
 
-# # 14. Médicament avec la plus forte rotation
-# high_rotation_medicine = df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=False).head(1)
+# 15. Médicament avec la plus forte rotation
+pipeline_medicament_forte_rotation = [
+  {
+    "$match": {
+      "date_de_vente": {
+        "$gte": TODAY - timedelta(days=120)
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "quantite_totale_vendue": { "$sum": "$quantite" },
+      "nombre_de_ventes": { "$sum": 1 },
+      "categorie": { "$first": "$medicament_categorie" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
+  },
+  {
+    "$sort": {
+      "quantite_totale_vendue": -1
+    }
+  },
+  {
+    "$limit": 3 
+  }
+]
 
-# # 15. Médicament avec la plus faible rotation
-# low_rotation_medicine = df.groupby('nom_medicament')['quantite'].sum().sort_values(ascending=True).head(1)
+# 16. Médicament avec la plus faible rotation
+pipeline_medicament_faible_rotation = [
+  {
+    "$match": {
+      "date_de_vente": {
+        "$gte": TODAY - timedelta(days=120)
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "quantite_totale_vendue": { "$sum": "$quantite" },
+      "nombre_de_ventes": { "$sum": 1 },
+      "categorie": { "$first": "$medicament_categorie" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
+  },
+  {
+    "$sort": {
+      "quantite_totale_vendue": 1
+    }
+  },
+  {
+    "$limit": 3 
+  }
+]
 
-# # 16. Médicaments les plus vendus (Top 3)
+# 17. Médicaments les plus vendus (Top 3)
+pipeline_medicaments_plus_vendus = [
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "quantite_totale_vendue": { "$sum": "$quantite" },
+      "nombre_de_ventes": { "$sum": 1 },
+      "categorie": { "$first": "$medicament_categorie" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
+  },
+  {
+    "$sort": {
+      "quantite_totale_vendue": -1
+    }
+  },
+  {
+    "$limit": 3
+  }
+]
 # top_3_best_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nlargest(3)
 
-# # 17. Médicaments les moins vendus (Bottom 3)
+# # 18. Médicaments les moins vendus (Bottom 3)
 # bottom_3_least_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nsmallest(3)
 
-# # 18. Chiffre d’affaires par jour/semaine/mois
+# # 19. Chiffre d’affaires par jour/semaine/mois
 # df['chiffre_affaires'] = df['quantite'] * df['prix_unitaire']
 
 # daily_revenue = df.resample('D', on='date_de_vente')['chiffre_affaires'].sum()
@@ -340,7 +431,7 @@ pipeline_medicament_critique = [
 
 
 
-# # 19. Marge bénéficiaire moyenne
+# # 20. Marge bénéficiaire moyenne
 # total_profit = (df['quantite'] * df['marge_prix']).sum()
 # total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
 
@@ -349,29 +440,29 @@ pipeline_medicament_critique = [
 # else:
 #     average_profit_margin = 0
 
-# # 20. Médicament qui rapporte le plus
+# # 21. Médicament qui rapporte le plus
 # df['profit'] = df['quantite'] * df['marge_prix']
 # most_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmax()
 # total_profit = df.groupby('nom_medicament')['profit'].sum().max()
 
 
-# # 21. Medicament qui rapporte le moins
+# # 22. Medicament qui rapporte le moins
 # least_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmin()
 # total_profit = df.groupby('nom_medicament')['profit'].sum().min()
 
-# # 22. Médicament avec la plus faible marge
+# # 23. Médicament avec la plus faible marge
 # lowest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmin()
 # lowest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().min()
 # average_selling_price = df[df['nom_medicament'] == lowest_margin_medicine]['prix_unitaire'].mean()
 # margin_percentage = (lowest_margin_value / average_selling_price) * 100
 
-# # 23. Médicament avec la plus forte marge
+# # 24. Médicament avec la plus forte marge
 # highest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmax()
 # highest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().max()
 # average_selling_price = df[df['nom_medicament'] == highest_margin_medicine]['prix_unitaire'].mean()
 # margin_percentage = (highest_margin_value / average_selling_price) * 100
 
-# # 24. Evolution Total des pertes
+# # 25. Evolution Total des pertes
 # expired_medicines = df[(pd.to_datetime(df['date_expiration']) < pd.to_datetime('today')) & (df['quantite_restante'] > 0)].copy()
 # expired_medicines['date_expiration'] = pd.to_datetime(expired_medicines['date_expiration'])
 # expired_medicines.set_index('date_expiration', inplace=True)
@@ -385,16 +476,16 @@ pipeline_medicament_critique = [
 # # plt.legend()
 # # plt.show()
 
-# # 25. Taux de livraison en retard des fournisseurs
+# # 26. Taux de livraison en retard des fournisseurs
 # late_deliveries = df[df['retard_jour'] > 0]
 # late_deliveries_by_supplier = late_deliveries.groupby('fournisseur').size()
 # total_deliveries_by_supplier = df.groupby('fournisseur').size()
 # late_delivery_rate = (late_deliveries_by_supplier / total_deliveries_by_supplier) * 100
 
-# # 26. Temps moyen de livraison
+# # 27. Temps moyen de livraison
 # average_delivery_time = df.groupby('fournisseur')['retard_jour'].mean()
 
-# # 27. Nombre de médicaments en stock + Valeur financière du stock
+# # 28. Nombre de médicaments en stock + Valeur financière du stock
 # three_months_ago = TODAY - timedelta(days=30)
 # last_3_months_data = df[pd.to_datetime(df['date_de_vente']) >= three_months_ago]
 # stock_summary = last_3_months_data.groupby('nom_medicament').agg({
@@ -403,12 +494,12 @@ pipeline_medicament_critique = [
 # }).reset_index()
 
 
-# # 28. Panier moyen par vente
+# # 29. Panier moyen par vente
 # total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
 # total_sales = len(df['id_vente'].unique())
 # average_basket_value = total_revenue / total_sales
 
-# # 29. Top vendeur
+# # 30. Top vendeur
 # top_3_employees = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).nlargest(3)
 # employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
 # employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
@@ -416,14 +507,14 @@ pipeline_medicament_critique = [
 # # top_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
 # # plt.gca().spines[['top', 'right',]].set_visible(False)
 
-# # 30. Vendeur non habilité
+# # 31. Vendeur non habilité
 # employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
 # employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
 # bottom_employees = pd.merge(employee_revenue, employee_info, on='nom_employe').nsmallest(3, 'total_revenue')
 # # bottom_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
 # # plt.gca().spines[['top', 'right',]].set_visible(False)
 
-# # 31. Mois avec le plus d’approvisionnements
+# # 32. Mois avec le plus d’approvisionnements
 # monthly_arrivals = df.resample('M', on='arrival_date')['quantity_arrival'].sum()
 # top_3_months = monthly_arrivals.sort_values(ascending=False).head(3)
 

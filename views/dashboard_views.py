@@ -11,16 +11,16 @@ medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
 
 
-# 1. chiffre d'affaire total
+# I- S C O R E C A R D
+# 1.1. chiffre d'affaire total
 chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
-
 try:
   total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
   total_chiffre_affaire_str = f"{int(total_chiffre_affaire):,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire_str = 0
 
-# 2. valeur totale du stock
+# 1.2. valeur totale du stock
 valeur_stock = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
   title="Calcul de la valeur totale du stock"
@@ -30,14 +30,13 @@ try:
 except Exception as e:
     valeur_totale_stock = 0
     
-# 3. nombre total de vente
+# 1.3. nombre total de vente
 nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 
-# II- SECOND LINE OF SCORECARD
-# 2.1. Nombre total de médicaments
+# 1.4. Nombre total de médicaments
 nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
     
-# 2.2. Total des pertes dues aux médicaments invendus
+# 1.5. Total des pertes dues aux médicaments invendus
 pertes_medicaments = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_pertes_expiration, 
   title="Calcul des pertes dues aux médicaments invendus"
@@ -47,17 +46,15 @@ try:
 except Exception as e:
   total_pertes_medicaments = 0
 
-# 2.4. Nombre total de fournisseur
-# nb_total_fournisseurs = medicament_collection.count_distinct_agg(field_name="fournisseur")
-
     
-# 2.5. Médicaments expirés
+# II. MEDICAMENTS
+# 2.1. Médicaments expirés
 medicaments_expires = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_medicament_expired, 
   title="Récupération des médicaments expirés ou bientôt expirés"
 )
 
-# 2.6. Medicament bientôt expirés
+# 2.2. Medicament bientôt expirés
 medicament_bientot_expires = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_medicament_bientot_expire,
   title="Récupération des médicaments bientôt expirés"
@@ -65,7 +62,30 @@ medicament_bientot_expires = overview_collection.make_specific_pipeline(
 medicaments_expires = medicaments_expires + medicament_bientot_expires
 medicaments_expires.sort(key=lambda x: x['date_expiration'])
 
-# 
+# 2.3 Médicaments en rupture de stock au cours de 4 derniers mois
+medicaments_rupture_stock = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_rupture_stock,
+  title="Récupération des médicaments en rupture de stock"
+) 
+
+# 2.4. Médicaments avec le plus forte rotation
+medicaments_forte_rotation = overview_collection.make_specific_pipeline(
+  pipeline= pipeline_overview.pipeline_medicament_forte_rotation,
+  title= "Récupération des médicaments avec la plus forte rotation"
+)
+
+# 2.5. Médicaments avec le plus faible rotation
+medicaments_faible_rotation = overview_collection.make_specific_pipeline(
+  pipeline= pipeline_overview.pipeline_medicament_faible_rotation,
+  title= "Récupération des médicaments avec la plus baile rotation"
+)
+
+# 2.6. Médicaments les plus de vendus
+medicaments_plus_vendus = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicaments_plus_vendus,
+  title="Récupération des médicaments les plus vendus"
+)
+print("Total des médicaments les plus vendus:", medicaments_plus_vendus[0])
 
 # STYLES
 custom_css = """
@@ -466,9 +486,9 @@ three_second_kpis_html = f"""
 def get_status(jours_restants):
     if jours_restants < 1:
         return '<span class="badge red">Déjà expiré</span>'
-    elif jours_restants < 120:
+    elif jours_restants < 30:
         return f'<span class="badge grey">Dans {jours_restants} jours</span>'
-    elif jours_restants >= 120:
+    elif jours_restants >= 30:
         return f'<span class="badge green">Dans {jours_restants} jours</span>'
     else:
         return f'<span class="badge blue">Dans {jours_restants} jours</span>'
@@ -502,7 +522,8 @@ table_head_medicaments_expired_html = f"""
 </div>
 """
 
-# # Exemples d'utilisation
+
+# Exemples d'utilisation
 # st.markdown(f"""
 # <div class="container">
 #     <div class="card pink">
