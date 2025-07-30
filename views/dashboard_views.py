@@ -20,7 +20,7 @@ try:
 except Exception as e:
     total_chiffre_affaire_str = 0
 
-# # 2. valeur totale du stock
+# 2. valeur totale du stock
 valeur_stock = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
   title="Calcul de la valeur totale du stock"
@@ -30,15 +30,8 @@ try:
 except Exception as e:
     valeur_totale_stock = 0
     
-# # 3. nombre total de vente
+# 3. nombre total de vente
 nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
-
-# # 4. nombre total d'alimentation
-# # nombre_alimentation = medicament_collection.make_specific_pipeline(pipeline=mongodb_pipelines.pipeline_nombre_alimentations, title="Recuperation de nombre total d'alimentation")
-# # try:
-# #     nombre_total_alimentation = nombre_alimentation[0]["nombre_total_alimentations"] if nombre_alimentation else 0
-# # except Exception as e :
-# #     nombre_total_alimentation = 0
 
 # II- SECOND LINE OF SCORECARD
 # 2.1. Nombre total de médicaments
@@ -65,7 +58,14 @@ medicaments_expires = overview_collection.make_specific_pipeline(
 )
 
 # 2.6. Medicament bientôt expirés
+medicament_bientot_expires = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicament_bientot_expire,
+  title="Récupération des médicaments bientôt expirés"
+)
+medicaments_expires = medicaments_expires + medicament_bientot_expires
+medicaments_expires.sort(key=lambda x: x['date_expiration'])
 
+# 
 
 # STYLES
 custom_css = """
@@ -273,6 +273,14 @@ table_css = """
     background-color: #f4f4f4;
 }
 
+.row-table{
+  background-color: #ffffff;
+  padding: 50px 10px;
+  margin: 5px 0;
+  border-radius: 12px;
+  color: #333;
+}
+
 .badge {
     display: inline-block;
     padding: 5px 10px;
@@ -455,8 +463,28 @@ three_second_kpis_html = f"""
 </div>
 """
 
+def get_status(jours_restants):
+    if jours_restants < 1:
+        return '<span class="badge red">Déjà expiré</span>'
+    elif jours_restants < 120:
+        return f'<span class="badge grey">Dans {jours_restants} jours</span>'
+    elif jours_restants >= 120:
+        return f'<span class="badge green">Dans {jours_restants} jours</span>'
+    else:
+        return f'<span class="badge blue">Dans {jours_restants} jours</span>'
 
-table_medicaments_expired_html = """
+rows_table_html = """"""
+for m in medicaments_expires[-5:]:
+  rows_table_html += f"""
+      <tr class="row-table">
+          <td>{m['nom_medicament']}</td>
+          <td>{m['date_expiration'].strftime('%d %B %Y')}</td>
+          <td>{m['quantite_totale_restante']}</td>
+          <td>{get_status(m['jours_restants'])}</td>
+      </tr>
+  """
+
+table_head_medicaments_expired_html = f"""
 <div class="table-container kpi-card">
 <h2 class="subtitle">Médicaments expirés ou bientôt expirés</h2>
 <table>
@@ -469,29 +497,10 @@ table_medicaments_expired_html = """
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>Leads</td>
-            <td>0</td>
-            <td>0</td>
-            <td><span class="badge grey">Dans 15 jours</span></td>
-        </tr>
-        <tr>
-            <td>Valeur de la commande</td>
-            <td>0€</td>
-            <td>213,12€</td>
-            <td><span class="badge red">Déjà expiré</span></td>
-        </tr>
-        <tr>
-            <td>Commissions</td>
-            <td>2,13€</td>
-            <td>0€</td>
-            <td><span class="badge green">Dans 30 jours</span></td>
-        </tr>
     </tbody>
 </table>
 </div>
 """
-
 
 # # Exemples d'utilisation
 # st.markdown(f"""

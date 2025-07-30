@@ -71,7 +71,10 @@ pipeline_valeur_totale_stock = [
 pipeline_medicament_expired = [
     {
         "$match": {
-            "date_expiration": { "$lt": TODAY }
+            "date_expiration": {
+                "$lte": TODAY
+            },
+            "quantite_restante": {"$gt": 0 }
         }
     },
     {
@@ -80,19 +83,40 @@ pipeline_medicament_expired = [
             "nom_medicament": 1,
             "lot_id": 1,
             "date_expiration": 1,
-            "quantite_restante": 1
+            "quantite_restante": 1,
+            "jours_restants": {
+                "$dateDiff": {
+                    "startDate": TODAY,
+                    "endDate": "$date_expiration",
+                    "unit": "day"
+                }
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$lot_id",
+            "nom_medicament": { "$first": "$nom_medicament" },
+            "date_expiration": { "$first": "$date_expiration" },
+            "quantite_totale_restante": { "$first": "$quantite_restante" },
+            "jours_restants": { "$first": "$jours_restants" }
+        }
+    },
+    {
+        "$sort": {
+            "date_expiration": 1
         }
     }
 ]
 
 # 4. Medicament bientôt expirés (dans 3 mois)
-three_months_later = TODAY + timedelta(days=120)
+three_months_later = TODAY + timedelta(days=90)
 pipeline_medicament_bientot_expire = [
     {
         "$match": {
             "date_expiration": {
-                "$gte": TODAY,
-                "$lte": three_months_later
+                "$gte": TODAY, 
+                "$lte": three_months_later,
             }
         }
     },
@@ -102,20 +126,32 @@ pipeline_medicament_bientot_expire = [
             "nom_medicament": 1,
             "lot_id": 1,
             "date_expiration": 1,
-            "quantite_restante": 1
+            "quantite_restante": 1,
+            "jours_restants": {
+                "$dateDiff": {
+                    "startDate": TODAY,
+                    "endDate": "$date_expiration",
+                    "unit": "day"
+                }
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$lot_id",
+            "nom_medicament": { "$first": "$nom_medicament" },
+            "date_expiration": { "$first": "$date_expiration" },
+            "quantite_totale_restante": { "$first": "$quantite_restante" },
+            "jours_restants": { "$first": "$jours_restants" }
+        }
+    },
+    {
+        "$sort": {
+            "date_expiration": 1
         }
     }
 ]
 
-# upcoming_expiry = df[(pd.to_datetime(df['date_expiration']) > TODAY) & (pd.to_datetime(df['date_expiration']) <= three_months_later)]
-# upcoming_expiry_grouped = upcoming_expiry.groupby('nom_medicament').agg({
-#     'date_expiration': 'first',
-#     'prix_unitaire': 'first',
-#     'quantite_restante': 'sum',
-#     'valeur_stock': 'sum'
-# }).reset_index()
-# upcoming_expiry_grouped['jour_restant'] = (pd.to_datetime(upcoming_expiry_grouped['date_expiration']) - datetime.today()).dt.days
-# upcoming_expiry_grouped = upcoming_expiry_grouped.sort_values(by="jour_restant", ascending=True)
 
 # 5. Total de pertes dues aux medicaments expirés
 pipeline_pertes_expiration = [
@@ -197,7 +233,7 @@ pipeline_commande_moyen =  [
     }
 ]
 
-# 11. Médicaments en surplus (>500 unités)
+# 12. Médicaments en surplus (>500 unités)
 pipeline_medicament_surplus = [
     {
         "$match": {
@@ -225,7 +261,7 @@ pipeline_medicament_surplus = [
     }
 ]
 
-# 12. Medicaments critical en stock
+# 13. Medicaments critical en stock
 pipeline_medicament_critique = [
     {
         "$match": {

@@ -95,15 +95,16 @@ st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
 
 # I- 6 FIRST SCORECARD
 if dashboard_views.vente_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
+    # Priemère ligne de scorecard
     st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
+    # Deuxième ligne de scorecard
     st.markdown(dashboard_views.three_second_kpis_html, unsafe_allow_html=True)
-    st.markdown(dashboard_views.table_medicaments_expired_html, unsafe_allow_html=True)
-
+    # Médicaments expirés ou bientôt expirés (alerte)
+    st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
 
-# # II- SECOND LINE OF SCORECARD
 # if dashboard_views.medicament_collection and dashboard_views.employe_collection:
 #     rows_html = ""
 #     for row_medicament in dashboard_views.medicaments_expires[:7]:
