@@ -442,11 +442,11 @@ three_second_kpis_html = f"""
           Total Pertes
           <span style="font-size:0.9rem;">(Médicaments invendus)</span>
       </div>
-      <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments/4):,}".replace(",", " ")}&nbsp;MGA</div>
+      <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}&nbsp;MGA</div>
     </div>
     <div class="kpi-card card purple">
         <p class="kpi-title" style="font-size:1.2rem;">Valeur Stock</p>
-        <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock/5):,}".replace(",", " ")}&nbsp;MGA</p>
+        <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}&nbsp;MGA</p>
     </div>
     <div class="kpi-card card orange">
         <p class="kpi-title" style="font-size:1.2rem;">Total Médicaments</p>

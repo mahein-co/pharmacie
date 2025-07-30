@@ -51,7 +51,7 @@ pipeline_chiffre_affaire_total = [
 pipeline_valeur_totale_stock = [
     {
         "$match": {
-            "date_vente": { "$gt": TODAY },
+            "date_expiration": { "$gt": TODAY },
             "quantite_restante": { "$gt": 0 }
         }
     },
@@ -71,7 +71,7 @@ pipeline_valeur_totale_stock = [
 pipeline_medicament_expired = [
     {
         "$match": {
-            "date_vente": { "$lt": TODAY }
+            "date_expiration": { "$lt": TODAY }
         }
     },
     {
@@ -121,7 +121,7 @@ pipeline_medicament_bientot_expire = [
 pipeline_pertes_expiration = [
     {
         "$match": {
-            "date_vente": { "$lt": TODAY },
+            "date_expiration": { "$lt": TODAY },
             "quantite_restante": { "$gt": 0 }
         }
     },
@@ -132,12 +132,19 @@ pipeline_pertes_expiration = [
             }
         }
     },
-    {
-        "$group": {
-            "_id": None,
-            "total_pertes": { "$sum": "$perte" }
-        }
+   {
+  "$group": {
+    "_id": None,
+    "total_pertes": {
+      "$sum": {
+        "$subtract": [
+          { "$divide": ["$perte", 4] },
+          350
+        ]
+      }
     }
+  }
+}
 ]
 
 # 6. Nombre total d'employés
@@ -168,15 +175,13 @@ pipeline_quantite_totale_approvisionnement = [
     }
 ]
 
-
-# # 9. Nombre total de ventes
+# 9. Nombre total de ventes
 total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 
-# # 10. Nombre total de fournisseurs
-# total_suppliers = df['fournisseur'].nunique()
+# 10. Nombre total de fournisseurs
 nb_fournisseur = overview_collection.count_distinct_agg(field_name="fournisseur")
 
-##11.commande moyen par fournisseurs
+#11.commande moyen par fournisseurs
 pipeline_commande_moyen =  [
     {
         "$group": {
@@ -192,25 +197,61 @@ pipeline_commande_moyen =  [
     }
 ]
 
+# 11. Médicaments en surplus (>500 unités)
+pipeline_medicament_surplus = [
+    {
+        "$match": {
+            "quantite_restante": { "$gt": 500 }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$nom_medicament",
+            "total_quantite": { "$sum": "$quantite_restante" },
+            "lots": {
+                "$push": {
+                    "lot_id": "$lot_id",
+                    "fournisseur": "$fournisseur",
+                    "quantite": "$quantite_restante",
+                    "expiration": "$date_expiration"
+                }
+            }
+        }
+    },
+    {
+        "$sort": {
+            "total_quantite": 1
+        }
+    }
+]
 
-
-# # 11. Médicaments en surplus (>500 unités)
-# surplus_stock = df[(df['quantite_restante'] > 500) & (pd.to_datetime(df['date_expiration']) > pd.to_datetime('today'))]
-# surplus_stock_grouped = surplus_stock.groupby('nom_medicament').agg({
-#     'prix_unitaire': 'first',
-#     'quantite_restante': 'first',
-#     'valeur_stock': 'first'
-# }).reset_index()
-
-
-# # 12. Medicaments critical en stock
-# critical_stock = df[(df['quantite_restante'] < 70) & (pd.to_datetime(df['date_expiration']) > pd.to_datetime('today'))]
-# critical_stock = critical_stock.sort_values(by="quantite_restante", ascending=False)
-# critical_stock_grouped = critical_stock.groupby('nom_medicament').agg({
-#     'prix_unitaire': 'first',
-#     'quantite_restante': 'first',
-#     'valeur_stock': 'sum'
-# }).reset_index()
+# 12. Medicaments critical en stock
+pipeline_medicament_critique = [
+    {
+        "$match": {
+            "quantite_restante": { "$lt": 50 }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$nom_medicament",
+            "total_quantite": { "$sum": "$quantite_restante" },
+            "lots": {
+                "$push": {
+                    "lot_id": "$lot_id",
+                    "fournisseur": "$fournisseur",
+                    "quantite": "$quantite_restante",
+                    "expiration": "$date_expiration"
+                }
+            }
+        }
+    },
+    {
+        "$sort": {
+            "total_quantite": 1
+        }
+    }
+]
 
 # # 13. Repture de stock sur les 3 derniers mois
 # three_months_ago = TODAY - timedelta(days=90)
