@@ -26,7 +26,8 @@ class MongoDBClient:
                 uri,
                 server_api=ServerApi('1'),
                 tls=True,
-                tlsCAFile=certifi.where()
+                tlsCAFile=certifi.where(),
+                serverSelectionTimeoutMS=30000
             )
             self.db = self.client[db_name]
             self.collection = self.db[collection_name]
