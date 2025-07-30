@@ -25,3 +25,4 @@ html("""
 </style>
 <div class="box">Médicament</div>
 """)
+
