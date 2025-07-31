@@ -1,5 +1,7 @@
 from datetime import timedelta
 import streamlit as st
+from st_aggrid import AgGrid
+from st_aggrid.grid_options_builder import GridOptionsBuilder
 from streamlit.components.v1 import html
 
 import pandas as pd
@@ -101,8 +103,58 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     st.markdown(dashboard_views.three_second_kpis_html, unsafe_allow_html=True)
     # Médicaments expirés ou bientôt expirés (alerte)
     st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
+    #------
+    # ✅ Données 
+    data = dashboard_views.medicaments_expires
+    df = pd.DataFrame(data)
+    # 🎯 Filtres
+    with st.sidebar:
+        st.header("🔍 Filtres")
+        medicament_list = df["nom_medicament"].unique()
+        selected_medicaments = st.multiselect(
+            "Nom du médicament",
+            options=medicament_list,
+            default=medicament_list
+        )
+
+    # 🎯 Application des filtres
+    filtered_df = df[df["nom_medicament"].isin(selected_medicaments)]
+
+    # 💅 CSS personnalisé
+    st.markdown("""
+        <style>
+        .ag-root-wrapper {
+            border-radius: 20px;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        }
+        .ag-header, .ag-cell {
+            font-family: Arial, sans-serif;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 🎨 Affichage du tableau avec AgGrid
+    st.subheader("📋 Médicaments filtrés")
+    gb = GridOptionsBuilder.from_dataframe(filtered_df)
+    gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
+    gb.configure_grid_options(domLayout='normal')
+    grid_options = gb.build()
+
+    AgGrid(
+        filtered_df,
+        gridOptions=grid_options,
+        theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
+        fit_columns_on_grid_load=True,
+        height=300,
+        width='100%'
+    )
+
 else:
     st.error("Il est impossible de charger les données depuis la database.")
+
+
 
 
 # if dashboard_views.medicament_collection and dashboard_views.employe_collection:
