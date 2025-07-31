@@ -14,7 +14,8 @@ mongo_password = os.getenv("MONGO_PASSWORD")
 mongo_cluster = os.getenv("MONGO_CLUSTER")
 
 hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-    
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 # if st.secrets:
     # mongo_project_id = st.secrets["MONGO_PROJECT_ID"]
     # mongo_public_key = st.secrets["MONGO_PUBLIC_KEY"]
@@ -26,5 +27,6 @@ hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
     # mongo_cluster = st.secrets["MONGO_CLUSTER"]
 
     # hf_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+    # openai_api_key = os.getenv("OPENAI_API_KEY")
     
 
