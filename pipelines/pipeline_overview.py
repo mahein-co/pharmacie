@@ -555,7 +555,7 @@ pipeline_medicament_rapporte_plus = [
   }
 ]
 
-# # 22. Medicament qui rapporte le moins
+# 22. Medicament qui rapporte le moins
 pipeline_medicament_rapporte_moins = [
   {
     "$project": {
@@ -578,7 +578,34 @@ pipeline_medicament_rapporte_moins = [
   }
 ]
 
-# # 23. Médicament avec la plus faible marge
+# 23. Quantité de medicaments approvisionnés
+pipeline_quatite_medicament_approvisionne = [
+  {
+    "$addFields": {
+      "date_expiration": { "$toDate": "$date_expiration" }
+    }
+  },
+  {
+    "$match": {
+      "date_expiration": { "$gte": TODAY }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "quantite_totale_approvisionnee": { "$sum": "$quantity_arrival" },
+      "valeur_stock_active": {
+        "$sum": { "$multiply": ["$quantity_arrival", "$prix_unitaire"] }
+      }
+    }
+  },
+  {
+    "$sort": { "valeur_stock_active": -1 }
+  }
+] 
+
+
+# 24. Médicament avec la plus faible marge
 # lowest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmin()
 # lowest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().min()
 # average_selling_price = df[df['nom_medicament'] == lowest_margin_medicine]['prix_unitaire'].mean()
@@ -621,29 +648,128 @@ pipeline_medicament_rapporte_moins = [
 #     'valeur_stock': 'last'
 # }).reset_index()
 
+# 27.Medicaments les plus cher
+pipeline_medicaments_plus_cher = [
+  {
+    "$sort": { "prix_unitaire": -1 }
+  },
+  {
+    "$limit": 3
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": 1,
+      "lot_id": 1,
+      "prix_unitaire": 1,
+      "fournisseur": 1
+    }
+  }
+]
 
-# # 29. Panier moyen par vente
-# total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
-# total_sales = len(df['id_vente'].unique())
-# average_basket_value = total_revenue / total_sales
+# 28.Medicaments les moins cher
+pipeline_medicaments_moins_cher = [
+  {
+    "$sort": { "prix_unitaire": 1 }
+  },
+  {
+    "$limit": 3
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": 1,
+      "lot_id": 1,
+      "prix_unitaire": 1,
+      "fournisseur": 1
+    }
+  }
+]
 
-# # 30. Top vendeur
-# top_3_employees = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).nlargest(3)
-# employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
-# employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
-# top_employees = pd.merge(employee_revenue, employee_info, on='nom_employe').nlargest(3, 'total_revenue')
-# # top_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
-# # plt.gca().spines[['top', 'right',]].set_visible(False)
+# 29. Panier moyen par vente
+pipeline_panier_moyen_vente = [
+  {
+    "$group": {
+      "_id": "$id_vente",
+      "valeur_vente": {
+        "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] }
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": None,
+      "total_valeur": { "$sum": "$valeur_vente" },
+      "nombre_ventes": { "$sum": 1 }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "panier_moyen": { "$divide": ["$total_valeur", "$nombre_ventes"] }
+    }
+  }
+]
 
-# # 31. Vendeur non habilité
-# employee_revenue = df.groupby('nom_employe').apply(lambda x: (x['quantite'] * x['prix_unitaire']).sum()).reset_index(name='total_revenue')
-# employee_info = df[['nom_employe', 'fonction']].drop_duplicates()
-# bottom_employees = pd.merge(employee_revenue, employee_info, on='nom_employe').nsmallest(3, 'total_revenue')
-# # bottom_employees.groupby('nom_employe').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))
-# # plt.gca().spines[['top', 'right',]].set_visible(False)
+# 30. Top vendeur
+pipeline_top_vendeur = [
+  {
+    "$group": {
+      "_id": {
+        "nom": "$nom_employe",
+      },
+      "total_ventes": { "$sum": "$quantite" },
+      "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
+    }
+  },
+  {
+    "$sort": { "total_ventes": -1 }
+  },
+  {
+    "$limit": 3
+  }
+]
 
-# # 32. Mois avec le plus d’approvisionnements
-# monthly_arrivals = df.resample('M', on='arrival_date')['quantity_arrival'].sum()
-# top_3_months = monthly_arrivals.sort_values(ascending=False).head(3)
 
-# 
+# 31. Vendeur non habilité
+pipeline_vendeur_non_habilite = [
+  {
+    "$group": {
+      "_id": {
+        "nom": "$nom_employe",
+      },
+      "total_ventes": { "$sum": "$quantite" },
+      "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
+    }
+  },
+  {
+    "$sort": { "total_ventes": 1 }
+  },
+  {
+    "$limit": 3
+  }
+]
+
+# 32. Mois avec le plus d’approvisionnements
+pipeline_mois_plus_approvisionnement = [
+  {
+    "$addFields": {
+      "month_year": { "$dateToString": { "format": "%Y-%m", "date": "$arrival_date" } }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$month_year",
+      "total_approvisionnement": { "$sum": "$quantity_arrival" }
+    }
+  },
+  {
+    "$sort": { "total_approvisionnement": -1 }
+  },
+  {
+    "$limit": 3
+  }
+]
+
+
+
