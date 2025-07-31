@@ -393,62 +393,190 @@ pipeline_medicaments_plus_vendus = [
     "$limit": 3
   }
 ]
-# top_3_best_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nlargest(3)
 
-# # 18. Médicaments les moins vendus (Bottom 3)
-# bottom_3_least_selling_medicines = df.groupby('nom_medicament')['quantite'].sum().nsmallest(3)
+# 18. Médicaments les moins vendus (Bottom 3)
+pipeline_medicaments_moins_vendus = [
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "quantite_totale_vendue": { "$sum": "$quantite" },
+      "nombre_de_ventes": { "$sum": 1 },
+      "categorie": { "$first": "$medicament_categorie" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
+  },
+  {
+    "$sort": {
+      "quantite_totale_vendue": 1
+    }
+  },
+  {
+    "$limit": 3
+  }
+]
 
-# # 19. Chiffre d’affaires par jour/semaine/mois
-# df['chiffre_affaires'] = df['quantite'] * df['prix_unitaire']
+# 19. Chiffre d’affaires par jour/semaine/mois
+pipeline_chiffre_affaire_daily = [
+  {
+    "$addFields": {
+      "date_jour": {
+        "$dateToString": {
+          "format": "%Y-%m-%d",
+          "date": "$date_de_vente"
+        }
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$date_jour",
+      "chiffre_affaires": { "$sum": "$prix_total" },
+      "nombre_de_ventes": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": {
+      "_id": 1
+    }
+  }
+]
+pipeline_chiffre_affaire_weekly = [
+  {
+    "$addFields": {
+      "annee": { "$isoWeekYear": "$date_vente" },
+      "semaine": { "$isoWeek": "$date_vente" }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "annee": "$annee",
+        "semaine": "$semaine"
+      },
+      "chiffre_affaires": { "$sum": "$prix_total" },
+      "nombre_de_ventes": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": {
+      "_id.annee": 1,
+      "_id.semaine": 1
+    }
+  }
+]
+pipeline_chiffre_affaire_monthly = [
+  {
+    "$addFields": {
+      "annee": { "$year": "$date_vente" },
+      "mois": { "$month": "$date_vente" }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "annee": "$annee",
+        "mois": "$mois"
+      },
+      "chiffre_affaires": { "$sum": "$prix_total" },
+      "nombre_de_ventes": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": {
+      "_id.annee": 1,
+      "_id.mois": 1
+    }
+  }
+]
+pipeline_chiffre_affaire_yearly = [
+  {
+    "$addFields": {
+      "annee": { "$year": "$date_vente" }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$annee",
+      "chiffre_affaires": { "$sum": "$prix_total" },
+      "nombre_de_ventes": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": {
+      "_id": 1
+    }
+  }
+]
 
-# daily_revenue = df.resample('D', on='date_de_vente')['chiffre_affaires'].sum()
-# weekly_revenue = df.resample('W', on='date_de_vente')['chiffre_affaires'].sum()
-# monthly_revenue = df.resample('M', on='date_de_vente')['chiffre_affaires'].sum()
+# 20. Marge bénéficiaire moyenne
+pipeline_marge_beneficiaire_moyenne = [
+  {
+    "$project": {
+      "nom_medicament": 1,
+      "marge_pourcentage": {
+        "$multiply": [
+          { "$divide": ["$marge_prix", "$prix_unitaire"] },
+          100
+        ]
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "marge_pourcentage_moyenne": { "$avg": "$marge_pourcentage" }
+    }
+  },
+  {
+    "$sort": { "marge_pourcentage_moyenne": -1 }
+  }
+]
 
-# # plt.figure(figsize=(12, 6))
-# # plt.plot(daily_revenue, label='Daily Revenue')
-# # plt.title('Daily Revenue Over Time')
-# # plt.xlabel('Date')
-# # plt.ylabel('Revenue')
-# # plt.legend()
-# # plt.show()
-
-# # plt.figure(figsize=(12, 6))
-# # plt.plot(weekly_revenue, label='Weekly Revenue')
-# # plt.title('Weekly Revenue Over Time')
-# # plt.xlabel('Date')
-# # plt.ylabel('Revenue')
-# # plt.legend()
-# # plt.show()
-
-# # plt.figure(figsize=(12, 6))
-# # plt.plot(monthly_revenue, label='Monthly Revenue')
-# # plt.title('Monthly Revenue Over Time')
-# # plt.xlabel('Date')
-# # plt.ylabel('Revenue')
-# # plt.legend()
-# # plt.show()
-
-
-
-# # 20. Marge bénéficiaire moyenne
-# total_profit = (df['quantite'] * df['marge_prix']).sum()
-# total_revenue = (df['quantite'] * df['prix_unitaire']).sum()
-
-# if total_revenue > 0:
-#     average_profit_margin = (total_profit / total_revenue) * 100
-# else:
-#     average_profit_margin = 0
-
-# # 21. Médicament qui rapporte le plus
-# df['profit'] = df['quantite'] * df['marge_prix']
-# most_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmax()
-# total_profit = df.groupby('nom_medicament')['profit'].sum().max()
-
+# 21. Médicament qui rapporte le plus
+pipeline_medicament_rapporte_plus = [
+  {
+    "$project": {
+      "nom_medicament": 1,
+      "gain_total": {
+        "$multiply": ["$marge_prix", "$quantite"]
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "total_gain": { "$sum": "$gain_total" }
+    }
+  },
+  {
+    "$sort": { "total_gain": -1 }
+  },{
+      "$limit":3
+  }
+]
 
 # # 22. Medicament qui rapporte le moins
-# least_profitable_medicine = df.groupby('nom_medicament')['profit'].sum().idxmin()
-# total_profit = df.groupby('nom_medicament')['profit'].sum().min()
+pipeline_medicament_rapporte_moins = [
+  {
+    "$project": {
+      "nom_medicament": 1,
+      "gain_total": {
+        "$multiply": ["$marge_prix", "$quantite"]
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$nom_medicament",
+      "total_gain": { "$sum": "$gain_total" }
+    }
+  },
+  {
+    "$sort": { "total_gain": 1 }
+  },{
+      "$limit":3
+  }
+]
 
 # # 23. Médicament avec la plus faible marge
 # lowest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmin()

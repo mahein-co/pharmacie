@@ -85,7 +85,56 @@ medicaments_plus_vendus = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_medicaments_plus_vendus,
   title="Récupération des médicaments les plus vendus"
 )
-print("Total des médicaments les plus vendus:", medicaments_plus_vendus[0])
+
+# 2.7. Médicaments les moins vendus
+medicaments_moins_vendus = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicaments_moins_vendus,
+  title="Récupération des médicaments les moins vendus"
+)
+
+# III. F I N A N C E
+# 3.1. Chiffre d’affaires par jour
+chiffre_affaires_par_jour = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_chiffre_affaire_daily,
+  title="Récupération du chiffre d'affaires par jour"
+)
+
+# 3.2. Chiffre d’affaires par semaine
+chiffre_affaires_par_semaine = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_chiffre_affaire_weekly,
+  title="Récupération du chiffre d'affaires par semaine"
+)
+
+# 3.3. Chiffre d’affaires par mois
+chiffre_affaires_par_mois = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_chiffre_affaire_monthly,
+  title="Récupération du chiffre d'affaires par mois"
+)
+
+# 3.4. Chiffre d’affaires par annee
+chiffre_affaires_par_annee = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_chiffre_affaire_yearly,
+  title="Récupération du chiffre d'affaires par annee"
+)
+
+# 3.5. Marge bénéficiaire moyenne 
+marge_beneficiaire_moyenne = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_marge_beneficiaire_moyenne,
+  title="Récupération de la marge bénéficiaire moyenne"
+)
+
+# 3.6. Médicament qui rapporte plus
+medicament_rapportant_plus = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicament_rapporte_plus,
+  title="Récupération du médicament qui rapporte le plus"
+)
+
+# 3.6. Médicament qui rapporte moins
+medicament_rapportant_moins = overview_collection.make_specific_pipeline(
+  pipeline=pipeline_overview.pipeline_medicament_rapporte_moins,
+  title="Récupération du médicament qui rapporte le moins"
+)
+
 
 # STYLES
 custom_css = """
