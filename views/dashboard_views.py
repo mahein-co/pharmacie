@@ -88,7 +88,6 @@ medicaments_plus_vendus = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_medicaments_plus_vendus,
   title="Récupération des médicaments les plus vendus"
 )
-print("Total des médicaments les plus vendus:", medicaments_plus_vendus[0])
 
 # STYLES
 custom_css = """
