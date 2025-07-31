@@ -1,11 +1,9 @@
 import streamlit as st
+from streamlit.components.v1 import html
 
-import os
+
 import logging
-from datetime import datetime
-import faiss
 from openai import OpenAI
-import numpy as np
 
 
 from data.config import openai_api_key
@@ -101,20 +99,6 @@ system_prompt = """
     Voici des informations provenant de notre base de ventes, de stocks et d'employés:
 """
 
-# prompt = """
-#     Vous êtes un assistant intelligent travaillant dans une pharmacie. 
-#     Votre tâche est de répondre à la question de l'utilisateur uniquement à partir du contexte fourni.
-
-#     Contexte :
-#     {contexte}  
-
-#     Question : {question}
-
-#     Répondez de manière claire, précise et factuelle. 
-#     Si l'information n’est pas présente dans le contexte, dites-le explicitement.
-# """
-
-
 # Generate AI response
 def generate_answer(query, retrieved_docs):
     context = "\n\n---\n\n".join(retrieved_docs)
@@ -132,13 +116,31 @@ def generate_answer(query, retrieved_docs):
         ],
         temperature=0.2
     )
-    return response.choices[0].message["content"]
+    return response.choices[0].message.content
 
 
 st.set_page_config(page_title="Chatbot Simple", layout="centered")
 # UI Streamlit
-st.title("🧠 Assistant Pharmacie")
-st.markdown("Posez une question liée aux ventes, employés ou médicaments.")
+html("""
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    
+  .box {
+    color: #eee;
+    text-align: center;
+    font-family: 'Quicksand', cursive;
+    font-size: 3rem;
+  }
+    .subtitle {
+    text-align: center;
+    color: #eee;
+    font-family: 'Quicksand', cursive;
+    font-size: 1rem;
+  }
+</style>
+<h1 class="box">🧠 Assistant Pharmacie</h1>
+<h4 class="subtitle">Posez une question liée aux ventes, employés ou médicaments.</h4>
+""")
 
 # Initialiser les messages
 if "messages" not in st.session_state:
@@ -162,7 +164,6 @@ if prompt := st.chat_input("Votre question"):
         results = search_rag_mongo(prompt)
         ai_response = generate_answer(query=prompt, retrieved_docs=results)
             
-    # Ajouter la réponse du bot à l'historique
     st.session_state.messages.append({"role": "assistant", "content": ai_response})
     with st.chat_message("assistant"):
         st.markdown(ai_response)
