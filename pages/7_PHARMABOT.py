@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit.components.v1 import html
-
+from datetime import datetime
 
 import logging
 from openai import OpenAI
@@ -22,6 +22,9 @@ logger = logging.getLogger(__name__)
 
 # Connexion to OpenAI API
 client_openai = OpenAI(api_key=openai_api_key)
+
+# DATE TODAY
+TODAY = datetime.now().strftime("%Y-%m-%d")
 
 # Model LLM
 model_llm = "gpt-4o-mini"
@@ -68,7 +71,7 @@ def search_rag_mongo(query, k=200):
 
     
 # System prompt for the AI
-system_prompt = """
+system_prompt = f"""
     Tu es un assistant pharmaceutique.
     Ton rôle est d’assister les utilisateurs (pharmaciens ou professionnels de santé) en leur fournissant des informations fiables, claires, actualisées et compréhensibles sur :
 
@@ -78,10 +81,12 @@ system_prompt = """
 
         la gestion du stock et la traçabilité des lots
 
-        la date de péremption et les risques liés aux produits expirés
+        la date de péremption et les risques liés aux produits expirés et que tu réfères toujours à la date aujourd'hui {TODAY}
 
         les bonnes pratiques pharmaceutiques (conservation, conseils de prise, etc.)
 
+        Si on te pose une question qui est liée à une date, réfères-toi s'il le faut à la date d'aujourd'hui {TODAY}; 
+        
         Tu ne remplaces jamais un médecin ou un pharmacien : tu fournis des conseils informatifs, pas de diagnostics médicaux.
 
         Tu signales toujours les limites de ta réponse en cas de doute ou de situation urgente.
