@@ -500,16 +500,16 @@ kpis_style = """
 # ========== KPI Cards ===============
 three_first_kpis_html = f"""
 <div class="kpi-container">
-    <div class="kpi-card card green">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Finance</p>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Finance</p>
         <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
     </div>
-    <div class="kpi-card card pink">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Ventes (Unités)</p>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Ventes (Unités)</p>
         <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente_str}</p>
     </div>
-    <div class="kpi-card card blue">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Approvisionnement</p>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Approvisionnement</p>
         <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.total_approvisionnements}</p>
     </div>
 </div>
@@ -517,19 +517,19 @@ three_first_kpis_html = f"""
 
 three_second_kpis_html = f"""
 <div class="kpi-container">
-    <div class="kpi-card card red">
-      <div class="kpi-title" style="font-size:1.2rem;">
+    <div class="kpi-card">
+      <div class="kpi-title" style="font-size:1.2rem; color:#48494B;">
           Total Pertes
           <span style="font-size:0.9rem;">(Médicaments invendus)</span>
       </div>
       <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}&nbsp;MGA</div>
     </div>
-    <div class="kpi-card card purple">
-        <p class="kpi-title" style="font-size:1.2rem;">Valeur Stock</p>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Valeur Stock</p>
         <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}&nbsp;MGA</p>
     </div>
-    <div class="kpi-card card orange">
-        <p class="kpi-title" style="font-size:1.2rem;">Total Médicaments</p>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Médicaments</p>
         <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
     </div>
 </div>
