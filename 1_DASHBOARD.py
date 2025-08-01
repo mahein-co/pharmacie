@@ -22,7 +22,7 @@ from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 
-from datetime import timedelta
+from datetime import timedelta,date
 # from gluonts.dataset.common import ListDataset
 # from gluonts.dataset.field_names import FieldName
 # from gluonts.mx import DeepAREstimator
@@ -104,52 +104,117 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     # Médicaments expirés ou bientôt expirés (alerte)
     st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
     #------
-    # ✅ Données 
+
+    # ✅ Fonction pour définir le statut avec badge HTML
+    def get_status(jours_restants):
+        if jours_restants < 1:
+            return '<span class="badge red">Déjà expiré</span>'
+        elif jours_restants < 30:
+            return f'<span class="badge grey">Dans {jours_restants} jours</span>'
+        elif jours_restants >= 30:
+            return f'<span class="badge green">Dans {jours_restants} jours</span>'
+        else:
+            return f'<span class="badge blue">Dans {jours_restants} jours</span>'
+
+    # ✅ Fonction pour définir le badge HTML selon les jours restants
+    # def get_status(jours_restants):
+    #     if jours_restants < 1:
+    #         return '<span class="badge red">Déjà expiré</span>'
+    #     elif jours_restants < 30:
+    #         return f'<span class="badge grey">Dans {jours_restants} jours</span>'
+    #     elif jours_restants >= 30:
+    #         return f'<span class="badge green">Dans {jours_restants} jours</span>'
+    #     else:
+    #         return f'<span class="badge blue">Dans {jours_restants} jours</span>'
+
+    # ✅ Récupération et préparation des données
     data = dashboard_views.medicaments_expires
     df = pd.DataFrame(data)
-    # 🎯 Filtres
+
+    df.rename(columns={
+        "_id": "Lots",
+        "nom_medicament": "Médicament",
+        "date_expiration": "Date d'expiration",
+        "quantite_totale_restante": "Quantite restante",
+        "jours_restants": "Jours restants"
+    }, inplace=True)
+
+    # ✅ Ajouter la colonne Statut avec badge HTML
+    df["Statut"] = df["Jours restants"].apply(get_status)
+
+    # ✅ Trier les données (optionnel)
+    df.sort_values("Jours restants", inplace=True)
+
+    # ✅ Barre latérale avec filtres
     with st.sidebar:
-        st.header("🔍 Filtres")
-        medicament_list = df["nom_medicament"].unique()
-        selected_medicaments = st.multiselect(
-            "Nom du médicament",
-            options=medicament_list,
-            default=medicament_list
-        )
+        st.subheader("🔍 Filtrer les médicaments")
+        med_names = df["Médicament"].unique().tolist()
+        selected_meds = st.multiselect("Choisir un ou plusieurs médicaments", med_names, default=med_names)
+        df = df[df["Médicament"].isin(selected_meds)]
 
-    # 🎯 Application des filtres
-    filtered_df = df[df["nom_medicament"].isin(selected_medicaments)]
+    # ✅ Titre et date
+    st.subheader("📋 Médicaments")
+    st.caption(f"📅 Données mises à jour le : {date.today().strftime('%d/%m/%Y')}")
 
-    # 💅 CSS personnalisé
+    # ✅ Configuration AgGrid
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_default_column(filter=True, sortable=True, resizable=True)
+
+    # ✅ Nom du renderer personnalisé (htmlRenderer)
+    gb.configure_column(
+        "Statut",
+        header_name="Statut",
+        cellRenderer="htmlRenderer",  # on appelle le renderer par son nom ici
+        autoHeight=True,
+        wrapText=True
+    )
+
+    # ✅ Build des options
+    grid_options = gb.build()
+
+    # # ✅ Injection de la fonction htmlRenderer (JavaScript)
+    # grid_options["components"] = {
+    #     "htmlRenderer": """
+    #         function(params) {
+    #             const e = document.createElement('div');
+    #             e.innerHTML = params.value;
+    #             return e;
+    #         }
+    #     """
+    # }
+
+
+    # ✅ Affichage AgGrid
+    AgGrid(
+        df,
+        gridOptions=grid_options,
+        allow_unsafe_jscode=True,
+        enable_enterprise_modules=False,
+        fit_columns_on_grid_load=True,
+        theme="material",
+        height=500,
+        width="100%",
+    )
+
+    # ✅ CSS badges
     st.markdown("""
         <style>
-        .ag-root-wrapper {
-            border-radius: 20px;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        .badge {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            text-align: center;
+            color: white;
         }
-        .ag-header, .ag-cell {
-            font-family: Arial, sans-serif;
-        }
+        .badge.red { background-color: #e74c3c; }
+        .badge.grey { background-color: #7f8c8d; }
+        .badge.green { background-color: #2ecc71; }
+        .badge.blue { background-color: #3498db; }
         </style>
     """, unsafe_allow_html=True)
 
-    # 🎨 Affichage du tableau avec AgGrid
-    st.subheader("📋 Médicaments filtrés")
-    gb = GridOptionsBuilder.from_dataframe(filtered_df)
-    gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
-    gb.configure_grid_options(domLayout='normal')
-    grid_options = gb.build()
-
-    AgGrid(
-        filtered_df,
-        gridOptions=grid_options,
-        theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
-        fit_columns_on_grid_load=True,
-        height=300,
-        width='100%'
-    )
 
 else:
     st.error("Il est impossible de charger les données depuis la database.")

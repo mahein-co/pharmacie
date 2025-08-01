@@ -13,16 +13,15 @@ from pipelines import pipeline_overview
 #importation de data dans le MongoDB
 overview_collection = MongoDBClient(collection_name="overview")
 
-
-medoc_surplus = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_medicament_surplus,title="recuperation Medoc sur plus")
+medoc_surplus_result = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_medicament_surplus,title="recuperation Medoc sur plus")
 try:
-    medoc_surplus = medoc_surplus[1]["total_quantite"] if medoc_surplus else 0
+    medoc_surplus = medoc_surplus_result[1]["total_quantite"] if medoc_surplus_result else 0
 except Exception as e:
     medoc_surplus = 0 
 
-medoc_critique = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_medicament_critique,title="recuperation en critique")
+medoc_critique_result = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_medicament_critique,title="recuperation en critique")
 try:
-    medoc_critique = medoc_critique[1]["total_quantite"] if medoc_critique else 0
+    medoc_critique = medoc_critique_result[1]["total_quantite"] if medoc_critique_result else 0
 except Exception as e:
     medoc_critique = 0
 
@@ -426,34 +425,34 @@ table_medicaments_critiques_html = """
 """
 
 
-table_medicaments_surplus_html = """
-<div class="table-container kpi-card style="margin-bottom: 30px;">
-<h2 class="subtitle">Médicaments sur plus</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Médicament</th>
-            <th>Quantité sur plus</th>
-            <th>Status d'expiration</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Leads</td>
-            <td>0</td>
-            <td><span class="badge grey">Dans 15 jours</span></td>
-        </tr>
-        <tr>
-            <td>Valeur de la commande</td>
-            <td>213,12€</td>
-            <td><span class="badge red">Déjà expiré</span></td>
-        </tr>
-        <tr>
-            <td>Commissions</td>
-            <td>0€</td>
-            <td><span class="badge green">Dans 30 jours</span></td>
-        </tr>
-    </tbody>
-</table>
-</div>
-"""
+# table_medicaments_surplus_html = """
+# <div class="table-container kpi-card style="margin-bottom: 30px;">
+# <h2 class="subtitle">Médicaments sur plus</h2>
+# <table>
+#     <thead>
+#         <tr>
+#             <th>Médicament</th>
+#             <th>Quantité sur plus</th>
+#             <th>Status d'expiration</th>
+#         </tr>
+#     </thead>
+#     <tbody>
+#         <tr>
+#             <td>Leads</td>
+#             <td>0</td>
+#             <td><span class="badge grey">Dans 15 jours</span></td>
+#         </tr>
+#         <tr>
+#             <td>Valeur de la commande</td>
+#             <td>213,12€</td>
+#             <td><span class="badge red">Déjà expiré</span></td>
+#         </tr>
+#         <tr>
+#             <td>Commissions</td>
+#             <td>0€</td>
+#             <td><span class="badge green">Dans 30 jours</span></td>
+#         </tr>
+#     </tbody>
+# </table>
+# </div>
+# """

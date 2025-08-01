@@ -242,7 +242,7 @@ pipeline_commande_moyen =  [
 pipeline_medicament_surplus = [
     {
         "$match": {
-            "quantite_restante": { "$gt": 500 }
+            "quantite_restante": { "$gt": 700 }
         }
     },
     {
@@ -252,6 +252,7 @@ pipeline_medicament_surplus = [
             "lots": {
                 "$push": {
                     "lot_id": "$lot_id",
+                    "nom_medicament" : "$nom_medicament",
                     "fournisseur": "$fournisseur",
                     "quantite": "$quantite_restante",
                     "expiration": "$date_expiration"
@@ -270,7 +271,7 @@ pipeline_medicament_surplus = [
 pipeline_medicament_critique = [
     {
         "$match": {
-            "quantite_restante": { "$lt": 50 }
+            "quantite_restante": { "$lt": 70 }
         }
     },
     {

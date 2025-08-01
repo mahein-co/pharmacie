@@ -33,7 +33,7 @@ st.markdown(medicament_views.custom_css,unsafe_allow_html=True)
 st.markdown(medicament_views.kpis_style,unsafe_allow_html=True)
 if medicament_views.overview_collection :
   st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
-  st.markdown(medicament_views.table_medicaments_critiques_html,unsafe_allow_html=True)
+  # st.markdown(medicament_views.table_medicaments_critiques_html,unsafe_allow_html=True)
   # st.markdown(medicament_views.table_medicaments_surplus_html,unsafe_allow_html=True)
 
 else:
@@ -41,55 +41,111 @@ else:
 
 
 
-# # ✅ Données 
-# data = dashboard_views.medicaments_expires
-# df = pd.DataFrame(data)
+# ✅ Données 
+Data = medicament_views.medoc_surplus_result
+surplus = pd.DataFrame(list(Data))
+surplus["lots"]= surplus["lots"][0][0]["lot_id"]
+surplus.rename(columns={"_id": "Médicament", "total_quantite": "Total quantite"}, inplace=True)
 
-# st.title("💊 Tableau des Médicaments")
+st.title("💊 Tableau des Médicaments sur plus")
+# 🎯 Filtres
+with st.sidebar:
+    st.header("🔍 Filtres")
+    medicament_list = surplus["Médicament"].unique()
+    selected_medicaments = st.multiselect(
+        "Nom du médicament",
+        options=medicament_list,
+        default=medicament_list
+    )
 
-# # 🎯 Filtres
-# with st.sidebar:
-#     st.header("🔍 Filtres")
-#     medicament_list = df["nom_medicament"].unique()
-#     selected_medicaments = st.multiselect(
-#         "Nom du médicament",
-#         options=medicament_list,
-#         default=medicament_list
-#     )
+# 🎯 Application des filtres
+filtered_df = surplus[surplus["Médicament"].isin(selected_medicaments)]
 
-# # 🎯 Application des filtres
-# filtered_df = df[df["nom_medicament"].isin(selected_medicaments)]
+# 💅 CSS personnalisé
+st.markdown("""
+    <style>
+    .ag-root-wrapper {
+        border-radius: 20px;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
+    .ag-header, .ag-cell {
+        font-family: Arial, sans-serif;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# # 💅 CSS personnalisé
-# st.markdown("""
-#     <style>
-#     .ag-root-wrapper {
-#         border-radius: 20px;
-#         font-family: Arial, sans-serif;
-#         overflow: hidden;
-#         box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-#     }
-#     .ag-header, .ag-cell {
-#         font-family: Arial, sans-serif;
-#     }
-#     </style>
-# """, unsafe_allow_html=True)
+# 🎨 Affichage du tableau avec AgGrid
+st.subheader("📋 Médicaments filtrés")
+gb = GridOptionsBuilder.from_dataframe(filtered_df)
+gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
+gb.configure_grid_options(domLayout='normal')
+grid_options = gb.build()
 
-# # 🎨 Affichage du tableau avec AgGrid
-# st.subheader("📋 Médicaments filtrés")
-# gb = GridOptionsBuilder.from_dataframe(filtered_df)
-# gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
-# gb.configure_grid_options(domLayout='normal')
-# grid_options = gb.build()
+AgGrid(
+    filtered_df,
+    gridOptions=grid_options,
+    theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
+    fit_columns_on_grid_load=True,
+    height=300,
+    width='100%'
+)
 
-# AgGrid(
-#     filtered_df,
-#     gridOptions=grid_options,
-#     theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
-#     fit_columns_on_grid_load=True,
-#     height=300,
-#     width='100%'
-# )
+
+# ✅ Données 
+Data = medicament_views.medoc_critique_result
+critique = pd.DataFrame(list(Data))
+critique["lots"]= critique["lots"][0][0]["lot_id"]
+critique.rename(columns={"_id": "Médicament", "total_quantite": "Total quantite"}, inplace=True)
+
+st.title("💊 Tableau des Médicaments sur plus")
+# 🎯 Filtres
+with st.sidebar:
+    st.header("🔍 Filtres")
+    medicament_list = critique["Médicament"].unique()
+    selected_medicaments = st.multiselect(
+        "Nom du médicament",
+        options=medicament_list,
+        default=medicament_list
+    )
+
+# 🎯 Application des filtres
+filtered_df = critique[critique["Médicament"].isin(selected_medicaments)]
+
+# 💅 CSS personnalisé
+st.markdown("""
+    <style>
+    .ag-root-wrapper {
+        border-radius: 20px;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
+    .ag-header, .ag-cell {
+        font-family: Arial, sans-serif;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 🎨 Affichage du tableau avec AgGrid
+st.subheader("📋 Médicaments filtrés")
+gb = GridOptionsBuilder.from_dataframe(filtered_df)
+gb.configure_default_column(filter=True, sortable=True, resizable=True, editable=False)
+gb.configure_grid_options(domLayout='normal')
+grid_options = gb.build()
+
+AgGrid(
+    filtered_df,
+    gridOptions=grid_options,
+    theme='material',  # autres options : 'streamlit', 'alpine', 'balham'
+    fit_columns_on_grid_load=True,
+    height=300,
+    width='100%'
+)
+
+
+
 
 
 
