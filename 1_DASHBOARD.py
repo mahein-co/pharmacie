@@ -3,6 +3,7 @@ import streamlit as st
 from st_aggrid import AgGrid
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from streamlit.components.v1 import html
+import math
 
 import pandas as pd
 import plotly.express as px
@@ -102,35 +103,13 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     # Deuxième ligne de scorecard
     st.markdown(dashboard_views.three_second_kpis_html, unsafe_allow_html=True)
     # Médicaments expirés ou bientôt expirés (alerte)
-    st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
+    # st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
     #------
-
-    # ✅ Fonction pour définir le statut avec badge HTML
-    def get_status(jours_restants):
-        if jours_restants < 1:
-            return '<span class="badge red">Déjà expiré</span>'
-        elif jours_restants < 30:
-            return f'<span class="badge grey">Dans {jours_restants} jours</span>'
-        elif jours_restants >= 30:
-            return f'<span class="badge green">Dans {jours_restants} jours</span>'
-        else:
-            return f'<span class="badge blue">Dans {jours_restants} jours</span>'
-
-    # ✅ Fonction pour définir le badge HTML selon les jours restants
-    # def get_status(jours_restants):
-    #     if jours_restants < 1:
-    #         return '<span class="badge red">Déjà expiré</span>'
-    #     elif jours_restants < 30:
-    #         return f'<span class="badge grey">Dans {jours_restants} jours</span>'
-    #     elif jours_restants >= 30:
-    #         return f'<span class="badge green">Dans {jours_restants} jours</span>'
-    #     else:
-    #         return f'<span class="badge blue">Dans {jours_restants} jours</span>'
-
-    # ✅ Récupération et préparation des données
+    # Charger les données
     data = dashboard_views.medicaments_expires
     df = pd.DataFrame(data)
 
+    # Renommer les colonnes
     df.rename(columns={
         "_id": "Lots",
         "nom_medicament": "Médicament",
@@ -139,85 +118,129 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
         "jours_restants": "Jours restants"
     }, inplace=True)
 
-    # ✅ Ajouter la colonne Statut avec badge HTML
-    df["Statut"] = df["Jours restants"].apply(get_status)
-
-    # ✅ Trier les données (optionnel)
-    df.sort_values("Jours restants", inplace=True)
-
-    # ✅ Barre latérale avec filtres
-    with st.sidebar:
-        st.subheader("🔍 Filtrer les médicaments")
-        med_names = df["Médicament"].unique().tolist()
-        selected_meds = st.multiselect("Choisir un ou plusieurs médicaments", med_names, default=med_names)
-        df = df[df["Médicament"].isin(selected_meds)]
-
-    # ✅ Titre et date
-    st.subheader("📋 Médicaments")
-    st.caption(f"📅 Données mises à jour le : {date.today().strftime('%d/%m/%Y')}")
-
-    # ✅ Configuration AgGrid
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_default_column(filter=True, sortable=True, resizable=True)
-
-    # ✅ Nom du renderer personnalisé (htmlRenderer)
-    gb.configure_column(
-        "Statut",
-        header_name="Statut",
-        cellRenderer="htmlRenderer",  # on appelle le renderer par son nom ici
-        autoHeight=True,
-        wrapText=True
-    )
-
-    # ✅ Build des options
-    grid_options = gb.build()
-
-    # # ✅ Injection de la fonction htmlRenderer (JavaScript)
-    # grid_options["components"] = {
-    #     "htmlRenderer": """
-    #         function(params) {
-    #             const e = document.createElement('div');
-    #             e.innerHTML = params.value;
-    #             return e;
-    #         }
-    #     """
-    # }
-
-
-    # ✅ Affichage AgGrid
-    AgGrid(
-        df,
-        gridOptions=grid_options,
-        allow_unsafe_jscode=True,
-        enable_enterprise_modules=False,
-        fit_columns_on_grid_load=True,
-        theme="material",
-        height=500,
-        width="100%",
-    )
-
-    # ✅ CSS badges
-    st.markdown("""
-        <style>
-        .badge {
-            display: inline-block;
-            padding: 0.35em 0.65em;
-            font-size: 0.75em;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            text-align: center;
+    # Fonction pour le statut
+    def get_status(jours):
+        if jours < 1:
+            color = "#f44336"
+            text = "Déjà expiré"
+        elif jours < 30:
+            color = "#ff9800"
+            text = f"Dans {jours} jours"
+        else:
+            color = "#4caf50"
+            text = f"Dans {jours} jours"
+        return f"""
+        <div style="
+            background-color: {color};
             color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: normal;
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+        ">{text}</div>
+        """
+
+    df["Status"] = df["Jours restants"].apply(get_status)
+
+    # 🔍 Barre de recherche en haut
+    search = st.text_input("🔍 Rechercher un médicament :")
+
+    # Filtrage selon la recherche
+    if search:
+        df = df[df.astype(str).apply(lambda row: row.str.contains(search, case=False), axis=1).any(axis=1)]
+
+    # 🎨 CSS tableau stylisé
+    st.markdown(
+        """
+        <style>
+        .table-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        .badge.red { background-color: #e74c3c; }
-        .badge.grey { background-color: #7f8c8d; }
-        .badge.green { background-color: #2ecc71; }
-        .badge.blue { background-color: #3498db; }
+        .custom-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+        .custom-table th {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        .custom-table td {
+            padding: 10px;
+            color: black;
+            vertical-align: middle;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .custom-table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
         </style>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True
+    )
+
+    # 🔢 Pagination : affichage tableau avec page
+    # Valeurs disponibles
+    rows_per_page_options = [5]
+    # Valeur par défaut
+    rows_per_page = st.session_state.get("rows_per_page", 5)
+
+    # Nombre total de pages
+    total_rows = len(df)
+    total_pages = math.ceil(total_rows / rows_per_page)
+
+    # Index de page courant
+    current_page = st.session_state.get("current_page", 1)
+    start = (current_page - 1) * rows_per_page
+    end = start + rows_per_page
+    df_page = df.iloc[start:end]
+
+    # 🧾 Affichage tableau
+    def render_table(df_part):
+        table_html = "<div class='table-wrapper'><table class='custom-table'>"
+        table_html += "<tr>" + "".join([f"<th>{col}</th>" for col in df_part.columns]) + "</tr>"
+        for _, row in df_part.iterrows():
+            table_html += "<tr>"
+            for col in df_part.columns:
+                table_html += f"<td>{row[col]}</td>"
+            table_html += "</tr>"
+        table_html += "</table></div>"
+        st.markdown(table_html, unsafe_allow_html=True)
+
+    # 📊 Affiche le tableau filtré et paginé
+    render_table(df_page)
+
+    # 📄 Bas de tableau : choix nombre de lignes et navigation
+    col1, col2 = st.columns(2)
+
+    with col1:
+        rows_per_page = st.selectbox("Afficher par page :", rows_per_page_options, index=rows_per_page_options.index(rows_per_page))
+        st.session_state["rows_per_page"] = rows_per_page
+        total_pages = math.ceil(len(df) / rows_per_page)  # Recalcul après changement
+
+    with col2:
+        current_page = st.number_input(f"Page (1-{total_pages})", min_value=1, max_value=total_pages, value=current_page, step=1)
+        st.session_state["current_page"] = current_page
+
+
+
+    
 
 
 else:
     st.error("Il est impossible de charger les données depuis la database.")
+
+
+
+
 
 
 
