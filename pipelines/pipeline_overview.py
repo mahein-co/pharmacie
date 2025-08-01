@@ -94,13 +94,19 @@ pipeline_medicament_expired = [
         }
     },
     {
-        "$group": {
-            "_id": "$lot_id",
-            "nom_medicament": { "$first": "$nom_medicament" },
-            "date_expiration": { "$first": "$date_expiration" },
-            "quantite_totale_restante": { "$first": "$quantite_restante" },
-            "jours_restants": { "$first": "$jours_restants" }
+      "$group": {
+        "_id": "$lot_id",
+        "nom_medicament": { "$first": "$nom_medicament" },
+        "date_expiration": { "$first": "$date_expiration" },
+        "quantite_totale_restante": { "$first": "$quantite_restante" },
+        "jours_restants": {
+          "$first": {
+            "$cond": [
+              { "$lte": ["$jours_restants", 0] }, 0, "$jours_restants"
+            ]
+          }
         }
+      }
     },
     {
         "$sort": {
