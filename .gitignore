@@ -6,6 +6,11 @@ __pycache__/
 
 others/*
 
+# log
+mongodb_ip.log
+mongodb.log
+corpus_rag.log
+
 # Constants variables
 .env
 

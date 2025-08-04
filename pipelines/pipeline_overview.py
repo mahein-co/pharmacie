@@ -774,5 +774,19 @@ pipeline_mois_plus_approvisionnement = [
   }
 ]
 
-
+# 33. Temps moyen de livraison par fournisseur
+pipeline_temps_moyen_livraison_fournisseur = [
+  {
+    "$group": {
+      "_id": "$fournisseur",
+      "temps_moyen_livraison": { "$avg": "$retard_jour" },
+      "nombre_commandes": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": {
+      "temps_moyen_livraison": -1
+    }
+  }
+]
 
