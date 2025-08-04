@@ -94,6 +94,8 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     # st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
     #------
     # Charger les données
+
+# Charger les données
     data = dashboard_views.medicaments_expires
     df = pd.DataFrame(data)
 
@@ -123,7 +125,7 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
             color: white;
             padding: 6px 12px;
             border-radius: 12px;
-            font-weight: normal;
+            font-weight: bold;
             display: inline-block;
             min-width: 100px;
             text-align: center;
@@ -177,7 +179,7 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
 
     # 🔢 Pagination : affichage tableau avec page
     # Valeurs disponibles
-    rows_per_page_options = [5]
+    rows_per_page_options = [5, 10]
     # Valeur par défaut
     rows_per_page = st.session_state.get("rows_per_page", 5)
 
@@ -217,6 +219,9 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     with col2:
         current_page = st.number_input(f"Page (1-{total_pages})", min_value=1, max_value=total_pages, value=current_page, step=1)
         st.session_state["current_page"] = current_page
+
+
+
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
