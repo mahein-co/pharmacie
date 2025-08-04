@@ -248,7 +248,7 @@ pipeline_medicament_surplus = [
     {
         "$group": {
             "_id": "$nom_medicament",
-            "total_quantite": { "$sum": "$quantite_restante" },
+            "total_quantite": { "$first": "$quantite_restante" },
             "lots": {
                 "$push": {
                     "lot_id": "$lot_id",
@@ -277,7 +277,7 @@ pipeline_medicament_critique = [
     {
         "$group": {
             "_id": "$nom_medicament",
-            "total_quantite": { "$sum": "$quantite_restante" },
+            "total_quantite": { "$first": "$quantite_restante" },
             "lots": {
                 "$push": {
                     "lot_id": "$lot_id",
