@@ -613,16 +613,36 @@ pipeline_quatite_medicament_approvisionne = [
 
 
 # 24. Médicament avec la plus faible marge
-# lowest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmin()
-# lowest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().min()
-# average_selling_price = df[df['nom_medicament'] == lowest_margin_medicine]['prix_unitaire'].mean()
-# margin_percentage = (lowest_margin_value / average_selling_price) * 100
+pipeline_plus_faible_marge = [
+    {"$sort": {"marge_prix": 1}},  # Tri croissant
+    {"$limit": 3},                 # Garder le premier
+    {"$project": {
+        "_id": 0,
+        "nom_medicament": 1,
+        "medicament_categorie": 1,
+        "marge_prix": 1,
+        "prix_unitaire": 1,
+        "prix_fournisseur": 1,
+        "lot_id": 1
+    }}
+]
 
-# # 24. Médicament avec la plus forte marge
-# highest_margin_medicine = df.groupby('nom_medicament')['marge_prix'].mean().idxmax()
-# highest_margin_value = df.groupby('nom_medicament')['marge_prix'].mean().max()
-# average_selling_price = df[df['nom_medicament'] == highest_margin_medicine]['prix_unitaire'].mean()
-# margin_percentage = (highest_margin_value / average_selling_price) * 100
+
+
+# # 25. Médicament avec la plus forte marge
+pipeline_plus_forte_marge = [
+    {"$sort": {"marge_prix": -1}},  # Tri décroissant
+    {"$limit": 3},                  # Garder le premier
+    {"$project": {
+        "_id": 0,
+        "nom_medicament": 1,
+        "medicament_categorie": 1,
+        "marge_prix": 1,
+        "prix_unitaire": 1,
+        "prix_fournisseur": 1,
+        "lot_id": 1
+    }}
+]
 
 # # 25. Evolution Total des pertes
 # expired_medicines = df[(pd.to_datetime(df['date_expiration']) < pd.to_datetime('today')) & (df['quantite_restante'] > 0)].copy()
@@ -789,4 +809,5 @@ pipeline_temps_moyen_livraison_fournisseur = [
     }
   }
 ]
+
 
