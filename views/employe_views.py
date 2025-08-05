@@ -35,9 +35,13 @@ try:
     age_moyen = age_moyen[0]["age_moyen"] if age_moyen else 0
 except Exception as e:
     age_moyen = 0
-    
-        
 
+
+#effectif employer par categorie 
+effectif_par_employe_categorie = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Eff_categorie,title="recuperation effectifs par categorie")
+
+#effectif employer par fonction
+effectif_par_employe_fonction = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Eff_fonction,title="recuperation effectifs par fonction")
 
 
 # CSS sombre moderne
