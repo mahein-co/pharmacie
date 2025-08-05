@@ -305,6 +305,23 @@ body {
 </style>
 """
 
+# clustering employees style
+clustering_employees_style = """
+  <style>
+  /* Supprimer le fond gris autour des widgets Streamlit */
+  .stPlotlyChart {
+      background-color: transparent;
+      padding: 0;
+      margin: 0;
+  }
+  div[data-testid="stVerticalBlock"] > div {
+      background-color: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+  }
+  </style>
+"""
+
 # talbe style
 table_css = """
 <style>
@@ -572,6 +589,21 @@ table_head_medicaments_expired_html = f"""
     </tbody>
 </table>
 </div>
+"""
+
+
+# all employes
+nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
+
+total_all_employes_html = f"""
+  <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Employés</p>
+        <p class="kpi-value" style="font-size:2rem;">{nombre_total_employes}</p>
+  </div>
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Âge Moyen</p>
+        <p class="kpi-value" style="font-size:2rem;">34</p>
+    </div>
 """
 
 
