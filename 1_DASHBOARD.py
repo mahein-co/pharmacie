@@ -7,9 +7,7 @@ import math
 
 import pandas as pd
 import plotly.express as px
-import duckdb
 from utils import load_data
-from db import init_duckdb
 import streamlit as st
 
 from datetime import datetime
@@ -24,14 +22,6 @@ import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 
 from datetime import timedelta,date
-# from gluonts.dataset.common import ListDataset
-# from gluonts.dataset.field_names import FieldName
-# from gluonts.mx import DeepAREstimator
-# from gluonts.mx.trainer import Trainer
-# from gluonts.mx.distribution.neg_binomial import NegativeBinomialOutput
-# import mxnet as mx
-# from gluonts.evaluation.backtest import make_evaluation_predictions
-
 
 from data.mongodb_ip_manager import MongoDBIPManager
 from data import mongodb_pipelines
@@ -41,13 +31,13 @@ from itertools import product
 from pipelines import pipelines_ventes
 
 # views
-from views import dashboard_views 
+from views import dashboard_views, employe_views 
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
 
-
+# PING IP
 def mongodb_ip_manager():   
     manager = MongoDBIPManager()
 
@@ -55,8 +45,6 @@ def mongodb_ip_manager():
     if current_ip:
         if not manager.ip_exists(current_ip):
             manager.add_ip(current_ip)
-
-
 mongodb_ip_manager()
 
 # Chargement CSS
@@ -65,7 +53,7 @@ with open("style/pharmacie.css", "r") as css_file:
 
 
 # Chargement des données
-df = load_data()
+# df = load_data()
 
 # Sidebar
 with st.sidebar:
@@ -80,7 +68,7 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #eee;
+    color: #7827e6;
     padding: 20px;
     font-family: 'Dancing Script', cursive;
     border-radius: 10px;
@@ -232,15 +220,69 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
         current_page = st.number_input(f"Page (1-{total_pages})", min_value=1, max_value=total_pages, value=current_page, step=1)
         st.session_state["current_page"] = current_page
 
-
-
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
 
 
+# II- CLUSTERING EMPLOYÉ
+if dashboard_views.employe_collection:
+    st.markdown(dashboard_views.clustering_employees_style, unsafe_allow_html=True)
+    st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
 
 
+    employe_df = pd.DataFrame(list(employe_views.employe_documents))
+    # Convert 'date_embauche' to datetime
+    employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
+
+    # Calculate ancienneté in years
+    today = pd.Timestamp(datetime.today())
+    employe_df['anciennete'] = (today - employe_df['date_embauche']).dt.days / 365.25
+
+    # Remove duplicates by keeping the most recent 'date_embauche' per 'id_employe'
+    employe_df_unique = employe_df.sort_values('date_embauche').drop_duplicates(subset='id_employe', keep='last')
+
+    # Keep only relevant columns for analysis
+    employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
+
+    # Clustering with KMeans
+    employe_clustering_plot = px.scatter(
+        employe_df_analysis,
+        x="anciennete",
+        y="salaire",
+        color="salaire",
+        size="salaire",
+        template="simple_white",
+    )
+
+    employe_clustering_plot.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",  
+        plot_bgcolor="rgba(0,0,0,0)",   
+        margin=dict(l=0, r=0, t=30, b=0)
+    )
+
+    html("""
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        
+    .section-title {
+        color: #7827e6;
+        font-family: 'Quicksand', cursive;
+        font-size: 35px;
+        margin-bottom:-40vh;
+    }
+    </style>
+    <h2 class="section-title">Employés</h2>
+    """)
+
+    # columns
+    col_metrics, col_clustering = st.columns([1, 3])
+    
+    with col_metrics:
+        st.markdown(dashboard_views.nombre_total_employes, unsafe_allow_html=True)
+    
+    with col_clustering:    
+        st.plotly_chart(employe_clustering_plot, use_container_width=True)
 
 
 
