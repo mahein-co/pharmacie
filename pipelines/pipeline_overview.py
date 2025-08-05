@@ -517,26 +517,30 @@ pipeline_chiffre_affaire_yearly = [
 
 # 20. Marge bénéficiaire moyenne
 pipeline_marge_beneficiaire_moyenne = [
-  {
-    "$project": {
-      "nom_medicament": 1,
-      "marge_pourcentage": {
-        "$multiply": [
-          { "$divide": ["$marge_prix", "$prix_unitaire"] },
-          100
-        ]
-      }
-    }
-  },
+  # {
+  #   "$project": {
+  #     # "nom_medicament": 1,
+  #     "prix_unitaire": 1,
+  #     "prix_fournisseur": 1,
+  #     "marge_pourcentage": {
+  #       "$multiply": [
+  #         { "$divide": ["$marge_prix", "$prix_unitaire"] },
+  #         100
+  #       ]
+  #     }
+  #   }
+  # },
   {
     "$group": {
-      "_id": "$nom_medicament",
-      "marge_pourcentage_moyenne": { "$avg": "$marge_pourcentage" }
+      "_id": None,
+      "prix_unitaire": {"$avg":"$prix_unitaire"},
+      "prix_fournisseur": {"$avg":"$prix_fournisseur"},
+      "marge_prix": { "$avg": "$marge_prix" }
     }
-  },
-  {
-    "$sort": { "marge_pourcentage_moyenne": -1 }
   }
+  # {
+  #   "$sort": { "marge_pourcentage_moyenne": -1 }
+  # }
 ]
 
 # 21. Médicament qui rapporte le plus
@@ -614,35 +618,85 @@ pipeline_quatite_medicament_approvisionne = [
 
 # 24. Médicament avec la plus faible marge
 pipeline_plus_faible_marge = [
-    {"$sort": {"marge_prix": 1}},  # Tri croissant
-    {"$limit": 3},                 # Garder le premier
-    {"$project": {
-        "_id": 0,
-        "nom_medicament": 1,
-        "medicament_categorie": 1,
-        "marge_prix": 1,
-        "prix_unitaire": 1,
-        "prix_fournisseur": 1,
-        "lot_id": 1
-    }}
+    {
+        "$group": {
+            "_id": "$nom_medicament",
+            "marge_min": {"$min": "$marge_prix"},
+            "categorie": {"$first": "$medicament_categorie"},
+            "prix_unitaire": {"$first": "$prix_unitaire"},
+            "prix_fournisseur": {"$first": "$prix_fournisseur"},
+            "lot_id": {"$first": "$lot_id"}
+        }
+    },
+    {"$sort": {"marge_min": 1}},  # Tri par marge croissante
+    {"$limit": 3},
+    {
+        "$project": {
+            "_id": 0,
+            "nom_medicament": "$_id",
+            "marge_prix": "$marge_min",
+            "medicament_categorie": "$categorie",
+            "prix_unitaire": 1,
+            "prix_fournisseur": 1,
+            "lot_id": 1
+        }
+    }
 ]
+
+# pipeline_plus_faible_marge = [
+#     {"$sort": {"marge_prix": 1}},  # Tri croissant
+#     {"$limit": 3},                 # Garder le premier
+#     {"$project": {
+#         "_id": 0,
+#         "nom_medicament": 1,
+#         "medicament_categorie": 1,
+#         "marge_prix": 1,
+#         "prix_unitaire": 1,
+#         "prix_fournisseur": 1,
+#         "lot_id": 1
+#     }}
+# ]
 
 
 
 # # 25. Médicament avec la plus forte marge
 pipeline_plus_forte_marge = [
-    {"$sort": {"marge_prix": -1}},  # Tri décroissant
-    {"$limit": 3},                  # Garder le premier
+    {
+        "$group": {
+            "_id": "$nom_medicament",
+            "marge_max": {"$max": "$marge_prix"},
+            "categorie": {"$first": "$medicament_categorie"},
+            "prix_unitaire": {"$first": "$prix_unitaire"},
+            "prix_fournisseur": {"$first": "$prix_fournisseur"},
+            "lot_id": {"$first": "$lot_id"}
+        }
+    },
+    {"$sort": {"marge_max": -1}},
+    {"$limit": 3},
     {"$project": {
         "_id": 0,
-        "nom_medicament": 1,
-        "medicament_categorie": 1,
-        "marge_prix": 1,
+        "nom_medicament": "$_id",
+        "marge_prix": "$marge_max",
+        "medicament_categorie": "$categorie",
         "prix_unitaire": 1,
         "prix_fournisseur": 1,
         "lot_id": 1
     }}
 ]
+
+# pipeline_plus_forte_marge = [
+#     {"$sort": {"marge_prix": -1}},  # Tri décroissant
+#     {"$limit": 3},                  # Garder le premier
+#     {"$project": {
+#         "_id": 0,
+#         "nom_medicament": 1,
+#         "medicament_categorie": 1,
+#         "marge_prix": 1,
+#         "prix_unitaire": 1,
+#         "prix_fournisseur": 1,
+#         "lot_id": 1
+#     }}
+# ]
 
 # # 25. Evolution Total des pertes
 # expired_medicines = df[(pd.to_datetime(df['date_expiration']) < pd.to_datetime('today')) & (df['quantite_restante'] > 0)].copy()
