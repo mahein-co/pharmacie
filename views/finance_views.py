@@ -32,7 +32,6 @@ medoc_forte_marge = overview_collection.make_specific_pipeline(pipeline=pipeline
 medoc_faible_marge = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_plus_faible_marge,title="recuperation faible marge")
 
 #Evolution Total des pertes dues aux médicaments invendus ou abîmés
-evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_pertes_expiration,title="recuperation pertes")
 
 
 
