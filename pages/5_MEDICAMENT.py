@@ -157,7 +157,15 @@ def render_table(critique, titre="📋 Tableau des données"):
     st.markdown(table_html, unsafe_allow_html=True)
 
 # 👉 3. Appel
-render_table(critique, titre="📊 Medicaments en critique")
+if critique.empty:
+    st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Rupture du stock sur derniers mois</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    render_table(critique, titre="📊 Medicaments en critique")
 
 
 # # 🎯 Filtres
@@ -268,73 +276,89 @@ def render_table(df_surplus, titre="📋 Tableau des données"):
     st.markdown(table_html, unsafe_allow_html=True)
 
 # 👉 3. Appel
-render_table(df_surplus, titre="📊 Medicaments en sur plus")
+
+if df_surplus.empty:
+    st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Rupture du stock sur derniers mois</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    render_table(df_surplus, titre="📊 Medicaments en sur plus")
 
 
 
-# data = medicament_views.rupture_stock
-# df_rupture = pd.DataFrame(data)
-# # df_rupture["lots"]= df_rupture["lots"][0][0]["lot_id"]
-# print("resultat : ",df_rupture)
-# # 👉 1. CSS global (UNE SEULE FOIS)
-# st.markdown("""
-#     <style>
-#         .custom-card {
-#             background-color: #f9f9f9;
-#             padding: 20px;
-#             border-radius: 15px;
-#             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-#             margin-bottom: 30px;
-#         }
-#         .custom-card h4 {
-#             text-align: center;
-#             margin-top: 0;
-#             margin-bottom: 20px;
-#         }
-#         .table-wrapper {
-#             overflow-x: auto;
-#         }
-#         .custom-table {
-#             width: 100%;
-#             border-collapse: collapse;
-#         }
-#         .custom-table th, .custom-table td {
-#             padding: 10px;
-#             border: 1px solid #ddd;
-#             text-align: left;
-#         }
-#         .custom-table th {
-#             background-color: #f0f0f0;
-#             font-weight: bold;
-#         }
-#         .custom-table tr:nth-child(even) {
-#             background-color: #f9f9f9;
-#         }
-#     </style>
-# """, unsafe_allow_html=True)
+data = medicament_views.rupture_stock
+df_rupture = pd.DataFrame(data)
+# df_rupture["lots"]= df_rupture["lots"][0][0]["lot_id"]
+# 👉 1. CSS global (UNE SEULE FOIS)
+st.markdown("""
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .custom-card h4 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .custom-table th, .custom-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .custom-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# # 👉 2. Fonction pour afficher une carte avec titre centré + tableau
-# def render_table(df_rupture, titre="📋 Tableau des données"):
-#     table_html = f"""
-#     <div class='custom-card'>
-#         <h4>{titre}</h4>
-#         <div class='table-wrapper'>
-#             <table class='custom-table'>
-#                 <tr>
-#                     {''.join([f"<th>{col}</th>" for col in df_rupture.columns])}
-#                 </tr>
-#                 {''.join([
-#                     "<tr>" + ''.join([f"<td>{row[col]}</td>" for col in df_rupture.columns]) + "</tr>"
-#                     for _, row in df_rupture.iterrows()
-#                 ])}
-#             </table>
-#         </div>
-#     </div>
-#     """
-#     st.markdown(table_html, unsafe_allow_html=True)
+# 👉 2. Fonction pour afficher une carte avec titre centré + tableau
+def render_table(df_rupture, titre="📋 Tableau des données"):
+    table_html = f"""
+    <div class='custom-card'>
+        <h4>{titre}</h4>
+        <div class='table-wrapper'>
+            <table class='custom-table'>
+                <tr>
+                    {''.join([f"<th>{col}</th>" for col in df_rupture.columns])}
+                </tr>
+                {''.join([
+                    "<tr>" + ''.join([f"<td>{row[col]}</td>" for col in df_rupture.columns]) + "</tr>"
+                    for _, row in df_rupture.iterrows()
+                ])}
+            </table>
+        </div>
+    </div>
+    """
+    st.markdown(table_html, unsafe_allow_html=True)
 
-# # 👉 3. Appel
-# render_table(df_rupture, titre="📊 Rupture du stock sur derniers mois")
+# 👉 3. Appel
+if df_rupture.empty:
+    st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Rupture du stock sur derniers mois</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    render_table(df_rupture, titre="📊 Rupture du stock sur derniers mois")
 
 with st.container():
 
@@ -444,7 +468,148 @@ with st.container():
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
+data = medicament_views.medoc_plus_cher
+df_medoc_plus_cher = pd.DataFrame(data)
+df_medoc_plus_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix Unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lots"},inplace=True)
+# 👉 1. CSS global (UNE SEULE FOIS)
+st.markdown("""
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .custom-card h4 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .custom-table th, .custom-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .custom-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
+# 👉 2. Fonction pour afficher une carte avec titre centré + tableau
+def render_table(df_medoc_plus_cher, titre="📋 Tableau des données"):
+    table_html = f"""
+    <div class='custom-card'>
+        <h4>{titre}</h4>
+        <div class='table-wrapper'>
+            <table class='custom-table'>
+                <tr>
+                    {''.join([f"<th>{col}</th>" for col in df_medoc_plus_cher.columns])}
+                </tr>
+                {''.join([
+                    "<tr>" + ''.join([f"<td>{row[col]}</td>" for col in df_medoc_plus_cher.columns]) + "</tr>"
+                    for _, row in df_medoc_plus_cher.iterrows()
+                ])}
+            </table>
+        </div>
+    </div>
+    """
+    st.markdown(table_html, unsafe_allow_html=True)
+
+# 👉 3. Appel
+if df_medoc_plus_cher.empty:
+    st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Liste de médicaments plus chers</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    render_table(df_medoc_plus_cher, titre="📊 Liste de médicaments plus chers")
+
+
+data = medicament_views.medoc_moins_cher
+df_medoc_moins_cher = pd.DataFrame(data)
+df_medoc_moins_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix Unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lots"},inplace=True)
+# 👉 1. CSS global (UNE SEULE FOIS)
+st.markdown("""
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .custom-card h4 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .custom-table th, .custom-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .custom-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# 👉 2. Fonction pour afficher une carte avec titre centré + tableau
+def render_table(df_medoc_moins_cher, titre="📋 Tableau des données"):
+    table_html = f"""
+    <div class='custom-card'>
+        <h4>{titre}</h4>
+        <div class='table-wrapper'>
+            <table class='custom-table'>
+                <tr>
+                    {''.join([f"<th>{col}</th>" for col in df_medoc_moins_cher.columns])}
+                </tr>
+                {''.join([
+                    "<tr>" + ''.join([f"<td>{row[col]}</td>" for col in df_medoc_moins_cher.columns]) + "</tr>"
+                    for _, row in df_medoc_moins_cher.iterrows()
+                ])}
+            </table>
+        </div>
+    </div>
+    """
+    st.markdown(table_html, unsafe_allow_html=True)
+
+# 👉 3. Appel
+if df_medoc_moins_cher.empty:
+    st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Liste de médicaments moins chers</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+else:
+    render_table(df_medoc_moins_cher, titre="📊 Liste de médicaments moins chers")
 
 
 
