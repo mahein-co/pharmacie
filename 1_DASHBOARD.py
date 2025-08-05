@@ -52,27 +52,23 @@ with open("style/pharmacie.css", "r") as css_file:
     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
 
 
-# Chargement des données
-# df = load_data()
-
 # Sidebar
 with st.sidebar:
     if st.button("Recharger les données", key="reload", help="Cliquez pour recharger les données", use_container_width=True):
         st.cache_data.clear()
-    st.sidebar.image("images/logoMahein.png", caption="", use_container_width=True)
+    st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
 
 # -----------------------------------------------------------------
-# TITLE
+# DASHBOARD TITLE
 html("""
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
     color: #7827e6;
-    padding: 20px;
     font-family: 'Dancing Script', cursive;
-    border-radius: 10px;
     font-size: 74px;
+    margin-top:-1rem;
   }
 </style>
 <div class="box">Dashboard</div>
@@ -84,21 +80,66 @@ st.markdown(dashboard_views.table_css, unsafe_allow_html=True)
 st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
 
 
-# I- 6 FIRST SCORECARD
-if dashboard_views.vente_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
-    # Priemère ligne de scorecard
-    st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
-    # Deuxième ligne de scorecard
-    st.markdown(dashboard_views.three_second_kpis_html, unsafe_allow_html=True)
-    # Médicaments expirés ou bientôt expirés (alerte)
-    # st.markdown(dashboard_views.rows_table_html, unsafe_allow_html=True)
-    #------
-    # Charger les données
-
 # Charger les données
-    data = dashboard_views.medicaments_expires
-    df = pd.DataFrame(data)
+data = dashboard_views.medicaments_expires
+df = pd.DataFrame(data)
 
+# I- 6 FIRST SCORECARD
+if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
+    # 1. DAHSBOARD --------------------------------------------
+    st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
+
+    # 2. EMPLOYEES --------------------------------------------
+    st.markdown(dashboard_views.clustering_employees_style, unsafe_allow_html=True)
+    employe_df = pd.DataFrame(list(employe_views.employe_documents))
+    employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
+
+    # Calculate ancienneté in years
+    today = pd.Timestamp(datetime.today())
+    employe_df['anciennete'] = (today - employe_df['date_embauche']).dt.days / 365.25
+
+    # Remove duplicates by keeping the most recent 'date_embauche' per 'id_employe'
+    employe_df_unique = employe_df.sort_values('date_embauche').drop_duplicates(subset='id_employe', keep='last')
+
+    # Keep only relevant columns for analysis
+    employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
+    employe_correlation = employe_df_analysis.corr().loc['anciennete', 'salaire']
+
+    # Clustering with KMeans
+    employe_clustering_plot = px.scatter(
+        employe_df_analysis,
+        x="anciennete",
+        y="salaire",
+        color="salaire",
+        size="salaire",
+        template="simple_white",
+        title=f"Correlation: {employe_correlation}"
+    )
+    employe_clustering_plot.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",  
+        plot_bgcolor="rgba(0,0,0,0)",   
+        margin=dict(l=0, r=0, t=30, b=0),
+        height=380,
+        title={
+        'y':0.95,                              
+        'x':0.5,                               
+        'xanchor': 'center',                   
+        'yanchor': 'top'                      
+    },
+    title_font=dict(
+        size=20,            
+        color='black',      
+        family='Arial'     
+    )
+    )
+
+    col_metrics, col_clustering = st.columns([1, 3])
+    with col_metrics:
+        st.markdown(dashboard_views.total_all_employes_html, unsafe_allow_html=True)
+    with col_clustering:    
+        st.plotly_chart(employe_clustering_plot, use_container_width=True)
+
+    # 3. MEDICAMENTS --------------------------------------------
     # Renommer les colonnes
     df.rename(columns={
         "_id": "Lots",
@@ -113,7 +154,7 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
         if jours < 1:
             color = "#f44336"
             text = "Déjà expiré"
-        elif jours < 30:
+        elif jours < 50:
             color = "#ff9800"
             text = f"Dans {jours} jours"
         else:
@@ -123,9 +164,10 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
         <div style="
             background-color: {color};
             color: white;
+            text-decoration:uppercase;
             padding: 6px 12px;
             border-radius: 12px;
-            font-weight: bold;
+            font-weight: normal;
             display: inline-block;
             min-width: 100px;
             text-align: center;
@@ -135,7 +177,7 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
     df["Status"] = df["Jours restants"].apply(get_status)
 
     # 🔍 Barre de recherche en haut
-    search = st.text_input("🔍 Rechercher un médicament :")
+    search = st.text_input("Rechercher un médicament :")
 
     # Filtrage selon la recherche
     if search:
@@ -148,7 +190,8 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
         .table-wrapper {
             border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-top: -20px;
+            margin-bottom: 10px;
         }
         .custom-table {
             border-collapse: collapse;
@@ -157,8 +200,8 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
             color: black;
         }
         .custom-table th {
-            background-color: black;
-            color: white;
+            background-color: #eee;
+            color: #050505;
             padding: 10px;
             text-align: left;
         }
@@ -232,66 +275,6 @@ if dashboard_views.vente_collection and dashboard_views.overview_collection and 
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
-
-
-# II- CLUSTERING EMPLOYÉ
-if dashboard_views.employe_collection:
-    st.markdown(dashboard_views.clustering_employees_style, unsafe_allow_html=True)
-    st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
-
-
-    employe_df = pd.DataFrame(list(employe_views.employe_documents))
-    # Convert 'date_embauche' to datetime
-    employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
-
-    # Calculate ancienneté in years
-    today = pd.Timestamp(datetime.today())
-    employe_df['anciennete'] = (today - employe_df['date_embauche']).dt.days / 365.25
-
-    # Remove duplicates by keeping the most recent 'date_embauche' per 'id_employe'
-    employe_df_unique = employe_df.sort_values('date_embauche').drop_duplicates(subset='id_employe', keep='last')
-
-    # Keep only relevant columns for analysis
-    employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
-
-    # Clustering with KMeans
-    employe_clustering_plot = px.scatter(
-        employe_df_analysis,
-        x="anciennete",
-        y="salaire",
-        color="salaire",
-        size="salaire",
-        template="simple_white",
-    )
-
-    employe_clustering_plot.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",  
-        plot_bgcolor="rgba(0,0,0,0)",   
-        margin=dict(l=0, r=0, t=30, b=0)
-    )
-
-    html("""
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
-        
-    .section-title {
-        color: #7827e6;
-        font-family: 'Quicksand', cursive;
-        font-size: 35px;
-        margin-bottom:-40vh;
-    }
-    </style>
-    <h2 class="section-title">Employés</h2>
-    """)
-
-    # columns
-    col_metrics, col_clustering = st.columns([1, 3])
-    
-    with col_metrics:
-        st.markdown(dashboard_views.nombre_total_employes, unsafe_allow_html=True)
-    
-    with col_clustering:    
-        st.plotly_chart(employe_clustering_plot, use_container_width=True)
 
 
 
