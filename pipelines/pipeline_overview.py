@@ -301,7 +301,7 @@ pipeline_rupture_stock = [
     "$match": {
       "quantite_restante": 0,
       "date_de_vente": {
-        "$gte": TODAY - timedelta(days=120)
+        "$gte": TODAY - timedelta(days=400)
       }
     }
   },
@@ -722,7 +722,9 @@ pipeline_panier_moyen_vente = [
 pipeline_top_vendeur = [
   {
     "$group": {
-      "_id": "$nom_employe",
+      "_id": {
+        "nom": "$nom_employe",
+      },
       "total_ventes": { "$sum": "$quantite" },
       "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
     }
@@ -735,12 +737,13 @@ pipeline_top_vendeur = [
   }
 ]
 
-
 # 31. Vendeur non habilité
 pipeline_vendeur_non_habilite = [
   {
     "$group": {
-      "_id": "$nom_employe",
+      "_id": {
+        "nom": "$nom_employe",
+      },
       "total_ventes": { "$sum": "$quantite" },
       "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
     }
@@ -789,4 +792,6 @@ pipeline_temps_moyen_livraison_fournisseur = [
     }
   }
 ]
+
+
 
