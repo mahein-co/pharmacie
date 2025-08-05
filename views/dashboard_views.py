@@ -6,12 +6,19 @@ from st_aggrid import AgGrid
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 
 from pipelines import pipeline_overview
+from views import employe_views
+
+import base64
 
 # Initialisation a MongoDB
 vente_collection = MongoDBClient(collection_name="vente")
 overview_collection = pipeline_overview.overview_collection
 medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
+
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
 
 # I- S C O R E C A R D
@@ -139,7 +146,7 @@ medicament_rapportant_moins = overview_collection.make_specific_pipeline(
 )
 
 
-# STYLES
+# STYLES --------------------------------------
 custom_css = """
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
@@ -385,6 +392,7 @@ table_css = """
 </style>
 """
 
+# KPI STLYE
 kpis_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&display=swap');
@@ -400,30 +408,42 @@ kpis_style = """
 
 .kpi-container {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   margin-bottom: 25px;
   font-family:"Roboto", cursive;
 
 }
 
 .kpi-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 15px;
+  border: 1px solid #eee;
   padding: 20px;
+  margin-bottom: 10px;
   flex: 1;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
+.card {
+    background-color: #1e1e26;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
 .kpi-title {
+  color: #888;
   margin: 0;
-  color:#fff; 
-  font-weight:bold;
-  font-size: 3rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: right;
 }
 .kpi-value {
   font-size: 3rem;
   color: #000;
-  font-weight: bold;
+  font-weight: normal;
+  text-align: right;
   margin: 5px 0;
 }
 .kpi-change {
@@ -514,43 +534,89 @@ kpis_style = """
 </style>
 """
 
-# ========== KPI Cards ===============
+
+# IMAGES -------------------------------------------
+# finance
+finance_icon_b64 = get_base64_image("assets/icons/terminal.png")
+finance_icon_html = f'<img src="data:image/png;base64,{finance_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# vente
+ventes_icon_b64 = get_base64_image("assets/icons/vente.png")
+ventes_icon_html = f'<img src="data:image/png;base64,{ventes_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# stock
+stock_icon_b64 = get_base64_image("assets/icons/stock.png")
+stock_icon_html = f'<img src="data:image/png;base64,{stock_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# perte
+perte_icon_b64 = get_base64_image("assets/icons/perte.png")
+perte_icon_html = f'<img src="data:image/png;base64,{perte_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# employees
+employees_icon_b64 = get_base64_image("assets/icons/employees.png")
+employees_icon_html = f'<img src="data:image/png;base64,{employees_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# salaire
+salaire_icon_b64 = get_base64_image("assets/icons/salaire.png")
+salaire_icon_html = f'<img src="data:image/png;base64,{salaire_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+# age
+age_icon_b64 = get_base64_image("assets/icons/age.png")
+age_icon_html = f'<img src="data:image/png;base64,{age_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+
+
+
+
+# HTML ----------------------------------------------
 three_first_kpis_html = f"""
-<div class="kpi-container">
+<div class="kpi-container" style="margin-top:-6rem;">
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Finance</p>
-        <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire_str} MGA</p>
+      <div style="text-align: left; position:absolute;">
+      {finance_icon_html}
+      </div>
+        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Total Finance (MGA)</p>
+        <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Ventes (Unités)</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_total_vente_str}</p>
+      <div style="text-align: left; position:absolute;">
+      {ventes_icon_html}
+      </div>
+        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Total Ventes</p>
+        <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
     </div>
     <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Approvisionnement</p>
-        <p class="kpi-value" style="font-size:2rem;">{pipeline_overview.total_approvisionnements}</p>
+      <div style="text-align: left; position:absolute;">
+      {stock_icon_html}
+      </div>
+        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Valeur Stocks (MGA)</p>
+        <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
     </div>
+    <div class="kpi-card">
+      <div style="text-align: left; position:absolute;">
+      {perte_icon_html}
+      </div>
+      <p class="kpi-title" style="font-size:1rem; color:#48494B;">
+        Total Pertes (MGA)
+      </p>
+      <p class="kpi-value" style="font-size:1.5rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}</p>
+    </div>
+
 </div>
 """
 
-three_second_kpis_html = f"""
-<div class="kpi-container">
-    <div class="kpi-card">
-      <div class="kpi-title" style="font-size:1.2rem; color:#48494B;">
-          Total Pertes
-          <span style="font-size:0.9rem;">(Médicaments invendus)</span>
-      </div>
-      <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}&nbsp;MGA</div>
-    </div>
-    <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Valeur Stock</p>
-        <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}&nbsp;MGA</p>
-    </div>
-    <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Médicaments</p>
-        <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
-    </div>
-</div>
-"""
+# three_second_kpis_html = f"""
+# <div class="kpi-container">
+#     <div class="kpi-card">
+#       <div class="kpi-title" style="font-size:1.2rem; color:#48494B;">
+#           Total Pertes
+#           <span style="font-size:0.9rem;">(Médicaments invendus)</span>
+#       </div>
+#       <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}&nbsp;MGA</div>
+#     </div>
+#     <div class="kpi-card">
+#         <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Valeur Stock</p>
+#         <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}&nbsp;MGA</p>
+#     </div>
+#     <div class="kpi-card">
+#         <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Médicaments</p>
+#         <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
+#     </div>
+# </div>
+# """
 
 def get_status(jours_restants):
     if jours_restants < 1:
@@ -596,14 +662,27 @@ table_head_medicaments_expired_html = f"""
 nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
 
 total_all_employes_html = f"""
-  <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Employés</p>
-        <p class="kpi-value" style="font-size:2rem;">{nombre_total_employes}</p>
-  </div>
-    <div class="kpi-card">
-        <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Âge Moyen</p>
-        <p class="kpi-value" style="font-size:2rem;">34</p>
+  <div class="kpi-card" style="margin-bottom:1.5rem;">
+    <div style="text-align: left; position:absolute;">
+      {employees_icon_html}
     </div>
+    <p class="kpi-title" color:#48494B;">Total Employés</p>
+    <p class="kpi-value" style="font-size:1.5rem;">{nombre_total_employes}</p>
+  </div>
+  <div class="kpi-card" style="margin-bottom:1.5rem;">
+    <div style="text-align: left; position:absolute;">
+      {salaire_icon_html}
+    </div>
+    <p class="kpi-title" color:#48494B;">Salaire Moyen (MGA)</p>
+    <p class="kpi-value" style="font-size:1.5rem;">{employe_views.salaire_moyen}</p>
+  </div>
+  <div class="kpi-card" style="margin-bottom:1.5rem;">
+    <div style="text-align: left; position:absolute;">
+      {age_icon_html}
+    </div>
+    <p class="kpi-title" color:#48494B;">Âge Moyen</p>
+    <p class="kpi-value" style="font-size:1.5rem;">{round(employe_views.age_moyen)} ans</p>
+  </div>
 """
 
 
