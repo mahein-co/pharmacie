@@ -796,9 +796,7 @@ pipeline_panier_moyen_vente = [
 pipeline_top_vendeur = [
   {
     "$group": {
-      "_id": {
-        "nom": "$nom_employe",
-      },
+      "_id": "$nom_employe",
       "total_ventes": { "$sum": "$quantite" },
       "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
     }
@@ -815,9 +813,7 @@ pipeline_top_vendeur = [
 pipeline_vendeur_non_habilite = [
   {
     "$group": {
-      "_id": {
-        "nom": "$nom_employe",
-      },
+      "_id": "$nom_employe",
       "total_ventes": { "$sum": "$quantite" },
       "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
     }
@@ -845,10 +841,10 @@ pipeline_mois_plus_approvisionnement = [
   },
   {
     "$sort": { "total_approvisionnement": -1 }
-  },
-  {
-    "$limit": 3
   }
+  # {
+  #   "$limit": 3
+  # }
 ]
 
 # 33. Temps moyen de livraison par fournisseur
