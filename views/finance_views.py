@@ -8,6 +8,7 @@ from pipelines import pipelines_finance,pipeline_overview
 
 
 
+
 #importation de baseDB via MongoDB
 overview_collection = MongoDBClient(collection_name="overview")
 vente_collection = MongoDBClient(collection_name="vente")
@@ -33,6 +34,16 @@ medoc_faible_marge = overview_collection.make_specific_pipeline(pipeline=pipelin
 
 #Evolution Total des pertes dues aux médicaments invendus ou abîmés
 
+
+#chriffre d'affraire
+CA_par_jour = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_daily,title="recuperation CA jour")
+
+CA_par_semaine = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_weekly,title="recuperation CA par semaine")
+
+
+CA_par_mois = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_monthly,title="recuperation CA par mois")
+
+CA_par_Annee = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_yearly,title="recuperation CA par Annee")
 
 
 # CSS sombre moderne
@@ -331,18 +342,18 @@ kpis_style = """
 """
 
 
+def get_kpi_html(filtre, total_chiffre_affaire):
 
-
-kpis_html = f"""
-<div class="kpi-card">
-    <p class="kpi-title" style="font-size:1.2rem;">Total Chiffre d'Affaire</p>
-    <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire}</p>
-</div>
-<div class="kpi-card">
-    <p class="kpi-title" style="font-size:1.2rem;"> CA (filtre Actuel)</p>
-    <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire}</p>
-</div>
-"""
-
+    kpis_html = f"""
+    <div class="kpi-card">
+        <p class="kpi-title" style="font-size:1.2rem;">Total Chiffre d'Affaire</p>
+        <p class="kpi-value" style="font-size:2rem;">{dashboard_views.total_chiffre_affaire}</p>
+    </div>
+    <div class="kpi-card">
+            <p class="kpi-title" style="font-size:1.2rem;">CA ({filtre})</p>
+            <p class="kpi-value" style="font-size:2rem;">{total_chiffre_affaire:,.0f} MGA</p>
+        </div>
+    """
+    return kpis_html
 
 

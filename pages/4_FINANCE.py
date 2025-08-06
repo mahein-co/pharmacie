@@ -5,7 +5,8 @@ import plotly.express as px
 from streamlit.components.v1 import html
 from views import finance_views
 from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_finance
+from pipelines import pipelines_finance,pipeline_overview
+
 
 
 
@@ -32,32 +33,43 @@ html("""
 # Données exemple
 # --------------------
 
+#Data 
+# 🔹 Import des données depuis le backend
+overview_documents = pipeline_overview.overview_collection.find_all_documents()
+df = pd.DataFrame(overview_documents)
+# Assurer que la colonne est bien au format datetime
+df['date_de_vente'] = pd.to_datetime(df['date_de_vente'])
+df['chiffre_affaires'] = df['quantite'] * df['prix_unitaire']
 
-np.random.seed(42)
-dates = pd.date_range(start="2024-01-01", end="2024-07-21", freq='D')
-data = pd.DataFrame({
-    'date': np.random.choice(dates, 200),
-    'montant': np.random.randint(1000, 10000, size=200)
-})
-data['date'] = pd.to_datetime(data['date'])
+# Résumés temporels
+daily_revenue = df.resample('D', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
+weekly_revenue = df.resample('W', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
+monthly_revenue = df.resample('ME', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
+year_revenue = df.resample('YE', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
 
-# Filtre : Jour, Semaine, Mois
-filtre = st.selectbox("Filtrer par :", ["Jour", "Semaine", "Mois"])
+filtre = st.selectbox("Filtrer par :", ["Jour", "Semaine", "Mois", "Année"])
 
 if filtre == "Jour":
-    data_grouped = data.groupby(data['date'].dt.date)['montant'].sum().reset_index()
-    data_grouped['label'] = pd.to_datetime(data_grouped['date']).dt.strftime('%d %b')
+    df_filtre = daily_revenue.copy()
+    df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%d %b')
 elif filtre == "Semaine":
-    data['semaine'] = data['date'].dt.to_period("W").apply(lambda r: r.start_time)
-    data_grouped = data.groupby('semaine')['montant'].sum().reset_index()
-    data_grouped['label'] = pd.to_datetime(data_grouped['semaine']).dt.strftime('Sem. %W')
+    df_filtre = weekly_revenue.copy()
+    df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('Sem. %W')
 elif filtre == "Mois":
-    data['mois'] = data['date'].dt.to_period("M").dt.to_timestamp()
-    data_grouped = data.groupby('mois')['montant'].sum().reset_index()
-    data_grouped['label'] = pd.to_datetime(data_grouped['mois']).dt.strftime('%b %Y')
+    df_filtre = monthly_revenue.copy()
+    df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%b %Y')
+elif filtre == "Année":
+    df_filtre = year_revenue.copy()
+    df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%Y')
 
-total_ca = data['montant'].sum()
-dernier_val = data_grouped['montant'].iloc[-1]
+df_filtre.rename(columns={
+    'date_de_vente': 'Période',
+    'chiffre_affaires': "Chiffre d'affaires"
+}, inplace=True)
+
+total_chiffre_affaire = df_filtre["Chiffre d'affaires"].sum()
+dernier_ca = df_filtre["Chiffre d'affaires"].iloc[-1]
+
 
 #importation html et css
 st.markdown(finance_views.custom_css, unsafe_allow_html=True)
@@ -65,9 +77,12 @@ st.markdown(finance_views.kpis_style, unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 3])
 with col1:
-    st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+    html_code = finance_views.get_kpi_html(filtre, total_chiffre_affaire)
+    st.markdown(html_code, unsafe_allow_html=True)
 with col2:
-    st.line_chart(data=data_grouped.set_index('label')['montant'], use_container_width=True)
+    # 🔹 Affichage du graphique
+    st.subheader(f"Évolution du chiffre d'affaires par {filtre.lower()}")
+    st.line_chart(data=df_filtre.set_index('Période')["Chiffre d'affaires"])
 
 
 with st.container():
@@ -177,7 +192,7 @@ with st.container():
             "marge_prix": "Marge"
         }, inplace=True)
         df_forte_marge["Marge"] = df_forte_marge["Marge"].round(2)
-        df_forte_marge = df_forte_marge.sort_values(by="Marge", ascending=False).head(3)
+        df_forte_marge = df_forte_marge.sort_values(by="Marge", ascending=False)
 
         # 🔹 CSS pour carte centrée
         st.markdown("""
@@ -250,7 +265,7 @@ with st.container():
             "marge_prix": "Marge"
         }, inplace=True)
         df_faible_marge["Marge"] = df_faible_marge["Marge"].round(2)
-        df_faible_marge = df_faible_marge.sort_values(by="Marge", ascending=False).head(3)
+        df_faible_marge = df_faible_marge.sort_values(by="Marge", ascending=False)
 
         # 🔹 CSS pour carte centrée
         st.markdown("""
