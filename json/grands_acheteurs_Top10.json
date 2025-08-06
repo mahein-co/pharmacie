@@ -4,16 +4,12 @@
         "Pourcentage": 11.46
     },
     {
-        "Nom_Client": "Agnès Yóu",
-        "Pourcentage": 11.46
-    },
-    {
         "Nom_Client": "Mélodie Athéna",
         "Pourcentage": 11.46
     },
     {
-        "Nom_Client": "Mélys Ruò",
-        "Pourcentage": 9.85
+        "Nom_Client": "Agnès Yóu",
+        "Pourcentage": 11.46
     },
     {
         "Nom_Client": "Faîtes Nélie",
@@ -24,7 +20,11 @@
         "Pourcentage": 9.85
     },
     {
-        "Nom_Client": "Anaëlle Eugénie",
+        "Nom_Client": "Mélys Ruò",
+        "Pourcentage": 9.85
+    },
+    {
+        "Nom_Client": "Léonie Erwéi",
         "Pourcentage": 9.65
     },
     {
@@ -32,11 +32,11 @@
         "Pourcentage": 9.65
     },
     {
-        "Nom_Client": "Léonie Erwéi",
+        "Nom_Client": "Anaëlle Eugénie",
         "Pourcentage": 9.65
     },
     {
-        "Nom_Client": "Erwéi Håkan",
+        "Nom_Client": "Marlène Béatrice",
         "Pourcentage": 7.11
     }
 ]

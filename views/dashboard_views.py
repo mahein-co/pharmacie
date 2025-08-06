@@ -21,7 +21,7 @@ def get_base64_image(image_path):
         return base64.b64encode(img_file.read()).decode()
 
 
-# I- S C O R E C A R D
+# I- D A S H B O A R D
 # 1.1. chiffre d'affaire total
 chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
 try:
@@ -55,6 +55,10 @@ try:
   total_pertes_medicaments = pertes_medicaments[0]["total_pertes"] if pertes_medicaments else 0
 except Exception as e:
   total_pertes_medicaments = 0
+
+# 1.6. Dataframe des ventes
+overview_docs = overview_collection.find_all_documents()
+df_ventes = pd.DataFrame(overview_docs)
 
     
 # II. MEDICAMENTS
@@ -433,7 +437,7 @@ kpis_style = """
     color: white;
 }
 .kpi-title {
-  color: #888;
+  color:#48494B;
   margin: 0;
   font-size: 1rem;
   font-weight: bold;
@@ -568,21 +572,21 @@ three_first_kpis_html = f"""
       <div style="text-align: left; position:absolute;">
       {finance_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Total Finance (MGA)</p>
+        <p class="kpi-title" style="font-size:1rem;">Total Finance (MGA)</p>
         <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
     </div>
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {ventes_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Total Ventes</p>
+        <p class="kpi-title" style="font-size:1rem;">Total Ventes</p>
         <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
     </div>
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {stock_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem; color:#48494B;">Valeur Stocks (MGA)</p>
+        <p class="kpi-title" style="font-size:1rem;">Valeur Stocks (MGA)</p>
         <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
     </div>
     <div class="kpi-card">
@@ -597,26 +601,6 @@ three_first_kpis_html = f"""
 
 </div>
 """
-
-# three_second_kpis_html = f"""
-# <div class="kpi-container">
-#     <div class="kpi-card">
-#       <div class="kpi-title" style="font-size:1.2rem; color:#48494B;">
-#           Total Pertes
-#           <span style="font-size:0.9rem;">(Médicaments invendus)</span>
-#       </div>
-#       <div class="kpi-value" style="font-size:2rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}&nbsp;MGA</div>
-#     </div>
-#     <div class="kpi-card">
-#         <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Valeur Stock</p>
-#         <p class="kpi-value" style="font-size:2rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}&nbsp;MGA</p>
-#     </div>
-#     <div class="kpi-card">
-#         <p class="kpi-title" style="font-size:1.2rem; color:#48494B;">Total Médicaments</p>
-#         <p class="kpi-value" style="font-size:2rem;">{nb_total_medicaments}</p>
-#     </div>
-# </div>
-# """
 
 def get_status(jours_restants):
     if jours_restants < 1:
