@@ -276,7 +276,7 @@ else:
 
 # PREDICTION DE RUPTURE DE STOCK
 # Étape 1 : préparation des colonnes nécessaires
-overview_docs = dashboard_views.overview_collection.find_all_documents()
+overview_docs = dashboard_views.vente_collection.find_all_documents()
 overview_df = pd.DataFrame(overview_docs)
 overview_df['jour_semaine'] = overview_df['date_de_vente'].dt.dayofweek  # 0 = Lundi, 6 = Dimanche
 overview_df['mois_num'] = overview_df['date_de_vente'].dt.month
@@ -290,11 +290,11 @@ with st.container():
     overview_df['mois_num'] = overview_df['date_de_vente'].dt.month
 
     # Étape 2 : calcul des probabilités historiques par mois et jour de semaine
-    combo_group = overview_df.groupby(['lot_id', 'mois_num', 'jour_semaine'])['quantite']
+    combo_group = overview_df.groupby(['id_medicament', 'mois_num', 'jour_semaine'])['quantite']
     combo_zero = combo_group.apply(lambda x: (x == 0).sum()).reset_index(name='nb_zero')
     combo_total = combo_group.count().reset_index(name='total')
 
-    combo_stats = pd.merge(combo_zero, combo_total, on=['lot_id', 'mois_num', 'jour_semaine'])
+    combo_stats = pd.merge(combo_zero, combo_total, on=['id_medicament', 'mois_num', 'jour_semaine'])
     combo_stats['proba_zero'] = combo_stats['nb_zero'] / combo_stats['total']
 
     # Mapper les noms des jours de la semaine pour affichage
@@ -308,7 +308,7 @@ with st.container():
     mois_annees = next_months.year
 
     # Générer toutes les combinaisons possibles
-    unique_meds = combo_stats['lot_id'].unique()
+    unique_meds = combo_stats['id_medicament'].unique()
     jours_semaine = combo_stats['jour_semaine'].unique()
     combinations = list(product(unique_meds, zip(mois_annees, mois_numeros), jours_semaine))
 
@@ -317,7 +317,7 @@ with st.container():
     # Étape 4 : construire la table de prévision avec dégradation hebdomadaire
     for med_id, (annee, mois), jour in combinations:
         match = combo_stats[
-            (combo_stats['lot_id'] == med_id) &
+            (combo_stats['id_medicament'] == med_id) &
             (combo_stats['mois_num'] == mois) &
             (combo_stats['jour_semaine'] == jour)
         ]
@@ -326,7 +326,7 @@ with st.container():
         for semaine_idx in range(4):  # environ 4 semaines par mois
             adjusted_proba = max(base_proba - 0.01 * semaine_idx, 0)
             forecast_rows.append({
-                'lot_id': med_id,
+                'id_medicament': med_id,
                 'annee': annee,
                 'mois': mois,
                 'jour_semaine': jour,
@@ -338,8 +338,8 @@ with st.container():
 
     
     # Fusionner noms des médicaments
-    df_meds = overview_df[['lot_id', 'nom_medicament']].drop_duplicates()
-    forecast_df = forecast_df.merge(df_meds, on='lot_id', how='left')
+    df_meds = overview_df[['id_medicament', 'nom_medicament']].drop_duplicates()
+    forecast_df = forecast_df.merge(df_meds, on='id_medicament', how='left')
 
     # Interface utilisateur
     medicament_choisi = st.selectbox("Choisir un médicament", forecast_df['nom_medicament'].unique())
