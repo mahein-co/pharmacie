@@ -28,6 +28,14 @@ except Exception as e :
 
 
 
+#Temps moyen de livraison par fournisseur
+Temps_moyen_fournisseur = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_temps_moyen_livraison_fournisseur,title="recuperation temps moyen fournisseurs")
+
+#Nombre de livraisons en retard par fournisseur
+
+
+#Mois plus Aprovisionnements
+Mois_plus_Appro = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_mois_plus_approvisionnement,title="recuperation mois plus approvisionnements")
 
 
 
