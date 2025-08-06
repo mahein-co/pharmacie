@@ -223,7 +223,7 @@ total_sales = overview_collection.count_distinct_agg(field_name="id_vente")
 nb_fournisseur = overview_collection.count_distinct_agg(field_name="fournisseur")
 
 #11.commande moyen par fournisseurs
-pipeline_commande_moyen =  [
+pipeline_commande_moyen_global =  [
     {
         "$group": {
             "_id": "$fournisseur",
@@ -234,6 +234,22 @@ pipeline_commande_moyen =  [
         "$group": {
             "_id": None,
             "moyenne_commandes_par_fournisseur": { "$avg": "$nombre_commandes" }
+        }
+    }
+]
+
+pipeline_commande_moyen_par_fournisseurs = [
+    {
+        "$group": {
+            "_id": "$fournisseur",
+            "nombre_commandes": { "$sum": 1 }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "Fournisseur": "$_id",
+            "Nombre moyen de commandes": "$nombre_commandes"
         }
     }
 ]

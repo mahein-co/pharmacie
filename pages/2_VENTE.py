@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from streamlit.components.v1 import html
 import plotly.express as px
-from views import vente_views
+from views import vente_views,dashboard_views
 from data.mongodb_client import MongoDBClient 
 from pipelines import pipeline_overview
 
@@ -32,7 +32,9 @@ html("""
 """)
 
 
-st.markdown(vente_views.custom_css, unsafe_allow_html=True)
+st.markdown(dashboard_views.custom_css, unsafe_allow_html=True)
+st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
+
 st.markdown(vente_views.kpis_html, unsafe_allow_html=True)
 
 

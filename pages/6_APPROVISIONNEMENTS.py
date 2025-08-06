@@ -41,7 +41,9 @@ if appro_views.overview_collection:
 
 
 with st.container():
-        
+    col1,col2 = st.columns(2)
+
+    with col1:
         data = appro_views.Mois_plus_Appro
         df_mois_plus_appro = pd.DataFrame(data)
         # Appliquer le renommage avec inplace=True
@@ -90,9 +92,117 @@ with st.container():
         # Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
+    with col2:
+        data = appro_views.Commande_moyen_par_fournisseur
+        df_commande_moyen_fourn = pd.DataFrame(data)
+
+        # 🔽 Tri décroissant par nombre moyen de commandes
+        df_temps_moyen_fourn = df_commande_moyen_fourn.sort_values(by="Nombre moyen de commandes", ascending=False)
+
+        # 📈 Création du graphique
+        fig = px.bar(
+            df_commande_moyen_fourn,
+            x="Fournisseur", 
+            y="Nombre moyen de commandes",
+            text="Nombre moyen de commandes",
+            color="Nombre moyen de commandes",
+            color_continuous_scale=px.colors.sequential.Teal
+        )
+
+        # 🎨 Mise en forme
+        fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
+        fig.update_layout(
+            title={
+                'text': "Nombre moyen de commandes par fournisseur",
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            xaxis_title="Fournisseurs",
+            yaxis_title="Nombre moyen de commandes",
+            yaxis=dict(range=[0, df_temps_moyen_fourn["Nombre moyen de commandes"].max() + 2]),
+            uniformtext_minsize=8,
+            uniformtext_mode='hide'
+        )
+
+        # 🖼️ Affichage dans Streamlit
+        st.plotly_chart(fig)
+
 
 with st.container():
       col1,col2 = st.columns(2)
-      
+
+      with col1:
+          # 📊 Création du dataframe
+          data = appro_views.Temps_moyen_fournisseur
+          df_temps_moyen_fourn = pd.DataFrame(data)
+
+          # 🧹 Renommage et tri
+          df_temps_moyen_fourn.rename(columns={"_id": "Fournisseurs", "temps_moyen_livraison": "Temps Moyen Livraison"}, inplace=True)
+          df_temps_moyen_fourn = df_temps_moyen_fourn.sort_values(by="Temps Moyen Livraison", ascending=False)
+
+          # 📈 Création du graphique
+          fig = px.bar(
+              df_temps_moyen_fourn,
+              x="Fournisseurs",
+              y="Temps Moyen Livraison",
+              text="Temps Moyen Livraison",
+              color="Temps Moyen Livraison",
+              color_continuous_scale=px.colors.sequential.Teal
+          )
+
+          # 🎨 Mise en forme
+          fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
+          fig.update_layout(
+              title={
+                  'text': "Temps moyen de livraison par fournisseur",
+                  'x': 0.5,
+                  'xanchor': 'center',
+                  'yanchor': 'top'
+              },
+              xaxis_title="Fournisseurs",
+              yaxis_title="Temps Moyen Livraison (jours)",
+              yaxis=dict(range=[0, df_temps_moyen_fourn["Temps Moyen Livraison"].max() + 2]),
+              uniformtext_minsize=8,
+              uniformtext_mode='hide'
+          )
+
+          # 🖼️ Affichage dans Streamlit
+          st.plotly_chart(fig)
+
+      with col2:
+          data = appro_views.taux_retard_livraison
+          df_taux_retard_livraison = pd.DataFrame(data)
+          df_taux_retard_livraison.rename(columns={"fournisseur": "Fournisseurs", "taux_retard": "Taux retard"}, inplace=True)
+          df_taux_retard_livraison = df_taux_retard_livraison.sort_values(by="Taux retard", ascending=False)
+
+          # 📈 Création du graphique
+          fig = px.bar(
+              df_taux_retard_livraison,
+              x="Fournisseurs",
+              y="Taux retard",
+              text="Taux retard",
+              color="Taux retard",
+              color_continuous_scale=px.colors.sequential.Teal
+          )
+
+          # 🎨 Mise en forme
+          fig.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+          fig.update_layout(
+              title={
+                  'text': "Taux de retard de livraison par fournisseur",
+                  'x': 0.5,
+                  'xanchor': 'center',
+                  'yanchor': 'top'
+              },
+              xaxis_title="Fournisseurs",
+              yaxis_title="Taux de retard (%)",
+              yaxis=dict(range=[0, df_taux_retard_livraison["Taux retard"].max() + 5]),
+              uniformtext_minsize=8,
+              uniformtext_mode='hide'
+          )
+
+          # 🖼️ Affichage dans Streamlit
+          st.plotly_chart(fig)
 
 

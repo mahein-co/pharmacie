@@ -19,20 +19,21 @@ from pipelines import pipeline_overview
 # #initiation a mongoDB 
 overview_collection = MongoDBClient(collection_name="overview")
 
-commande_moyen = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_commande_moyen,title="recuperation")
+Commande_moyen = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_commande_moyen_global,title="recuperation")
 
 try:
-    commande_moyen = commande_moyen[0]["moyenne_commandes_par_fournisseur"] if commande_moyen else 0
+    commande_moyen = Commande_moyen[0]["moyenne_commandes_par_fournisseur"] if Commande_moyen else 0
 except Exception as e :
     commande_moyen = 0
 
+Commande_moyen_par_fournisseur = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_commande_moyen_par_fournisseurs,title="recuperation par commande fornisseurs")
 
 
 #Temps moyen de livraison par fournisseur
 Temps_moyen_fournisseur = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_temps_moyen_livraison_fournisseur,title="recuperation temps moyen fournisseurs")
 
 #Nombre de livraisons en retard par fournisseur
-
+taux_retard_livraison = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_taux_retard_livraison,title="recuperation taux livraison")
 
 #Mois plus Aprovisionnements
 Mois_plus_Appro = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_mois_plus_approvisionnement,title="recuperation mois plus approvisionnements")
