@@ -247,9 +247,18 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
             table_html += "</tr>"
         table_html += "</table></div>"
         st.markdown(table_html, unsafe_allow_html=True)
+    if df.empty:
+        st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Rupture du stock sur derniers mois</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+    else:
+        render_table(df_page)
 
     # 📊 Affiche le tableau filtré et paginé
-    render_table(df_page)
+    
 
     # 📄 Bas de tableau : choix nombre de lignes et navigation
     col1, col2 = st.columns(2)

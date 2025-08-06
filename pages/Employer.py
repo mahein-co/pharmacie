@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 
 from data.mongodb_client import MongoDBClient
-from pharmacie.pipelines import pipelines_employe
+from pipelines import pipelines_employe
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
