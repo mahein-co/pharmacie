@@ -33,6 +33,12 @@ from pipelines import pipelines_ventes
 # views
 from views import dashboard_views, employe_views 
 
+st.markdown("""
+    <style>
+        [data-testid="stToolbar"] [aria-label="Settings"] {display: none;}
+    </style>
+""", unsafe_allow_html=True)
+
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
@@ -121,16 +127,17 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
         margin=dict(l=0, r=0, t=30, b=0),
         height=380,
         title={
-        'y':0.95,                              
-        'x':0.5,                               
-        'xanchor': 'center',                   
-        'yanchor': 'top'                      
-    },
-    title_font=dict(
-        size=20,            
-        color='black',      
-        family='Arial'     
-    )
+            'y':0.95,                              
+            'x':0.5,                               
+            'xanchor': 'center',                   
+            'yanchor': 'top'                      
+        },
+        title_font=dict(
+            size=20,            
+            color='#817d7d',
+            weight=400,      
+            family='Arial'     
+        )
     )
 
     col_metrics, col_clustering = st.columns([1, 3])
@@ -247,18 +254,9 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
             table_html += "</tr>"
         table_html += "</table></div>"
         st.markdown(table_html, unsafe_allow_html=True)
-    if df.empty:
-        st.markdown("""
-        <div class='custom-card'>
-            <h4>📊 Rupture du stock sur derniers mois</h4>
-            <p style='text-align:center; color: #888;'>Aucune Data</p>
-        </div>
-    """, unsafe_allow_html=True)
-    else:
-        render_table(df_page)
 
     # 📊 Affiche le tableau filtré et paginé
-    
+    render_table(df_page)
 
     # 📄 Bas de tableau : choix nombre de lignes et navigation
     col1, col2 = st.columns(2)
@@ -275,6 +273,8 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
 else:
     st.error("Il est impossible de charger les données depuis la database.")
 
+
+# PREDICTION DE RUPTURE DE STOCK
 
 
 

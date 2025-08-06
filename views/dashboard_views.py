@@ -59,7 +59,7 @@ except Exception as e:
 # 1.6. Dataframe des ventes
 overview_docs = overview_collection.find_all_documents()
 df_ventes = pd.DataFrame(overview_docs)
-
+df_ventes = df_ventes.drop_duplicates(subset=["id_vente"])
     
 # II. MEDICAMENTS
 # 2.1. Médicaments expirés
@@ -445,8 +445,8 @@ kpis_style = """
 }
 .kpi-value {
   font-size: 3rem;
-  color: #000;
-  font-weight: normal;
+  color: #817d7d;
+  font-weight: 500;
   text-align: right;
   margin: 5px 0;
 }

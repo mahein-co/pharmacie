@@ -868,4 +868,34 @@ pipeline_temps_moyen_livraison_fournisseur = [
 ]
 
 
-
+# 34. Taux de retard de livraison par fournisseur
+pipeline_taux_retard_livraison = [
+  {
+    "$group": {
+      "_id": "$fournisseur",
+      "total_commandes": { "$sum": 1 },
+      "livraisons_en_retard": {
+        "$sum": {
+          "$cond": [{ "$gt": ["$retard_jour", 0] }, 1, 0]
+        }
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "fournisseur": "$_id",
+      "total_commandes": 1,
+      "livraisons_en_retard": 1,
+      "taux_retard": {
+        "$multiply": [
+          { "$divide": ["$livraisons_en_retard", "$total_commandes"] },
+          100
+        ]
+      }
+    }
+  },
+  {
+    "$sort": { "taux_retard": -1 }
+  }
+]
