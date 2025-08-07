@@ -4,6 +4,7 @@ from st_aggrid import AgGrid
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from streamlit.components.v1 import html
 import math
+import random
 
 import pandas as pd
 import plotly.express as px
@@ -29,6 +30,8 @@ from streamlit.components.v1 import html
 from data.mongodb_client import MongoDBClient
 from itertools import product
 from pipelines import pipelines_ventes
+
+from style import style
 
 # views
 from views import dashboard_views, employe_views 
@@ -81,9 +84,10 @@ html("""
 """)
 
 # importation de style CSS
-st.markdown(dashboard_views.custom_css, unsafe_allow_html=True)
-st.markdown(dashboard_views.table_css, unsafe_allow_html=True)
-st.markdown(dashboard_views.kpis_style, unsafe_allow_html=True)
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.table_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+st.markdown(style.clustering_employees_style, unsafe_allow_html=True)
 
 
 # Charger les données
@@ -96,7 +100,6 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
 
     # 2. EMPLOYEES --------------------------------------------
-    st.markdown(dashboard_views.clustering_employees_style, unsafe_allow_html=True)
     employe_df = pd.DataFrame(list(employe_views.employe_documents))
     employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
 
@@ -276,8 +279,7 @@ else:
 
 # PREDICTION DE RUPTURE DE STOCK
 # Étape 1 : préparation des colonnes nécessaires
-overview_docs = dashboard_views.vente_collection.find_all_documents()
-overview_df = pd.DataFrame(overview_docs)
+overview_df = pd.DataFrame(dashboard_views.vente_docs)
 overview_df['jour_semaine'] = overview_df['date_de_vente'].dt.dayofweek  # 0 = Lundi, 6 = Dimanche
 overview_df['mois_num'] = overview_df['date_de_vente'].dt.month
 
@@ -336,31 +338,26 @@ with st.container():
 
     forecast_df = pd.DataFrame(forecast_rows)
 
-    
-    # Fusionner noms des médicaments
-    df_meds = overview_df[['id_medicament', 'nom_medicament']].drop_duplicates()
-    forecast_df = forecast_df.merge(df_meds, on='id_medicament', how='left')
+    # Choisir un médicament au hasard parmi ceux de la prévision
+    med_random = random.choice(forecast_df['id_medicament'].unique())
 
-    # Interface utilisateur
-    medicament_choisi = st.selectbox("Choisir un médicament", forecast_df['nom_medicament'].unique())
+    # Filtrer les données pour ce médicament
+    med_data = forecast_df[forecast_df['id_medicament'] == med_random].copy()
 
-    # Filtrer les données
-    med_data = forecast_df[forecast_df['nom_medicament'] == medicament_choisi].copy()
-
-    # Création de la date synthétique
+    # Créer une date synthétique pour l'axe des x : début de chaque semaine du mois
     med_data['date_synthetique'] = pd.to_datetime({
         'year': med_data['annee'],
         'month': med_data['mois'],
         'day': 1
     }) + pd.to_timedelta((med_data['semaine_du_mois'] - 1) * 7, unit='D')
 
-    # Agrégation
+    # Regrouper par date synthétique en prenant la moyenne des probabilités sur tous les jours de la semaine
     agg_data = med_data.groupby('date_synthetique')['proba_zero'].mean().reset_index()
 
     # Tracer avec matplotlib
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(agg_data['date_synthetique'], agg_data['proba_zero'], marker='o')
-    ax.set_title(f"Évolution des probabilités de rupture - {medicament_choisi}")
+    ax.set_title(f"Évolution des probabilités de rupture - {med_random}")
     ax.set_xlabel("Date (approx. début de semaine)")
     ax.set_ylabel("Probabilité de rupture")
     ax.grid(True)

@@ -6,7 +6,7 @@ from streamlit.components.v1 import html
 from views import medicament_views,dashboard_views
 from data.mongodb_client import MongoDBClient
 from pipelines import pipeline_overview
-
+from style import style
 
 
 
@@ -17,19 +17,20 @@ html("""
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
-  .box {
-    color: #eee;
-    padding: 20px;
+ .box {
+    color: #7827e6;
     font-family: 'Dancing Script', cursive;
-    border-radius: 10px;
     font-size: 74px;
+    margin-top:-1rem;
   }
 </style>
 <div class="box">Médicament</div>
 """)
 
-st.markdown(medicament_views.custom_css,unsafe_allow_html=True)
-st.markdown(medicament_views.kpis_style,unsafe_allow_html=True)
+st.markdown(style.custom_css,unsafe_allow_html=True)
+st.markdown(style.kpis_style,unsafe_allow_html=True)
+
+
 if medicament_views.overview_collection :
   st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
   # st.markdown(medicament_views.table_medicaments_critiques_html,unsafe_allow_html=True)
