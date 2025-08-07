@@ -131,16 +131,16 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #eee;
+    color: #7827e6;
     text-align: center;
     font-family: 'Quicksand', cursive;
     font-size: 3rem;
   }
     .subtitle {
     text-align: center;
-    color: #eee;
+    color: #48494B;
     font-family: 'Quicksand', cursive;
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 </style>
 <h1 class="box">🧠 Assistant Pharmacie</h1>
