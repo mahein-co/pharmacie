@@ -7,8 +7,7 @@ from views import finance_views
 from data.mongodb_client import MongoDBClient
 from pipelines import pipelines_finance,pipeline_overview
 
-
-
+from style import style
 
 
 # Initialisation
@@ -19,22 +18,18 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #eee;
-    padding: 20px;
+    color: #7827e6;
     font-family: 'Dancing Script', cursive;
-    border-radius: 10px;
     font-size: 74px;
+    margin-top:-1rem;
   }
 </style>
 <div class="box">Finance</div>
 """)
 
-# --------------------
-# Données exemple
-# --------------------
 
-#Data 
-# 🔹 Import des données depuis le backend
+# Data ------------------------------------ 
+# Import des données depuis le backend
 overview_documents = pipeline_overview.overview_collection.find_all_documents()
 df = pd.DataFrame(overview_documents)
 # Assurer que la colonne est bien au format datetime
@@ -72,16 +67,30 @@ dernier_ca = df_filtre["Chiffre d'affaires"].iloc[-1]
 
 
 #importation html et css
-st.markdown(finance_views.custom_css, unsafe_allow_html=True)
-st.markdown(finance_views.kpis_style, unsafe_allow_html=True)
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 3])
 with col1:
     html_code = finance_views.get_kpi_html(filtre, total_chiffre_affaire)
     st.markdown(html_code, unsafe_allow_html=True)
 with col2:
-    # 🔹 Affichage du graphique
-    st.subheader(f"Évolution du chiffre d'affaires par {filtre.lower()}")
+    # Affichage du graphique
+    html("""
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        
+    .box {
+        color: #7827e6;
+        font-family: 'Quicksand', cursive;
+        font-size: 35px;
+        margin-top:-1rem;
+        text-align: center;
+    }
+    </style>
+    <p class="box">Évolution du chiffre d'affaires</p>
+    """)
+    # st.subheader(f"Évolution du chiffre d'affaires par {filtre.lower()}")
     st.line_chart(data=df_filtre.set_index('Période')["Chiffre d'affaires"])
 
 
