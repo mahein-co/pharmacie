@@ -134,13 +134,13 @@ html("""
     color: #7827e6;
     text-align: center;
     font-family: 'Quicksand', cursive;
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
     .subtitle {
     text-align: center;
     color: #48494B;
     font-family: 'Quicksand', cursive;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 </style>
 <h1 class="box">🧠 Assistant Pharmacie</h1>
