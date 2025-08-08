@@ -23859,3 +23859,1031 @@ pymongo.errors.ServerSelectionTimeoutError: SSL handshake failed: ac-11rlwnv-sha
 2025-08-05 09:26:29,090 - INFO - **recuperation Medicaments faible rotation** est bien réussit.
 2025-08-05 09:26:29,331 - INFO - **recuperation de moins cher** est bien réussit.
 2025-08-05 09:26:29,542 - INFO - **recuperation plus cher** est bien réussit.
+2025-08-08 10:30:58,612 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:30:58,926 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:30:59,200 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:30:59,433 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:31:03,299 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:03,524 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:31:03,750 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:31:03,978 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:31:04,199 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:31:04,495 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:31:04,771 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:31:08,114 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:11,616 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:15,121 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:21,921 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:31:22,199 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:31:22,435 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:31:22,674 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:31:22,924 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:31:23,185 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:31:23,442 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:31:23,698 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:31:23,956 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:31:24,226 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:31:24,467 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:31:24,722 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:31:25,708 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:31:25,987 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:31:26,259 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:31:26,560 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:31:26,807 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:31:27,303 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:31:27,592 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:31:27,838 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:31:31,876 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:35,343 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:38,721 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:31:39,025 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:31:39,263 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:31:39,506 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:31:39,754 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:31:40,007 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:31:40,320 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:31:40,648 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 10:39:01,079 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:01,344 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:39:01,603 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:39:01,863 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:39:05,627 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:05,886 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:39:06,135 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:39:06,386 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:39:06,639 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:39:06,887 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:39:07,140 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:39:10,501 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:13,316 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:16,214 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:19,182 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:39:19,410 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:39:19,612 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:39:19,788 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:39:19,991 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:39:20,207 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:39:20,409 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:39:20,616 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:39:20,865 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:39:21,126 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:39:21,376 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:39:21,608 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:39:22,453 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:39:22,678 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:39:22,903 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:39:23,150 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:39:23,368 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:39:23,587 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:39:23,846 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:39:24,049 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:39:27,396 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:30,867 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:33,708 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:39:33,955 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:39:34,174 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:39:34,485 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:39:34,705 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:39:34,945 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:39:35,160 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:39:35,443 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 10:42:59,858 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:00,137 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:43:00,396 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:43:00,627 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:43:03,666 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:03,908 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:43:04,136 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:43:04,356 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:43:04,583 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:43:04,786 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:43:04,991 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:43:08,054 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:10,765 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:13,921 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:17,644 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:43:17,893 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:43:18,101 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:43:18,290 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:43:18,492 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:43:18,705 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:43:18,912 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:43:19,120 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:43:19,334 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:43:19,540 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:43:19,749 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:43:19,968 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:43:20,633 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:43:20,864 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:43:21,087 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:43:21,304 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:43:21,509 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:43:21,714 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:43:21,920 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:43:22,101 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:43:25,270 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:28,178 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:31,034 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:43:31,273 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:43:31,513 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:43:31,750 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:43:32,006 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:43:32,237 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:43:32,480 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:43:32,813 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 10:47:22,604 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:22,859 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:47:23,116 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:47:23,355 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:47:26,717 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:26,909 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:47:27,100 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:47:27,286 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:47:27,479 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:47:27,672 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:47:27,854 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:47:31,118 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:33,793 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:36,423 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:40,767 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:47:40,989 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:47:41,192 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:47:41,374 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:47:41,578 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:47:41,879 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:47:42,118 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:47:42,386 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:47:42,627 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:47:42,970 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:47:43,216 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:47:43,456 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:47:44,384 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:47:44,650 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:47:44,929 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:47:45,221 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:47:45,467 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:47:45,697 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:47:45,936 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:47:46,139 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:47:49,108 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:52,518 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:55,890 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:47:56,141 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:47:56,365 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:47:56,665 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:47:56,942 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:47:57,221 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:47:57,463 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:47:57,817 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 10:56:31,904 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:56:32,141 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:56:32,385 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:56:32,624 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:56:36,330 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:56:36,607 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:56:36,981 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:56:37,872 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:56:38,146 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:56:38,448 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:56:38,682 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:56:42,367 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:56:45,480 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:56:48,937 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:56:53,937 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:56:54,213 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:56:54,448 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:56:54,703 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:56:54,958 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:56:55,221 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:56:55,463 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:56:55,868 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:56:56,159 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:56:56,411 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:56:56,641 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:56:56,913 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:56:57,611 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:56:57,845 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:56:58,095 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:56:58,327 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:56:58,569 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:56:58,784 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:56:59,003 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:56:59,206 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:57:02,060 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:57:05,045 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:57:07,814 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:57:08,084 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:57:08,362 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:57:08,604 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:57:08,833 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:57:09,085 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:57:09,440 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:57:09,720 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 10:58:40,550 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:58:40,755 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 10:58:40,965 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 10:58:41,160 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 10:58:44,496 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:58:44,722 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 10:58:44,962 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 10:58:45,205 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:58:45,441 - INFO - **age moyen** est bien réussit.
+2025-08-08 10:58:45,677 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 10:58:45,905 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 10:58:49,454 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:58:52,634 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:58:55,760 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:59:00,397 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 10:59:00,670 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 10:59:00,891 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 10:59:01,105 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 10:59:01,329 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 10:59:01,613 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 10:59:01,852 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 10:59:02,084 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 10:59:02,306 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 10:59:02,531 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 10:59:02,757 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 10:59:03,008 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 10:59:03,697 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 10:59:03,939 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 10:59:04,178 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 10:59:04,423 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 10:59:04,642 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 10:59:04,878 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 10:59:05,111 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 10:59:05,397 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 10:59:08,402 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:59:11,278 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:59:14,538 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 10:59:14,792 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 10:59:15,038 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 10:59:15,291 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 10:59:15,536 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 10:59:15,785 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 10:59:16,025 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 10:59:16,355 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:03:41,721 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:03:41,926 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:03:42,123 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:03:42,341 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:06:19,486 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:06:19,736 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:06:20,034 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:06:20,290 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:06:23,774 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:06:24,020 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:06:24,252 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:06:24,479 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:06:24,716 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:06:24,951 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:06:25,179 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:06:28,752 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:06:31,988 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:06:35,384 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:06:51,511 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:06:51,780 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:06:52,041 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:06:52,284 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:06:52,528 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:06:52,795 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:06:53,058 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:06:53,324 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:06:53,562 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:06:53,824 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:06:54,099 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:06:54,360 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:06:55,987 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:06:56,289 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:06:56,544 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:06:56,784 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:06:56,999 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:06:57,223 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:06:57,429 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:06:57,633 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:07:00,463 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:07:03,318 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:07:06,896 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:07:07,103 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:07:07,324 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:07:07,525 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:07:07,737 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:07:07,963 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:07:08,180 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:07:08,695 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:27:14,578 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:14,806 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:27:15,029 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:27:15,237 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:27:18,158 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:18,350 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:27:18,542 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:27:18,758 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:27:18,946 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:27:19,138 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:27:19,328 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:27:21,866 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:24,340 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:27,443 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:37,036 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:27:37,305 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:27:37,558 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:27:37,760 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:27:37,990 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:27:38,238 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:27:38,462 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:27:38,709 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:27:38,947 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:27:39,183 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:27:39,441 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:27:39,728 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:27:40,769 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:27:41,012 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:27:41,248 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:27:41,515 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:27:41,746 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:27:41,961 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:27:42,209 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:27:42,419 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:27:45,203 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:48,028 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:50,942 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:27:51,192 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:27:51,460 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:27:51,766 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:27:52,009 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:27:52,234 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:27:52,446 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:27:53,038 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:32:29,532 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:32:29,845 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:32:30,115 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:32:30,363 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:32:34,612 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:32:34,944 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:32:35,198 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:32:35,461 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:32:35,711 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:32:35,952 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:32:36,203 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:32:39,746 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:32:43,020 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:32:46,551 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:32:54,595 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:32:54,818 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:32:55,002 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:32:55,182 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:32:55,375 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:32:55,576 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:32:55,777 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:32:56,001 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:32:56,252 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:32:57,036 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:32:57,354 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:32:57,780 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:32:59,077 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:32:59,378 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:32:59,668 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:32:59,948 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:33:00,226 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:33:00,504 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:33:00,861 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:33:01,159 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:33:01,972 - INFO - \U0001f4e1 IP publique détectée : 129.222.109.130
+2025-08-08 11:33:03,660 - INFO - \U0001f50d IP 129.222.109.130 est déjà présente dans la liste.
+2025-08-08 11:33:49,054 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:33:52,845 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:33:56,596 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:33:56,987 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:33:57,224 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:33:57,463 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:33:57,695 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:33:57,972 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:33:58,217 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:33:58,890 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:35:49,995 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:35:50,251 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:35:50,527 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:35:50,779 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:35:54,067 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:35:54,310 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:35:54,615 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:35:54,872 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:35:55,132 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:35:55,382 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:35:55,621 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:35:59,199 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:03,099 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:07,209 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:12,857 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:36:13,156 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:36:13,405 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:36:13,625 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:36:13,876 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:36:14,139 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:36:14,413 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:36:14,661 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:36:14,916 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:36:15,167 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:36:15,409 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:36:15,669 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:36:16,657 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:36:16,969 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:36:17,231 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:36:17,498 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:36:17,763 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:36:18,015 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:36:18,260 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:36:18,478 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:36:21,803 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:25,086 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:28,339 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:36:28,627 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:36:28,888 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:36:29,160 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:36:29,433 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:36:29,720 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:36:30,010 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:36:30,629 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:37:42,375 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:37:42,580 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:37:42,808 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:37:43,011 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:37:46,251 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:37:46,512 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:37:46,726 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:37:46,928 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:37:47,123 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:37:47,315 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:37:47,527 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:37:50,535 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:37:53,270 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:37:56,167 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:37:59,619 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:37:59,876 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:38:00,105 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:38:00,314 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:38:00,538 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:38:00,770 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:38:01,059 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:38:01,310 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:38:01,538 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:38:01,766 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:38:01,998 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:38:02,229 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:38:03,112 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:38:03,354 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:38:03,597 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:38:03,841 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:38:04,073 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:38:04,304 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:38:04,538 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:38:04,750 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:38:07,654 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:10,583 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:14,874 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:15,262 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:38:15,641 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:38:16,023 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:38:16,406 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:38:16,798 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:38:17,184 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:38:18,059 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 11:38:22,710 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:23,045 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:38:23,394 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:38:23,742 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:38:28,431 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:28,643 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 11:38:28,864 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 11:38:29,084 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 11:38:31,875 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:32,081 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 11:38:32,275 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 11:38:32,484 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:38:32,696 - INFO - **age moyen** est bien réussit.
+2025-08-08 11:38:32,900 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 11:38:33,099 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 11:38:35,800 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:38,608 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:41,374 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:38:51,973 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 11:38:52,330 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 11:38:52,649 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 11:38:52,921 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 11:38:53,251 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 11:38:53,559 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 11:38:53,871 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 11:38:54,170 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 11:38:54,490 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 11:38:54,799 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 11:38:55,106 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 11:38:55,405 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 11:38:56,549 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 11:38:56,772 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 11:38:56,980 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 11:38:57,205 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 11:38:57,417 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 11:38:57,624 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 11:38:57,831 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 11:38:58,014 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 11:39:01,284 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:39:04,603 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:39:07,673 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 11:39:07,927 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 11:39:08,161 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 11:39:08,383 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 11:39:08,621 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 11:39:08,851 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 11:39:09,071 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 11:39:09,585 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 12:13:53,145 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:13:53,397 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 12:13:53,637 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 12:13:53,888 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 12:13:57,326 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:13:57,534 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 12:13:57,733 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 12:13:57,938 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 12:13:58,158 - INFO - **age moyen** est bien réussit.
+2025-08-08 12:13:58,365 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 12:13:58,563 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 12:14:01,254 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:04,065 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:06,694 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:10,602 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 12:14:10,866 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 12:14:11,071 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 12:14:11,260 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 12:14:11,473 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 12:14:11,680 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 12:14:11,906 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 12:14:12,135 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 12:14:12,342 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 12:14:12,565 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 12:14:12,783 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 12:14:13,023 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 12:14:14,105 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 12:14:14,321 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 12:14:14,574 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 12:14:14,790 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 12:14:15,000 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 12:14:15,212 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 12:14:15,424 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 12:14:15,608 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 12:14:18,637 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:21,377 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:24,147 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:14:24,389 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 12:14:24,620 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 12:14:24,887 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 12:14:25,101 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 12:14:25,312 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 12:14:25,524 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 12:14:26,021 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 12:16:37,010 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:16:37,247 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 12:16:37,490 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 12:16:37,735 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 12:16:40,658 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:16:40,886 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 12:16:41,195 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 12:16:41,478 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 12:16:41,706 - INFO - **age moyen** est bien réussit.
+2025-08-08 12:16:41,924 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 12:16:42,149 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 12:16:44,869 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:16:48,138 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:16:50,912 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:16:58,623 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 12:16:58,912 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 12:16:59,165 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 12:16:59,404 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 12:16:59,665 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 12:16:59,926 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 12:17:00,181 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 12:17:00,452 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 12:17:00,712 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 12:17:00,972 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 12:17:01,228 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 12:17:01,486 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 12:17:02,974 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 12:17:03,271 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 12:17:03,531 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 12:17:03,803 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 12:17:04,059 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 12:17:04,325 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 12:17:04,620 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 12:17:04,858 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 12:17:08,267 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:17:11,748 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:17:14,795 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 12:17:15,029 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 12:17:15,269 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 12:17:15,517 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 12:17:15,743 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 12:17:15,988 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 12:17:16,223 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 12:17:16,937 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 13:27:11,597 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:11,804 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 13:27:12,014 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 13:27:12,368 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 13:27:16,122 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:16,373 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 13:27:16,618 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 13:27:16,811 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:27:17,049 - INFO - **age moyen** est bien réussit.
+2025-08-08 13:27:17,449 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 13:27:17,654 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 13:27:21,045 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:24,166 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:27,207 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:38,455 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 13:27:38,721 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 13:27:38,955 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 13:27:39,185 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 13:27:39,424 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 13:27:39,676 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 13:27:39,905 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 13:27:40,155 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 13:27:40,395 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 13:27:40,658 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 13:27:40,896 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 13:27:41,126 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 13:27:42,065 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 13:27:42,324 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 13:27:42,580 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 13:27:42,905 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 13:27:43,155 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 13:27:43,397 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 13:27:43,715 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 13:27:44,003 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:27:47,375 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:50,975 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:54,412 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:27:54,672 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 13:27:54,917 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 13:27:55,169 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 13:27:55,420 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 13:27:55,669 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 13:27:55,917 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 13:27:56,500 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 13:49:46,172 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:49:46,552 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 13:49:48,131 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 13:49:48,722 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 13:49:56,432 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:49:56,727 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 13:49:57,132 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 13:49:57,532 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:49:58,024 - INFO - **age moyen** est bien réussit.
+2025-08-08 13:49:58,801 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 13:49:59,207 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 13:50:04,336 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:50:10,416 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:50:13,849 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:50:52,626 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 13:50:52,990 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 13:50:53,399 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 13:50:53,692 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 13:50:53,927 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 13:50:54,129 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 13:50:54,348 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 13:50:54,565 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 13:50:54,815 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 13:50:55,031 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 13:50:55,256 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 13:50:55,550 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 13:50:56,560 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 13:50:56,981 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 13:50:57,287 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 13:50:57,655 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 13:50:58,007 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 13:50:58,633 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 13:50:59,336 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 13:50:59,774 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:51:05,302 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:51:09,178 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:51:14,790 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:51:15,247 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 13:51:15,929 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 13:51:16,524 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 13:51:16,769 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 13:51:17,032 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 13:51:17,309 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 13:51:18,634 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 13:54:26,753 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:54:27,089 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 13:54:27,365 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 13:54:28,454 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 13:54:33,704 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:54:34,022 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 13:54:34,364 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 13:54:34,852 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:54:35,333 - INFO - **age moyen** est bien réussit.
+2025-08-08 13:54:35,827 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 13:54:36,176 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 13:54:40,526 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:54:45,883 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:54:48,964 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:55:00,777 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 13:55:01,130 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 13:55:01,344 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 13:55:01,543 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 13:55:01,786 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 13:55:02,038 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 13:55:02,300 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 13:55:02,524 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 13:55:02,794 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 13:55:03,145 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 13:55:03,406 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 13:55:03,658 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 13:55:04,684 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 13:55:05,548 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 13:55:05,842 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 13:55:06,098 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 13:55:06,336 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 13:55:06,600 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 13:55:06,928 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 13:55:07,174 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 13:55:10,759 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:55:14,402 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:55:17,704 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 13:55:17,986 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 13:55:18,258 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 13:55:18,592 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 13:55:18,891 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 13:55:19,246 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 13:55:19,580 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 13:55:20,380 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:00:09,921 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:10,120 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:00:10,328 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:00:10,540 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:00:13,927 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:14,192 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:00:14,477 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:00:14,719 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:00:14,968 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:00:15,206 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:00:15,439 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:00:19,092 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:28,976 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:32,224 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:37,706 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:00:38,004 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:00:38,276 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:00:38,572 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:00:38,863 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:00:39,124 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:00:39,396 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:00:39,674 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:00:39,956 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:00:40,202 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:00:40,500 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:00:40,778 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:00:41,783 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:00:42,006 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:00:42,218 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:00:42,442 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:00:42,680 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:00:42,892 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:00:43,104 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:00:43,353 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:00:45,992 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:48,849 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:52,104 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:00:52,316 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:00:52,532 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:00:52,736 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:00:52,938 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:00:53,265 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:00:53,544 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:00:54,063 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:11:30,090 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:11:30,280 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:11:30,464 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:11:30,671 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:11:34,036 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:11:34,241 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:11:34,436 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:11:34,623 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:11:34,825 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:11:35,008 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:11:35,185 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:11:38,556 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:11:41,236 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:11:44,986 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:11:51,570 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:11:51,845 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:11:52,118 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:11:52,358 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:11:52,611 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:11:52,899 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:11:53,176 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:11:53,457 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:11:53,711 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:11:53,973 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:11:54,232 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:11:54,491 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:11:56,009 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:11:56,298 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:11:56,542 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:11:56,799 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:11:57,009 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:11:57,237 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:11:57,460 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:11:57,657 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:12:01,086 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:12:04,302 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:12:07,316 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:12:07,552 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:12:07,778 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:12:07,979 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:12:08,232 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:12:08,462 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:12:08,688 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:12:09,229 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:15:16,267 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:15:16,614 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:15:16,934 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:15:17,239 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:15:22,483 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:15:22,729 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:15:22,954 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:15:23,229 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:15:23,509 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:15:23,805 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:15:24,034 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:15:28,601 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:15:33,150 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:15:38,640 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:15:47,516 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:15:47,983 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:15:48,260 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:15:48,465 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:15:48,694 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:15:48,936 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:15:49,238 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:15:49,459 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:15:49,778 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:15:50,063 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:15:50,396 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:15:50,725 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:15:51,986 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:15:52,230 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:15:52,466 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:15:52,694 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:15:52,933 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:15:53,152 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:15:53,395 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:15:53,914 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:15:58,237 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:16:02,505 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:16:06,648 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:16:06,985 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:16:07,336 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:16:07,661 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:16:07,998 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:16:08,338 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:16:08,678 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:16:09,460 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:25:26,406 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:26,614 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:25:26,850 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:25:27,063 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:25:30,139 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:30,367 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:25:30,568 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:25:30,780 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:25:31,013 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:25:31,223 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:25:31,458 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:25:34,444 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:37,280 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:40,213 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:47,432 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:25:47,726 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:25:47,985 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:25:48,238 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:25:48,509 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:25:48,781 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:25:49,039 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:25:49,305 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:25:49,568 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:25:49,820 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:25:50,074 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:25:50,361 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:25:51,374 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:25:51,648 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:25:51,936 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:25:52,208 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:25:52,473 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:25:52,730 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:25:52,992 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:25:53,242 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:25:56,410 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:25:59,641 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:26:02,741 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:26:03,011 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:26:03,270 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:26:03,532 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:26:03,788 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:26:04,057 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:26:04,315 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:26:04,895 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:27:15,528 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:15,784 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:27:16,043 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:27:16,284 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:27:19,628 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:19,992 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:27:20,235 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:27:20,475 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:27:20,720 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:27:20,968 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:27:21,318 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:27:24,518 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:27,496 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:30,253 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:36,875 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:27:37,175 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:27:37,405 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:27:37,645 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:27:37,923 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:27:38,139 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:27:38,355 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:27:38,621 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:27:38,831 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:27:39,074 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:27:39,282 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:27:39,496 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:27:40,415 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:27:40,653 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:27:40,874 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:27:41,138 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:27:41,402 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:27:41,608 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:27:41,859 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:27:42,073 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:27:45,078 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:48,154 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:51,263 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:27:51,518 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:27:51,746 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:27:51,991 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:27:52,252 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:27:52,524 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:27:52,770 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:27:53,529 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:28:34,705 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:28:34,948 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-08 14:28:35,192 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:28:35,486 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-08 14:28:38,690 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:28:38,948 - INFO - 30 documents récupérés depuis la collection.
+2025-08-08 14:28:39,185 - INFO - **salaire moyen** est bien réussit.
+2025-08-08 14:28:39,455 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:28:39,691 - INFO - **age moyen** est bien réussit.
+2025-08-08 14:28:39,918 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-08 14:28:40,148 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-08 14:28:43,523 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:28:46,876 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:28:50,242 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:29:47,586 - INFO - 25182 documents récupérés depuis la collection.
+2025-08-08 14:29:48,088 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-08 14:29:48,372 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-08 14:29:48,644 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-08 14:29:48,915 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-08 14:29:49,210 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-08 14:29:49,496 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-08 14:29:49,811 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-08 14:29:50,089 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-08 14:29:50,361 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-08 14:29:50,663 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-08 14:29:50,941 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-08 14:29:52,059 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-08 14:29:52,350 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-08 14:29:52,665 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-08 14:29:52,960 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-08 14:29:53,236 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-08 14:29:53,519 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-08 14:29:53,856 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-08 14:29:54,109 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-08 14:29:57,860 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:30:02,021 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:30:05,749 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:30:06,054 - INFO - **recuperation du marge beneficaire** est bien réussit.
+2025-08-08 14:30:06,363 - INFO - **recuperation rapport plus** est bien réussit.
+2025-08-08 14:30:06,673 - INFO - **recuperation rapporte moins** est bien réussit.
+2025-08-08 14:30:06,966 - INFO - **recuperation forte marge** est bien réussit.
+2025-08-08 14:30:07,264 - INFO - **recuperation faible marge** est bien réussit.
+2025-08-08 14:30:07,565 - INFO - **recuperation pertes** est bien réussit.
+2025-08-08 14:30:08,923 - INFO - **recuperation CA jour** est bien réussit.
+2025-08-08 14:30:29,652 - INFO - Connexion MongoDB établie avec succès.
+2025-08-08 14:30:29,926 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-08 14:30:30,277 - INFO - **recuperaction top 3** est bien réussit.
+2025-08-08 14:30:31,824 - INFO - **recuperation top medicaments** est bien réussit.
+2025-08-08 14:30:33,084 - INFO - **recuperation moins venus** est bien réussit.
+2025-08-08 14:30:33,402 - INFO - **recuperation vendeur non habilite** est bien réussit.

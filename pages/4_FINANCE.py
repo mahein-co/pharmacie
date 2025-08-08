@@ -38,46 +38,6 @@ html("""
 
 # --- Style CSS pour la card ---
 
-data = finance_views.CA_finance
-df_finance = pd.DataFrame(data)
-
-# ======= Nettoyage =======
-df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois'])
-df_semaine = df_finance.dropna(subset=['semaine', 'chiffre_affaire_semaine'])
-# ✅ Utilisation de selectbox 
-filtre = st.selectbox("Afficher par :", ['Mois', 'Semaine'])
-# ======= Filtres + graphique =======
-
-st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-if filtre == "Mois":
-    fig = px.line(
-        df_mois,
-        x="mois",
-        y="chiffre_affaire_mois",
-        title="Chiffre d'affaire mensuel"
-    )
-    fig.update_traces(mode="lines+markers")
-    st.plotly_chart(fig)
-
-elif filtre == "Semaine":
-    fig = px.line(
-        df_semaine,
-        x="semaine",
-        y="chiffre_affaire_semaine",
-        title="Chiffre d'affaire hebdomadaire"
-    )
-    fig.update_traces(mode="lines+markers")
-    st.plotly_chart(fig)
 
 # # Assurer que la colonne est bien au format datetime
 # df['date_de_vente'] = pd.to_datetime(df['date_de_vente'])
@@ -113,33 +73,87 @@ elif filtre == "Semaine":
 # dernier_ca = df_filtre["Chiffre d'affaires"].iloc[-1]
 
 
-# #importation html et css
-# st.markdown(style.custom_css, unsafe_allow_html=True)
-# st.markdown(style.kpis_style, unsafe_allow_html=True)
+#importation html et css
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+with st.container():
+    st.markdown("""
+                <style>
+                    .custom-card {
+                        background-color: #f9f9f9;
+                        padding: 20px;
+                        border-radius: 15px;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                        margin-bottom: 30px;
+                    }
+                </style>
+            """, unsafe_allow_html=True)
+    data = finance_views.CA_finance
+    df_finance = pd.DataFrame(data)
 
-# col1, col2 = st.columns([1, 3])
-# with col1:
-#     html_code = finance_views.get_kpi_html(filtre, total_chiffre_affaire)
-#     st.markdown(html_code, unsafe_allow_html=True)
-# with col2:
-#     # Affichage du graphique
-#     html("""
-#     <style>
-#         @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
-        
-#     .box {
-#         color: #7827e6;
-#         font-family: 'Quicksand', cursive;
-#         font-size: 35px;
-#         margin-top:-1rem;
-#         text-align: center;
-#     }
-#     </style>
-#     <p class="box">Évolution du chiffre d'affaires</p>
-#     """)
-#     # st.subheader(f"Évolution du chiffre d'affaires par {filtre.lower()}")
-#     st.line_chart(data=df_filtre.set_index('Période')["Chiffre d'affaires"])
+    # ======= Nettoyage =======
+    df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois'])
+    df_semaine = df_finance.dropna(subset=['semaine', 'chiffre_affaire_semaine'])
+    # ✅ Utilisation de selectbox 
+    
+    col1, col2 = st.columns([1, 3])
+    with col1:
+       filtre = st.selectbox("Afficher par :", ['Mois', 'Semaine'])
+       st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+    with col2:
+        if filtre == "Mois":
+            fig = px.line(
+            df_mois,
+            x="mois",
+            y="chiffre_affaire_mois",
+            title="Chiffre d'affaire mensuel"
+            )
 
+            fig.update_traces(mode="lines+markers")
+
+            fig.update_layout(
+                title={
+                    'text': "📊 Chiffre d'affaire mensuel",
+                    'x': 0.5,
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+                title_font=dict(size=18),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                margin=dict(l=0, r=0, t=30, b=0),
+                xaxis_title="Mois",
+                yaxis_title="Chiffre d'affaire (€)"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        elif filtre == "Semaine":
+            fig = px.line(
+            df_semaine,
+            x="semaine",
+            y="chiffre_affaire_semaine",
+            title="Chiffre d'affaire hebdomadaire"
+            )
+
+            fig.update_traces(mode="lines+markers")
+
+            # Mise à jour du layout pour un titre centré et propre + fond transparent
+            fig.update_layout(
+                title={
+                    'text': "📈 Chiffre d'affaire hebdomadaire",
+                    'x': 0.5,  # Centrer horizontalement
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+                title_font=dict(size=18),
+                paper_bgcolor="rgba(0,0,0,0)",  # Fond transparent de la figure
+                plot_bgcolor="rgba(0,0,0,0)",   # Fond transparent du graphe
+                margin=dict(l=0, r=0, t=30, b=0),
+                xaxis_title="Semaine",
+                yaxis_title="Chiffre d'affaire (€)"
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
 with st.container():
     col1,col2 = st.columns(2)
@@ -385,7 +399,7 @@ with st.container():
         # 🔹 Fin de la carte
         st.markdown("</div>", unsafe_allow_html=True)
 with st.container():
-    col1, col2 = st.columns([4,2])
+    col1, col2 = st.columns(2)
 
     with col1:
         # 🔹 Style personnalisé (carte)
@@ -447,7 +461,7 @@ with st.container():
         # Affichage dans Streamlit
         st.plotly_chart(fig)
 
-with st.container():
+    with col2:
     # 🔸 Données récupérées
         data = finance_views.Evolution_pertes
         df_pertes = pd.DataFrame(data)
