@@ -194,41 +194,41 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
         df = df[df.astype(str).apply(lambda row: row.str.contains(search, case=False), axis=1).any(axis=1)]
 
     # 🎨 CSS tableau stylisé
-    st.markdown(
-        """
-        <style>
+    st.markdown("""
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .custom-card h4 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
         .table-wrapper {
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: -20px;
-            margin-bottom: 10px;
+            overflow-x: auto;
         }
         .custom-table {
-            border-collapse: collapse;
             width: 100%;
-            font-family: Arial, sans-serif;
-            color: black;
+            border-collapse: collapse;
         }
-        .custom-table th {
-            background-color: #eee;
-            color: #050505;
+        .custom-table th, .custom-table td {
             padding: 10px;
+            border: 1px solid #ddd;
             text-align: left;
         }
-        .custom-table td {
-            padding: 10px;
-            color: black;
-            vertical-align: middle;
+        .custom-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
         }
         .custom-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        .custom-table tr:nth-child(odd) {
-            background-color: #ffffff;
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
+    </style>
+    """, unsafe_allow_html=True)
 
     # 🔢 Pagination : affichage tableau avec page
     # Valeurs disponibles
@@ -257,9 +257,16 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
             table_html += "</tr>"
         table_html += "</table></div>"
         st.markdown(table_html, unsafe_allow_html=True)
-
+    if df.empty:
+        st.markdown("""
+        <div class='custom-card'>
+            <h4>📊 Médicaments expiré</h4>
+            <p style='text-align:center; color: #888;'>Aucune Data</p>
+        </div>
+    """, unsafe_allow_html=True)
+    else:
     # 📊 Affiche le tableau filtré et paginé
-    render_table(df_page)
+        render_table(df_page)
 
     # 📄 Bas de tableau : choix nombre de lignes et navigation
     col1, col2 = st.columns(2)
