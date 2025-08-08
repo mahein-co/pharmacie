@@ -14,6 +14,8 @@ overview_collection = MongoDBClient(collection_name="overview")
 vente_collection = MongoDBClient(collection_name="vente")
 medicament_collection = MongoDBClient(collection_name="medicament")
 
+# Overview docs
+overveiw_docs = overview_collection.find_all_documents()
 
 
 
