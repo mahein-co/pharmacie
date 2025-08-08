@@ -41,24 +41,16 @@ Evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_
 #chriffre d'affraire
 CA_finance = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_mensuel_et_hebdo,title="recuperation CA jour")
 
-def get_kpi_html(filtre, total_chiffre_affaire):
 
-    kpis_html = f"""
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-            {icons.finance_icon_html}
-        </div>
-        <p class="kpi-title">Total Finance (MGA)</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
-      </div>
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-          {icons.calendar_icon_html}
-        </div>
-        <p class="kpi-title">Finance (MGA)<span style="text-transform:uppercase; color:#7827e6; font-size:0.9rem;">&nbsp;[{filtre}]</span></p>
-        <p class="kpi-value" style="font-size:1.5rem;">{f"{total_chiffre_affaire:,.0f}".replace(",", " ")}</p>
-      </div>
-    """
-    return kpis_html
+
+kpis_html = f"""
+  <div class="kpi-card">
+    <div style="text-align: left; position:absolute;">
+        {icons.finance_icon_html}
+    </div>
+    <p class="kpi-title">Total Finance (MGA)</p>
+    <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+  </div>
+"""
 
 
