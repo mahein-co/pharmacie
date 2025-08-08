@@ -60,4 +60,20 @@ fournisseur_icon_html = f'<img src="data:image/png;base64,{fournisseur_icon_b64}
 commande_icon_b64 = get_base64_image("assets/icons/vitamin.png")
 commande_icon_html = f'<img src="data:image/png;base64,{commande_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
 
+# Prix de vente
+prix_vente_icon_b64 = get_base64_image("assets/icons/ventes-flash.png")
+prix_vente_icon_html = f'<img src="data:image/png;base64,{prix_vente_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+
+# Prix fournisseur
+prix_fournisseur_icon_b64 = get_base64_image("assets/icons/budgeting.png")
+prix_fournisseur_icon_html = f'<img src="data:image/png;base64,{prix_fournisseur_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+
+# Evaluation - rmse
+evaluation_rmse_icon_b64 = get_base64_image("assets/icons/settings.png")
+evaluation_rmse_icon_html = f'<img src="data:image/png;base64,{evaluation_rmse_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+
+# Prediction
+prediction_icon_b64 = get_base64_image("assets/icons/predictive.png")
+prediction_icon_html = f'<img src="data:image/png;base64,{prediction_icon_b64}"  style="position: relative; top: 0; left: -7px; width:70px;">'
+
 

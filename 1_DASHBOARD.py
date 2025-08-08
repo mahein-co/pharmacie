@@ -31,7 +31,7 @@ from data.mongodb_client import MongoDBClient
 from itertools import product
 from pipelines import pipelines_ventes
 
-from style import style
+from style import style, icons
 
 # views
 from views import dashboard_views, employe_views 
@@ -290,9 +290,64 @@ overview_df = pd.DataFrame(dashboard_views.vente_docs)
 overview_df['jour_semaine'] = overview_df['date_de_vente'].dt.dayofweek  # 0 = Lundi, 6 = Dimanche
 overview_df['mois_num'] = overview_df['date_de_vente'].dt.month
 
+# Medicament dataframe
+medicament_df = pd.DataFrame(dashboard_views.medicament_docs)
+# Get unique id_medicament and nom
+medicament_df = medicament_df.drop_duplicates(subset=['id_medicament'])
+medicament_df = medicament_df[['id_medicament', 'nom', 'prix_unitaire', 'fournisseur', 'prix_fournisseur', 'Quantity_arrival']]
+medifcament_to_filter = medicament_df.to_dict(orient="records")
+
+def get_medicament_to_predict(medicament_choisi):
+    if not medicament_choisi:
+        return medifcament_to_filter[0]
+
+    medicament_to_predict = next((item for item in medifcament_to_filter if item["nom"] == medicament_choisi), None)
+    return medicament_to_predict
 
 with st.container():
-    st.markdown("<h3>Prediction rupture de meducaments</h3>", unsafe_allow_html=True)
+    # Title anticipation de rupture de stock
+    html("""
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        
+    .box {
+        color: #7827e6;
+        font-family: 'Quicksand', cursive;
+        font-size: 35px;
+        margin-top:4rem;
+        margin-bottom:-7rem;
+        text-align: center;
+    }
+    </style>
+    <p class="box">Anticipation des ruptures de stock d’un médicament</p>
+    """)
+    
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        options = [item['nom'] for item in medifcament_to_filter]
+        medicament_choisi = st.selectbox("Choisissez un médicament", options)
+        medicament_to_predict = get_medicament_to_predict(medicament_choisi)
+
+        # Card
+        medicament_info = f"""
+            <div class="kpi-card">
+                <div style="text-align: left; position:absolute;">
+                {icons.prix_vente_icon_html}
+                </div>
+                    <p class="kpi-title" style="font-size:1rem;">Prix Unitaire (MGA)</p>
+                    <p class="kpi-value" style="font-size:1.5rem;">{medicament_to_predict["prix_unitaire"]}</p>
+            </div>
+            <div class="kpi-card">
+                <div style="text-align: left; position:absolute;">
+                {icons.prix_fournisseur_icon_html}
+                </div>
+                    <p class="kpi-title" style="font-size:1rem;">Prix Fournisseur (MGA)</p>
+                    <p class="kpi-value" style="font-size:1.5rem;">{medicament_to_predict["prix_fournisseur"]}</p>
+                </div>
+            </div>
+        """
+
+        st.markdown(medicament_info, unsafe_allow_html=True)
 
     # Étape 1 : préparation des colonnes nécessaires
     overview_df['jour_semaine'] = overview_df['date_de_vente'].dt.dayofweek  # 0 = Lundi, 6 = Dimanche
@@ -346,10 +401,10 @@ with st.container():
     forecast_df = pd.DataFrame(forecast_rows)
 
     # Choisir un médicament au hasard parmi ceux de la prévision
-    med_random = random.choice(forecast_df['id_medicament'].unique())
+    # med_random = random.choice(forecast_df['id_medicament'].unique())
 
     # Filtrer les données pour ce médicament
-    med_data = forecast_df[forecast_df['id_medicament'] == med_random].copy()
+    med_data = forecast_df[forecast_df['id_medicament'] == medicament_to_predict["id_medicament"]].copy()
 
     # Créer une date synthétique pour l'axe des x : début de chaque semaine du mois
     med_data['date_synthetique'] = pd.to_datetime({
@@ -361,103 +416,136 @@ with st.container():
     # Regrouper par date synthétique en prenant la moyenne des probabilités sur tous les jours de la semaine
     agg_data = med_data.groupby('date_synthetique')['proba_zero'].mean().reset_index()
 
-    # Tracer avec matplotlib
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(agg_data['date_synthetique'], agg_data['proba_zero'], marker='o')
-    ax.set_title(f"Évolution des probabilités de rupture - {med_random}")
-    ax.set_xlabel("Date (approx. début de semaine)")
-    ax.set_ylabel("Probabilité de rupture")
-    ax.grid(True)
-    st.pyplot(fig)
+    with col2:
+        # Tracer avec matplotlib
+        fig = px.line(
+            agg_data,
+            x="date_synthetique",
+            y="proba_zero",
+            markers=True,
+            title=f"Évolution des probabilités de rupture - {medicament_to_predict['nom']}"
+        )
+        fig.update_layout(
+            xaxis_title="Date (approx. début de semaine)",
+            yaxis_title="Probabilité de rupture",
+            title={
+                'y':0.95,                              
+                'x':0.5,                               
+                'xanchor': 'center',                   
+                'yanchor': 'top'                      
+            }, 
+            plot_bgcolor='white',
+            xaxis=dict(showgrid=True, gridcolor='lightgrey'),
+            yaxis=dict(showgrid=True, gridcolor='lightgrey'),
+            height=315,
+            margin=dict(l=0, r=0, t=30, b=0),
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
+    # PREDICTION DE RETARD DE LIVRAISON
+    col1, col2, col3 = st.columns(3)
+    st.markdown("""
+        <style>
+        .metric-box {
+            background-color: #1e1e26;
+            border-left: 5px solid #00cc66;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 8px 0;
+            color: white;
+            box-shadow: 0 0 4px rgba(0,0,0,0.2);
+        }
+        .metric-label {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    # Selecting features and target
+    features = ['nom', 'Quantity_arrival', 'fournisseur']
+    target = 'retard_jour'
+    df_medicament = pd.DataFrame(dashboard_views.medicament_docs)
+    # Prepare feature matrix X and target vector y
+    X = df_medicament[features].copy()
+    y = df_medicament[target]
 
-# with st.container():
-#     st.markdown("<h3>Prediction fournisseurs</h3>", unsafe_allow_html=True)
-#     col1,col2 = st.columns(2)
-#     st.markdown("""
-#         <style>
-#         .metric-box {
-#             background-color: #1e1e26;
-#             border-left: 5px solid #00cc66;
-#             border-radius: 12px;
-#             padding: 16px 20px;
-#             margin: 8px 0;
-#             color: white;
-#             box-shadow: 0 0 4px rgba(0,0,0,0.2);
-#         }
-#         .metric-label {
-#             font-size: 16px;
-#             font-weight: 500;
-#             margin-bottom: 4px;
-#         }
-#         .metric-value {
-#             font-size: 28px;
-#             font-weight: bold;
-#         }
-#         </style>
-#         """, unsafe_allow_html=True)
-#     # Selecting features and target
-#     features = ['nom', 'Quantity_arrival', 'fournisseur']
-#     target = 'retard_jour'
+    # Encode categorical features
+    label_encoders = {}
+    for col in ['nom', 'fournisseur']:
+        le = LabelEncoder()
+        X[col] = le.fit_transform(X[col])
+        label_encoders[col] = le
 
-#     # Prepare feature matrix X and target vector y
-#     X = df_medicament[features].copy()
-#     y = df_medicament[target]
+    # Split data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-#     # Encode categorical features
-#     label_encoders = {}
-#     for col in ['nom', 'fournisseur']:
-#         le = LabelEncoder()
-#         X[col] = le.fit_transform(X[col])
-#         label_encoders[col] = le
+    # Initialize and train XGBoost regressor
+    model = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
 
-#     # Split data into train and test sets
-#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Predict on test set and calculate RMSE
+    y_pred = model.predict(X_test)
+    rmse = mean_squared_error(y_test, y_pred)
 
-#     # Initialize and train XGBoost regressor
-#     model = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, random_state=42)
-#     model.fit(X_train, y_train)
+    # Fonction pour faire une prédiction à partir de nouvelles valeurs
+    def predire_retard(nom, quantity_arrival, fournisseur):
+        # Encodage des variables catégorielles avec les encodeurs précédents
+        try:
+            nom_encoded = label_encoders['nom'].transform([nom])[0]
+            fournisseur_encoded = label_encoders['fournisseur'].transform([fournisseur])[0]
+        except ValueError as e:
+            return str(e)  # retourne une erreur si la valeur n'a pas été vue pendant l'entraînement
 
-#     # Predict on test set and calculate RMSE
-#     y_pred = model.predict(X_test)
-#     rmse = mean_squared_error(y_test, y_pred)
+        # Construction du vecteur d'entrée
+        input_data = pd.DataFrame([[nom_encoded, quantity_arrival, fournisseur_encoded]],
+                                columns=['nom', 'Quantity_arrival', 'fournisseur'])
 
-#     # Fonction pour faire une prédiction à partir de nouvelles valeurs
-#     def predire_retard(nom, quantity_arrival, fournisseur):
-#         # Encodage des variables catégorielles avec les encodeurs précédents
-#         try:
-#             nom_encoded = label_encoders['nom'].transform([nom])[0]
-#             fournisseur_encoded = label_encoders['fournisseur'].transform([fournisseur])[0]
-#         except ValueError as e:
-#             return str(e)  # retourne une erreur si la valeur n'a pas été vue pendant l'entraînement
+        # Prédiction
+        predicted_retard = model.predict(input_data)[0]
+        if predicted_retard < 0 :
+            return 0
+        return round(predicted_retard, 2)
 
-#         # Construction du vecteur d'entrée
-#         input_data = pd.DataFrame([[nom_encoded, quantity_arrival, fournisseur_encoded]],
-#                                 columns=['nom', 'Quantity_arrival', 'fournisseur'])
+    # Exemple de prédiction
+    example_prediction = predire_retard(medicament_to_predict["nom"], medicament_to_predict["Quantity_arrival"], medicament_to_predict["fournisseur"])
 
-#         # Prédiction
-#         predicted_retard = model.predict(input_data)[0]
-#         return round(predicted_retard, 2)
+    with col1:
+        st.markdown(f"""
+            <div class="kpi-card">
+                <div style="text-align: left; position:absolute;">
+                {icons.fournisseur_icon_html}
+                </div>
+                    <p class="kpi-title" style="font-size:1rem;">Fournisseur</p>
+                    <p class="kpi-value" style="font-size:1.5rem;">{medicament_to_predict["fournisseur"]}</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+            <div class="kpi-card">
+                <div style="text-align: left; position:absolute;">
+                    {icons.prediction_icon_html}
+                </div>
+                <p class="kpi-title" style="font-size:1rem;">Risque de retard de livraison (jours)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{example_prediction:.2f}</p>
+            </div>
+        """, unsafe_allow_html=True)
 
-#     # Exemple de prédiction
-#     example_prediction = predire_retard("Paracétamol", 700, "PharmaPlus")
-
-#     with col1:
-#         st.markdown(f"""
-#             <div class="kpi-card">
-#                 <div class="kpi-title" style="font-size:1.2rem;">rmse</div>
-#                 <div class="kpi-value" style="font-size:2rem;">{rmse:.2f}</div>
-#             </div>
-#         """, unsafe_allow_html=True)
-
-#     with col2:
-#         st.markdown(f"""
-#             <div class="kpi-card">
-#                 <div class="kpi-title" style="font-size:1.2rem;">prediction</div>
-#                 <div class="kpi-value" style="font-size:2rem;">{example_prediction:.2f}</div>
-#             </div>
-#         """, unsafe_allow_html=True)
-
+    with col3:
+        st.markdown(f"""
+            <div class="kpi-card">
+                <div style="text-align: left; position:absolute;">
+                {icons.evaluation_rmse_icon_html}
+                </div>
+                <p class="kpi-title" style="font-size:1rem;">Évaluation (rmse)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{rmse:.2f}</p>
+            </div>
+        """, unsafe_allow_html=True)
 # with st.container():
 #     st.markdown("<h3>Sales forecasting</h3>", unsafe_allow_html=True)
 

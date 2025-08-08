@@ -17,6 +17,7 @@ medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
 
 vente_docs = vente_collection.find_all_documents()
+medicament_docs = medicament_collection.find_all_documents()
 
 # I- D A S H B O A R D
 # 1.1. chiffre d'affaire total
