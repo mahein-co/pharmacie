@@ -66,7 +66,10 @@ with st.container():
               x=0.5,
               xanchor='center',
               font=dict(size=18)
-          )
+          ),
+          paper_bgcolor="rgba(0,0,0,0)",  
+          plot_bgcolor="rgba(0,0,0,0)",   
+          margin=dict(l=0, r=0, t=30, b=0),
       )
 
       # Affichage dans Streamlit
@@ -94,7 +97,10 @@ with st.container():
               x=0.5,
               xanchor='center',
               font=dict(size=18)
-          )
+          ),
+          paper_bgcolor="rgba(0,0,0,0)",  
+          plot_bgcolor="rgba(0,0,0,0)",   
+          margin=dict(l=0, r=0, t=30, b=0),
       )
 
       # Affichage dans Streamlit
