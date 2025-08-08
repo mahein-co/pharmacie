@@ -187,6 +187,63 @@ pipeline_pertes_expiration = [
   }
 }
 ]
+pipeline_pertes_expiration_fig = [
+    {
+        "$match": {
+            "date_expiration": { "$lt": TODAY },
+            "quantite_restante": { "$gt": 0 }
+        }
+    },
+    {
+        "$project": {
+            "perte": {
+                "$multiply": ["$quantite_restante", "$prix_unitaire"]
+            },
+            "annee": { "$year": "$date_expiration" },
+            "mois": { "$month": "$date_expiration" }
+        }
+    },
+    {
+        "$group": {
+            "_id": {
+                "annee": "$annee",
+                "mois": "$mois"
+            },
+            "total_pertes": {
+                "$sum": {
+                    "$subtract": [
+                        { "$divide": ["$perte", 4] },
+                        350
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "Date": {
+                "$dateToString": {
+                    "format": "%b %Y",
+                    "date": {
+                        "$dateFromParts": {
+                            "year": "$_id.annee",
+                            "month": "$_id.mois",
+                            "day": 1
+                        }
+                    }
+                }
+            },
+            "total_pertes": 1
+        }
+    },
+    {
+        "$sort": {
+            "Date": 1
+        }
+    }
+]
+
 
 # 6. Nombre total d'employés
 # total_employees = df['nom_employe'].nunique()
@@ -323,14 +380,12 @@ pipeline_rupture_stock = [
   },
   {
     "$group": {
-      "_id": {
-        "lot_id": "$lot_id",
-        "nom_medicament": "$nom_medicament"
-      },
-      "rupture_count": { "$sum": 1 },
-      "derniere_vente": { "$max": "$date_de_vente" },
-      "categorie": { "$first": "$medicament_categorie" },
-      "fournisseur": { "$first": "$fournisseur" }
+    "_id": "$lot_id",  # On groupe seulement par lot_id
+    "Médicament": { "$first": "$nom_medicament" },
+    "Rupture": { "$sum": 1 },
+    "Derniere Vente": { "$max": "$date_de_vente" },
+    "categorie": { "$first": "$medicament_categorie" },
+    "Fournisseur": { "$first": "$fournisseur" }
     }
   },
   {
@@ -339,6 +394,8 @@ pipeline_rupture_stock = [
     }
   }
 ]
+
+
 
 # 15. Médicament avec la plus forte rotation
 pipeline_medicament_forte_rotation = [
@@ -748,18 +805,26 @@ pipeline_plus_forte_marge = [
 # 27.Medicaments les plus cher
 pipeline_medicaments_plus_cher = [
   {
+    "$group": {
+      "_id": "$nom_medicament",
+      "lot_id": { "$first": "$lot_id" },
+      "fournisseur": { "$first": "$fournisseur" },
+      "prix_unitaire": { "$max": "$prix_unitaire" }
+    }
+  },
+  {
     "$sort": { "prix_unitaire": -1 }
   },
   {
-    "$limit": 3
+    "$limit": 2
   },
   {
     "$project": {
       "_id": 0,
-      "nom_medicament": 1,
+      "nom_medicament": "$_id",
       "lot_id": 1,
-      "prix_unitaire": 1,
-      "fournisseur": 1
+      "fournisseur": 1,
+      "prix_unitaire": 1
     }
   }
 ]
@@ -770,18 +835,28 @@ pipeline_medicaments_moins_cher = [
     "$sort": { "prix_unitaire": 1 }
   },
   {
-    "$limit": 3
+    "$group": {
+      "_id": "$nom_medicament",
+      "lot_id": { "$first": "$lot_id" },
+      "prix_unitaire": { "$first": "$prix_unitaire" },
+      "fournisseur": { "$first": "$fournisseur" }
+    }
   },
   {
     "$project": {
       "_id": 0,
-      "nom_medicament": 1,
+      "nom_medicament": "$_id",
       "lot_id": 1,
       "prix_unitaire": 1,
       "fournisseur": 1
     }
+  },
+  {
+    "$limit": 2  # (facultatif) les 3 médicaments les moins chers
   }
 ]
+
+
 
 # 29. Panier moyen par vente
 pipeline_panier_moyen_vente = [
@@ -910,4 +985,114 @@ pipeline_taux_retard_livraison = [
   {
     "$sort": { "taux_retard": -1 }
   }
+]
+
+#chriffre d'affaire finance filtre:
+pipeline_chiffre_affaire_mensuel_et_hebdo = [
+    {
+        "$match": {
+            "quantite": {"$ne": None},
+            "prix_unitaire": {"$ne": None},
+            "date_de_vente": {"$ne": None}
+        }
+    },
+    {
+        "$project": {
+            "quantite": {"$toDouble": "$quantite"},
+            "prix_unitaire": {"$toDouble": "$prix_unitaire"},
+            "mois_annee": {
+                "$dateToString": {"format": "%b%Y", "date": "$date_de_vente"}
+            },
+            "semaine": {
+                "$dateToString": {"format": "%G-S%V", "date": "$date_de_vente"}
+            },
+            "date_sort_mois": {
+                "$dateToString": {"format": "%Y%m", "date": "$date_de_vente"}
+            },
+            "date_sort_semaine": {
+                "$dateToString": {"format": "%G%V", "date": "$date_de_vente"}
+            }
+        }
+    },
+    {
+        "$facet": {
+            "par_mois": [
+                {
+                    "$group": {
+                        "_id": "$mois_annee",
+                        "chiffre_affaire_mois": {
+                            "$sum": {"$multiply": ["$quantite", "$prix_unitaire"]}
+                        },
+                        "date_sort": {"$first": "$date_sort_mois"}
+                    }
+                },
+                {"$sort": {"date_sort": 1}}
+            ],
+            "par_semaine": [
+                {
+                    "$group": {
+                        "_id": "$semaine",
+                        "chiffre_affaire_semaine": {
+                            "$sum": {"$multiply": ["$quantite", "$prix_unitaire"]}
+                        },
+                        "date_sort": {"$first": "$date_sort_semaine"}
+                    }
+                },
+                {"$sort": {"date_sort": 1}}
+            ]
+        }
+    },
+    {
+        "$project": {
+            "combined": {
+                "$map": {
+                    "input": {
+                        "$range": [
+                            0,
+                            {
+                                "$max": [
+                                    {"$size": "$par_mois"},
+                                    {"$size": "$par_semaine"}
+                                ]
+                            }
+                        ]
+                    },
+                    "as": "idx",
+                    "in": {
+                        "id": {"$add": ["$$idx", 1]},
+                        "mois": {
+                            "$cond": [
+                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
+                                {"$arrayElemAt": ["$par_mois._id", "$$idx"]},
+                                None
+                            ]
+                        },
+                        "chiffre_affaire_mois": {
+                            "$cond": [
+                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
+                                {"$arrayElemAt": ["$par_mois.chiffre_affaire_mois", "$$idx"]},
+                                None
+                            ]
+                        },
+                        "semaine": {
+                            "$cond": [
+                                {"$lt": ["$$idx", {"$size": "$par_semaine"}]},
+                                {"$arrayElemAt": ["$par_semaine._id", "$$idx"]},
+                                None
+                            ]
+                        },
+                        "chiffre_affaire_semaine": {
+                            "$cond": [
+                                {"$lt": ["$$idx", {"$size": "$par_semaine"}]},
+                                {"$arrayElemAt": ["$par_semaine.chiffre_affaire_semaine", "$$idx"]},
+                                None
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {"$unwind": "$combined"},
+    {"$replaceRoot": {"newRoot": "$combined"}}
 ]

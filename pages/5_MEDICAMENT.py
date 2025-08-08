@@ -292,7 +292,7 @@ else:
 
 data = medicament_views.rupture_stock
 df_rupture = pd.DataFrame(data)
-# df_rupture["lots"]= df_rupture["lots"][0][0]["lot_id"]
+df_rupture.rename(columns={"_id" : "Lots"},inplace=True)
 # 👉 1. CSS global (UNE SEULE FOIS)
 st.markdown("""
     <style>

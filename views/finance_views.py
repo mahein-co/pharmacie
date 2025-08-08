@@ -33,18 +33,11 @@ medoc_forte_marge = overview_collection.make_specific_pipeline(pipeline=pipeline
 medoc_faible_marge = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_plus_faible_marge,title="recuperation faible marge")
 
 #Evolution Total des pertes dues aux médicaments invendus ou abîmés
+Evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_pertes_expiration_fig,title="recuperation pertes")
 
 
 #chriffre d'affraire
-CA_par_jour = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_daily,title="recuperation CA jour")
-
-CA_par_semaine = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_weekly,title="recuperation CA par semaine")
-
-
-CA_par_mois = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_monthly,title="recuperation CA par mois")
-
-CA_par_Annee = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_yearly,title="recuperation CA par Annee")
-
+CA_finance = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_mensuel_et_hebdo,title="recuperation CA jour")
 
 def get_kpi_html(filtre, total_chiffre_affaire):
 
