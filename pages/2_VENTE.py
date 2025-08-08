@@ -86,14 +86,16 @@ with st.container():
                 xanchor='center',
                 font=dict(size=20, color='black')
             ),
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
             xaxis_title="Montant des ventes",
             yaxis_title="Vendeur",
             showlegend=False,
             height=350,
-            margin=dict(l=20, r=20, t=50, b=10)
         )
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside')
+        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -140,19 +142,21 @@ with st.container():
 
         fig.update_layout(
             title=dict(
-                text="Top 3 vendeurs non habilités",
+                text="Vendeurs non habilités",
                 x=0.5,
                 xanchor='center',
                 font=dict(size=20, color='black')
             ),
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
             xaxis_title="Montant des ventes",
             yaxis_title="Vendeur",
             showlegend=False,
             height=350,
-            margin=dict(l=20, r=20, t=50, b=10)
         )
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
+        fig.update_traces(texttemplate='%{text:.2f}', textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -201,7 +205,7 @@ with st.container():
 
         fig.update_layout(
             title=dict(
-                text="Top 3 médicaments",
+                text="Médicaments les plus vendus",
                 x=0.5,
                 xanchor='center',
                 font=dict(size=20, color='black')
@@ -210,11 +214,13 @@ with st.container():
             yaxis_title="Médicaments",
             showlegend=False,
             height=350,
-            margin=dict(l=20, r=20, t=50, b=10)
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
         )
 
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside')
+        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
 
@@ -264,7 +270,7 @@ with st.container():
 
         fig.update_layout(
             title=dict(
-                text="Médicaments Moins Vendus",
+                text="Médicaments les moins vendus",
                 x=0.5,
                 xanchor='center',
                 font=dict(size=20, color='black')
@@ -273,11 +279,13 @@ with st.container():
             yaxis_title="Médicaments",
             showlegend=False,
             height=350,
-            margin=dict(l=20, r=20, t=50, b=10)
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
         )
 
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside')
+        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
 

@@ -177,7 +177,10 @@ with st.container():
                 'xanchor': 'center',
                 'yanchor': 'top'
             },
-            title_font=dict(size=18),  # Taille du titre
+            title_font=dict(size=18),
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
         )
 
         # 🎯 Affichage dans Streamlit
@@ -217,6 +220,9 @@ with st.container():
                 'yanchor': 'top'
             },
             title_font=dict(size=18),  # Taille du titre
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
         )
 
         # 🎯 Affichage dans Streamlit
@@ -292,8 +298,10 @@ with st.container():
             yaxis=dict(range=[0, df_forte_marge["Marge"].max() * 1.2]),
             showlegend=False,
             height=400,
-            margin=dict(l=20, r=20, t=20, b=20)
-        )
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
+        )   
 
         fig.update_traces(textposition='outside')
 
@@ -365,7 +373,9 @@ with st.container():
             yaxis=dict(range=[0, df_faible_marge["Marge"].max() * 1.2]),
             showlegend=False,
             height=400,
-            margin=dict(l=20, r=20, t=20, b=20)
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=0, r=0, t=30, b=0),
         )
 
         fig.update_traces(textposition='outside')
@@ -375,6 +385,9 @@ with st.container():
         # 🔹 Fin de la carte
         st.markdown("</div>", unsafe_allow_html=True)
 with st.container():
+    col1, col2 = st.columns([4,2])
+
+    with col1:
         # 🔹 Style personnalisé (carte)
         st.markdown("""
             <style>
@@ -426,6 +439,9 @@ with st.container():
                         'yanchor': 'top'
                     },
                     title_font=dict(size=18),  # Taille du titre
+                    paper_bgcolor="rgba(0,0,0,0)",  
+                    plot_bgcolor="rgba(0,0,0,0)",   
+                    margin=dict(l=0, r=50, t=30, b=0),
                 )
 
         # Affichage dans Streamlit
