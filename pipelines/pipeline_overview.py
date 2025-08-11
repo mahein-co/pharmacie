@@ -1096,3 +1096,87 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
     {"$unwind": "$combined"},
     {"$replaceRoot": {"newRoot": "$combined"}}
 ]
+
+pipeline_quantite_jour = [
+  {
+    "$group": {
+      "_id": {
+        "jour": { "$dayOfWeek": "$date_de_vente" },
+        "nom_medicament": "$nom_medicament"
+      },
+      "quantite_totale": { "$sum": "$quantite" }
+    }
+  },
+  {
+    "$addFields": {
+      "jour_nom": {
+        "$arrayElemAt": [
+          ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+          { "$subtract": ["$_id.jour", 1] }
+        ]
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": "$_id.nom_medicament",
+      "quantite_totale": 1,
+      "jour": "$jour_nom"
+    }
+  },
+  {
+    "$sort": {
+      "nom_medicament": 1,
+      "jour": 1
+    }
+  }
+]
+
+pipeline_quantite_mois = [
+  {
+    "$addFields": {
+      "annee": { "$year": "$date_de_vente" },
+      "mois_num": { "$month": "$date_de_vente" }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "annee": "$annee",
+        "mois_num": "$mois_num"
+      },
+      "quantite_totale": { "$sum": "$quantite" }
+    }
+  },
+  {
+    "$addFields": {
+      "mois_nom": {
+        "$arrayElemAt": [
+          ["Jan", "Fev", "Mar", "Avr", "Mai", "Juin", "Juil", "Aout", "Sep", "Oct", "Nov", "Dec"],
+          { "$subtract": ["$_id.mois_num", 1] }
+        ]
+      },
+      "annee": "$_id.annee",
+      "nom_medicament": "$_id.nom_medicament"
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": 1,
+      "quantite_totale": 1,
+      "mois": "$mois_nom",
+      "annee": "$annee"
+    }
+  },
+  {
+    "$sort": {
+      "nom_medicament": 1,
+      "annee": 1,
+      "mois": 1
+    }
+  }
+]
+
