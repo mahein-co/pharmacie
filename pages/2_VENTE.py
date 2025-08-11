@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit.components.v1 import html
+import plotly.graph_objects as go
 import plotly.express as px
 from views import vente_views,dashboard_views
 from data.mongodb_client import MongoDBClient 
@@ -292,4 +293,140 @@ with st.container():
         # Fermeture du div .card
         st.markdown('</div>', unsafe_allow_html=True)
 
+with st.container():
+    # Supposons que vente_views.saisonalite soit déjà chargé
+    data = vente_views.saisonalite
+    df_saison = pd.DataFrame(data)
     
+    # Renommer les colonnes
+    df_saison.rename(columns={"quantite_totale": "Quantite Totale", "nom_medicament": "Médicaments"}, inplace=True)
+
+    # Ordre des jours de la semaine
+    ordre_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+    df_saison['jour'] = pd.Categorical(df_saison['jour'], categories=ordre_jours, ordered=True)
+
+    # Pivot table : Médicaments en index, jours en colonnes
+    pivot = df_saison.pivot(index='Médicaments', columns='jour', values='Quantite Totale')
+
+    z = pivot.values.tolist()
+    x = pivot.columns.tolist()
+    y = pivot.index.tolist()
+
+    # Création heatmap avec dégradé vert
+    fig = go.Figure(data=go.Heatmap(
+        z=z,
+        x=x,
+        y=y,
+        colorscale=[
+            [0, 'rgb(230, 255, 230)'],   # vert très clair
+            [0.5, 'rgb(100, 200, 100)'], # vert moyen
+            [1, 'rgb(0, 100, 0)']        # vert foncé
+        ],
+        colorbar=dict(title='Quantité Totale')
+    ))
+
+    # Annotations des valeurs dans chaque case
+    annotations = []
+    max_val = pivot.max().max() if pivot.max().max() else 0  # éviter erreur si pivot vide
+
+    for i, medicament in enumerate(y):
+        for j, jour in enumerate(x):
+            val = z[i][j]
+            if pd.notnull(val):
+                annotations.append(
+                    go.layout.Annotation(
+                        text=str(int(val)),
+                        x=jour,
+                        y=medicament,
+                        showarrow=False,
+                        font=dict(color='white' if val > (max_val / 2) else 'black'),
+                        xanchor='center',
+                        yanchor='middle'
+                    )
+                )
+
+    fig.update_layout(
+        title='Heatmap des quantités vendues par jour et médicament (avec valeurs)',
+        xaxis_title='Jour',
+        yaxis_title='Médicaments',
+        annotations=annotations,
+        yaxis=dict(autorange='reversed')  # pour que l’ordre vertical soit du haut vers le bas
+    )
+
+    # Style CSS pour la carte dans Streamlit (optionnel)
+    st.markdown(
+        """
+        <style>
+        .card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Affichage du graphique
+    st.plotly_chart(fig, use_container_width=True)
+
+with st.container():
+    col1,col2 = st.columns([1,3])
+    st.markdown(
+        """
+        <style>
+        .card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Supposons que tes données sont dans vente_views.Medoc_evolution
+    data = vente_views.Medoc_evolution
+    df_evolution = pd.DataFrame(data)
+
+    # Renommer colonnes si besoin
+    df_evolution.rename(columns={
+        "quantite_totale": "Quantite Totale",
+        "nom_medicament": "Médicaments",
+        "mois": "Mois",
+        "annee": "Annee"
+    }, inplace=True)
+
+    # Dictionnaire de conversion des mois en numéro
+    mois_map = {
+        'Jan': 1, 'Fév': 2, 'Fev': 2, 'Mar': 3, 'Avr': 4, 'Mai': 5, 'Juin': 6,
+        'Juil': 7, 'Aoû': 8, 'Aout': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Déc': 12, 'Dec': 12
+    }
+
+    # Convertir le mois texte en numéro
+    df_evolution['Mois_Num'] = df_evolution['Mois'].map(mois_map)
+
+    # Créer une colonne Date au 1er jour du mois pour tri et graphique
+    df_evolution['Date'] = pd.to_datetime(dict(year=df_evolution['Annee'], month=df_evolution['Mois_Num'], day=1))
+    with col1:
+        # Filtre médicaments et année
+        medocs = df_evolution['Médicaments'].unique()
+        annees = df_evolution['Annee'].unique()
+
+        medicament_choisi = st.selectbox("Choisissez un médicament :", options=sorted(medocs))
+        annee_choisie = st.selectbox("Choisissez une année :", options=sorted(annees))
+
+        # Appliquer les filtres
+        df_filtre = df_evolution[(df_evolution['Médicaments'] == medicament_choisi) & (df_evolution['Annee'] == annee_choisie)]
+        df_filtre = df_filtre.sort_values('Date')
+    with col2:
+        # Graphique en courbe
+        fig = px.line(df_filtre, x='Date', y='Quantite Totale',
+                    title=f"Évolution des ventes de {medicament_choisi} en {annee_choisie}",
+                    markers=True)
+
+        st.plotly_chart(fig, use_container_width=True)
