@@ -91,69 +91,73 @@ with st.container():
     data = finance_views.CA_finance
     df_finance = pd.DataFrame(data)
 
-    # ======= Nettoyage =======
-    df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois'])
-    df_semaine = df_finance.dropna(subset=['semaine', 'chiffre_affaire_semaine'])
-    # ✅ Utilisation de selectbox 
+    # Nettoyage
+df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois', 'annee'])
+df_semaine = df_finance.dropna(subset=['semaine', 'chiffre_affaire_semaine', 'annee'])
+
+col1, col2 = st.columns([1, 3])
+with col1:
+    filtre = st.selectbox("Afficher par :", ['Mois', 'Semaine'])
     
-    col1, col2 = st.columns([1, 3])
-    with col1:
-       filtre = st.selectbox("Afficher par :", ['Mois', 'Semaine'])
-       st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
-    with col2:
-        if filtre == "Mois":
-            fig = px.line(
-            df_mois,
+    # Récupérer la liste des années uniques disponibles
+    annees_dispo = [int(year) for year in sorted(df_finance['annee'].dropna().unique())]
+    annee_choisie = st.selectbox("Sélectionner l'année :", annees_dispo)
+    
+    st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+
+with col2:
+    if filtre == "Mois":
+        # Filtrer selon l'année choisie
+        df_filtre = df_mois[df_mois['annee'] == annee_choisie]
+        
+        fig = px.line(
+            df_filtre,
             x="mois",
             y="chiffre_affaire_mois",
-            title="Chiffre d'affaire mensuel"
-            )
+            title=f"Chiffre d'affaire mensuel - {int(annee_choisie)}"
+        )
+        fig.update_traces(mode="lines+markers")
+        fig.update_layout(
+            title={
+                'text': f"📊 Chiffre d'affaire mensuel - {int(annee_choisie)}",
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            title_font=dict(size=18),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=0, r=0, t=30, b=0),
+            xaxis_title="Mois",
+            yaxis_title="Chiffre d'affaire (€)"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
-            fig.update_traces(mode="lines+markers")
-
-            fig.update_layout(
-                title={
-                    'text': "📊 Chiffre d'affaire mensuel",
-                    'x': 0.5,
-                    'xanchor': 'center',
-                    'yanchor': 'top'
-                },
-                title_font=dict(size=18),
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                margin=dict(l=0, r=0, t=30, b=0),
-                xaxis_title="Mois",
-                yaxis_title="Chiffre d'affaire (€)"
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
-        elif filtre == "Semaine":
-            fig = px.line(
-            df_semaine,
+    elif filtre == "Semaine":
+        df_filtre = df_semaine[df_semaine['annee'] == annee_choisie]
+        
+        fig = px.line(
+            df_filtre,
             x="semaine",
             y="chiffre_affaire_semaine",
-            title="Chiffre d'affaire hebdomadaire"
-            )
-
-            fig.update_traces(mode="lines+markers")
-
-            # Mise à jour du layout pour un titre centré et propre + fond transparent
-            fig.update_layout(
-                title={
-                    'text': "📈 Chiffre d'affaire hebdomadaire",
-                    'x': 0.5,  # Centrer horizontalement
-                    'xanchor': 'center',
-                    'yanchor': 'top'
-                },
-                title_font=dict(size=18),
-                paper_bgcolor="rgba(0,0,0,0)",  # Fond transparent de la figure
-                plot_bgcolor="rgba(0,0,0,0)",   # Fond transparent du graphe
-                margin=dict(l=0, r=0, t=30, b=0),
-                xaxis_title="Semaine",
-                yaxis_title="Chiffre d'affaire (€)"
-            )
-            st.plotly_chart(fig, use_container_width=True)
+            title=f"Chiffre d'affaire hebdomadaire - {int(annee_choisie)}"
+        )
+        fig.update_traces(mode="lines+markers")
+        fig.update_layout(
+            title={
+                'text': f"📈 Chiffre d'affaire hebdomadaire - {int(annee_choisie)}",
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            title_font=dict(size=18),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=0, r=0, t=30, b=0),
+            xaxis_title="Semaine",
+            yaxis_title="Chiffre d'affaire (€)"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
 with st.container():
     col1,col2 = st.columns(2)
