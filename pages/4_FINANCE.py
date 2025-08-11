@@ -187,14 +187,17 @@ with st.container():
         fig.update_layout(
             title={
                 'text': "💰Médicament rapport Moins",
-                'x': 0.5,  # Centre horizontalement
+                'y': 0.90,            # Hauteur du titre (1 = tout en haut)
+                'x': 0.5,    # Centre horizontalement
                 'xanchor': 'center',
                 'yanchor': 'top'
             },
+            width=400,  # largeur en pixels (plus réaliste que 50)
+            height=350,
             title_font=dict(size=18),
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
+            margin=dict(l=0, r=0, t=80, b=0),
         )
 
         # 🎯 Affichage dans Streamlit
@@ -229,14 +232,17 @@ with st.container():
         fig.update_layout(
             title={
                 'text': "💰 Médicament Rapport Plus",
-                'x': 0.5,  # Centre horizontalement
-                'xanchor': 'center',
-                'yanchor': 'top'
+                'y': 0.90,            # Hauteur du titre (1 = tout en haut)
+                'x': 0.5,             # Centré horizontalement
+                'xanchor': 'center',  # Ancre horizontale
+                'yanchor': 'bottom'   # Ancre verticale
             },
+            width=400,  # largeur en pixels (plus réaliste que 50)
+            height=350, # hauteur en pixels
             title_font=dict(size=18),  # Taille du titre
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
+            margin=dict(l=0, r=0, t=80, b=0)  # ✅ Un seul margin, t=100 pour espace
         )
 
         # 🎯 Affichage dans Streamlit
