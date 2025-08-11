@@ -30,7 +30,7 @@ html("""
     margin-top:-1rem;
   }
 </style>
-<div class="box">Employé</div>
+<div class="box">Employés</div>
 """)
 
 #importation html et css

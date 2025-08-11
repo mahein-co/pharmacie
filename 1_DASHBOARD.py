@@ -532,7 +532,7 @@ with st.container():
                     {icons.prediction_icon_html}
                 </div>
                 <p class="kpi-title" style="font-size:1rem;">Risque de retard de livraison (jours)</p>
-                <p class="kpi-value" style="font-size:1.5rem;">{example_prediction:.2f}</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{int(example_prediction)}</p>
             </div>
         """, unsafe_allow_html=True)
 
