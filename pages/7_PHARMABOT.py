@@ -8,7 +8,7 @@ from openai import OpenAI
 
 from data.config import openai_api_key
 from data.mongodb_client import MongoDBClient
-from views import dashboard_views
+from views import dashboard_views, employe_views
 
 # Logging configuration
 logging.basicConfig(
@@ -93,6 +93,7 @@ system_prompt = f"""
         Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
         Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
         Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
+        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
 
     Voici des informations provenant de notre base de ventes, de stocks et d'employés:
 """
