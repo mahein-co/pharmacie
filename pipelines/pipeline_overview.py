@@ -987,7 +987,7 @@ pipeline_taux_retard_livraison = [
   }
 ]
 
-#chriffre d'affaire finance filtre:
+# 35.chriffre d'affaire finance filtre:
 pipeline_chiffre_affaire_mensuel_et_hebdo = [
     {
         "$match": {
@@ -1156,3 +1156,98 @@ pipeline_quantite_mois = [
   }
 ]
 
+pipeline_quantite_jour = [
+  {
+    "$group": {
+      "_id": {
+        "jour": { "$dayOfWeek": "$date_de_vente" },
+        "nom_medicament": "$nom_medicament"
+      },
+      "quantite_totale": { "$sum": "$quantite" }
+    }
+  },
+  {
+    "$addFields": {
+      "jour_nom": {
+        "$arrayElemAt": [
+          ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+          { "$subtract": ["$_id.jour", 1] }
+        ]
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": "$_id.nom_medicament",
+      "quantite_totale": 1,
+      "jour": "$jour_nom"
+    }
+  },
+  {
+    "$sort": {
+      "nom_medicament": 1,
+      "jour": 1
+    }
+  }
+]
+#36.salaire moyen 
+pipeline_salaire_moyen =[{
+     "$group": {
+      "_id": None,
+      "salaire_moyen": { "$avg": "$salaire" }
+    }
+}]
+
+#37.Age moyenne 
+pipeline_age_moyen =[{
+     "$addFields": {
+            "age": {
+                "$dateDiff": {
+                    "startDate": "$date_naissance",
+                    "endDate": "$$NOW",
+                    "unit": "year"
+                }
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": None,
+            "age_moyen": { "$avg": "$age" }
+        }
+    }
+]
+
+#38.pipeline Effictif par categorie et par fonction 
+pipeline_eff_categorie = [
+    {
+        "$group": {
+            "_id": "$employe_categorie",  # champ correct
+            "Effectif": {"$sum": 1}
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "Categorie": "$_id",
+            "Effectif": 1
+        }
+    }
+]
+
+pipeline_eff_fonction = [
+    {
+        "$group": {
+            "_id": "$fonction",
+            "Effectif": {"$sum": 1}
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "Fonction": "$_id",
+            "Effectif": 1
+        }
+    }
+]
