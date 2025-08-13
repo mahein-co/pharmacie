@@ -55,8 +55,8 @@ with open("style/pharmacie.css", "r") as css_file:
 
 # Sidebar
 with st.sidebar:
-    if st.button("Recharger les données", key="reload", help="Cliquez pour recharger les données", use_container_width=True):
-        st.cache_data.clear()
+    # if st.button("Recharger les données", key="reload", help="Cliquez pour recharger les données", use_container_width=True):
+    #     st.cache_data.clear()
     st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
 
 # -----------------------------------------------------------------
@@ -93,7 +93,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
 
     # 2. EMPLOYEES --------------------------------------------
     employe_df = pd.DataFrame(list(dashboard_views.all_employes))
-    employe_df = employe_df.drop_duplicates(subset=['nom_employe'])
+    employe_df = employe_df.drop_duplicates(subset=['id_employe'])
     employe_df = employe_df[['date_embauche', 'salaire']]
     employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
 
@@ -116,7 +116,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
         color="salaire",
         size="salaire",
         template="simple_white",
-        title=f"Correlation: {employe_correlation}"
+        title=f"Correlation: {abs(employe_correlation)}"
     )
     employe_clustering_plot.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",  

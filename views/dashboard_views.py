@@ -34,10 +34,8 @@ pipeline_get_employes = [
   }
 ] 
 
-all_employes = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_get_employes,
-  title="Recuperation de tous les employés"
-)
+all_employes = employe_collection.find_all_documents()
+nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
 
 vente_docs = vente_collection.find_all_documents()
 overview_docs = overview_collection.find_all_documents()
@@ -248,8 +246,6 @@ table_head_medicaments_expired_html = f"""
 """
 
 # all employes
-nombre_total_employes = len(all_employes)
-
 total_all_employes_html = f"""
   <div class="kpi-card" style="margin-bottom:1.5rem;">
     <div style="text-align: left; position:absolute;">

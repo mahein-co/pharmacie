@@ -29,11 +29,27 @@ Eff_categorie = [{
                 "_id": "$categorie",
                 "Effectif": {"$sum": 1}
             }
-}]
+},
+{
+        "$project": {
+            "_id": 0,
+            "Categorie": "$_id",
+            "Effectif": 1
+        }
+    }
+]
 
 Eff_fonction = [{
     "$group": {
                 "_id":"$fonction",
                 "Effectif": {"$sum":1}
             }
-}]
+},
+{
+        "$project": {
+            "_id": 0,
+            "Fonction": "$_id",
+            "Effectif": 1
+        }
+    }
+]
