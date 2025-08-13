@@ -48,13 +48,12 @@ with st.container():
       #DataFrame
       data = employe_views.effectif_par_employe_categorie
       df_eff_categorie = pd.DataFrame(data)
-      df_eff_categorie.rename(columns={"_id":"Catégorie"}, inplace=True)
 
 
       # Graphique camembert avec Plotly Express
       fig = px.pie(
           df_eff_categorie,
-          names='Catégorie',
+          names='Categorie',
           values='Effectif',
           hole=0.4
       )
@@ -62,7 +61,7 @@ with st.container():
       # Centrage du titre avec xanchor
       fig.update_layout(
           title=dict(
-              text="Répartition par categories",
+              text="Répartition par catégories",
               x=0.5,
               xanchor='center',
               font=dict(size=18)
@@ -78,13 +77,11 @@ with st.container():
     with col2:
       #DataFrame
       data = employe_views.effectif_par_employe_fonction
-      df_eff_categorie = pd.DataFrame(data)
-      df_eff_categorie.rename(columns={"_id":"Fonction"}, inplace=True)
-
+      df_eff_fonction = pd.DataFrame(data)
 
       # Graphique camembert avec Plotly Express
       fig = px.pie(
-          df_eff_categorie,
+          df_eff_fonction,
           names='Fonction',
           values='Effectif',
           hole=0.4
