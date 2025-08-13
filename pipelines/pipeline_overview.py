@@ -1000,9 +1000,8 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
         "$project": {
             "quantite": {"$toDouble": "$quantite"},
             "prix_unitaire": {"$toDouble": "$prix_unitaire"},
-            "mois_annee": {
-                "$dateToString": {"format": "%b%Y", "date": "$date_de_vente"}
-            },
+            "mois": { "$dateToString": { "format": "%b", "date": "$date_de_vente" } },  # Ex : "Jan"
+            "annee": { "$toInt": { "$year": "$date_de_vente" } },
             "semaine": {
                 "$dateToString": {"format": "%G-S%V", "date": "$date_de_vente"}
             },
@@ -1019,7 +1018,10 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
             "par_mois": [
                 {
                     "$group": {
-                        "_id": "$mois_annee",
+                        "_id": {
+                            "mois": "$mois",
+                            "annee": "$annee"
+                        },
                         "chiffre_affaire_mois": {
                             "$sum": {"$multiply": ["$quantite", "$prix_unitaire"]}
                         },
@@ -1060,10 +1062,18 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
                     "as": "idx",
                     "in": {
                         "id": {"$add": ["$$idx", 1]},
+                        # Extraction mois et année séparés pour par_mois
                         "mois": {
                             "$cond": [
                                 {"$lt": ["$$idx", {"$size": "$par_mois"}]},
-                                {"$arrayElemAt": ["$par_mois._id", "$$idx"]},
+                                {"$arrayElemAt": ["$par_mois._id.mois", "$$idx"]},
+                                None
+                            ]
+                        },
+                        "annee": {
+                            "$cond": [
+                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
+                                {"$arrayElemAt": ["$par_mois._id.annee", "$$idx"]},
                                 None
                             ]
                         },
@@ -1096,3 +1106,53 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
     {"$unwind": "$combined"},
     {"$replaceRoot": {"newRoot": "$combined"}}
 ]
+
+
+
+pipeline_quantite_mois = [
+  {
+    "$addFields": {
+      "annee": { "$year": "$date_de_vente" },
+      "mois_num": { "$month": "$date_de_vente" }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "annee": "$annee",
+        "mois_num": "$mois_num"
+      },
+      "quantite_totale": { "$sum": "$quantite" }
+    }
+  },
+  {
+    "$addFields": {
+      "mois_nom": {
+        "$arrayElemAt": [
+          ["Jan", "Fev", "Mar", "Avr", "Mai", "Juin", "Juil", "Aout", "Sep", "Oct", "Nov", "Dec"],
+          { "$subtract": ["$_id.mois_num", 1] }
+        ]
+      },
+      "annee": "$_id.annee",
+      "nom_medicament": "$_id.nom_medicament"
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": 1,
+      "quantite_totale": 1,
+      "mois": "$mois_nom",
+      "annee": "$annee"
+    }
+  },
+  {
+    "$sort": {
+      "nom_medicament": 1,
+      "annee": 1,
+      "mois": 1
+    }
+  }
+]
+

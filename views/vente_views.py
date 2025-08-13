@@ -38,6 +38,11 @@ Medoc_moins_vendus = overview_collection.make_specific_pipeline(pipeline=pipelin
 #6.Non habilité vendeur
 vendeur_non_habilite = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_vendeur_non_habilite,title="recuperation vendeur non habilite")
 
+#hitmap
+saisonalite = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_quantite_jour,title="recuperation hitmap")
+
+#evolution
+Medoc_evolution = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_quantite_mois,title="recuperation evolution")
 
 # ========== KPI Cards ===============
 kpis_html = f"""
