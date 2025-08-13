@@ -8,6 +8,7 @@ from openai import OpenAI
 
 from data.config import openai_api_key
 from data.mongodb_client import MongoDBClient
+from views import dashboard_views
 
 # Logging configuration
 logging.basicConfig(
@@ -35,6 +36,8 @@ model_embedding = "text-embedding-3-small"
 # Connexion MongoDB Atlas
 corpus_collection = MongoDBClient(collection_name="corpus_rag").get_collection()
 
+perte_total_medicaments = f"{dashboard_views.total_pertes_medicaments}".replace(",", " ")
+valeur_stock_restant = f"{dashboard_views.valeur_totale_stock}".replace(",", " ")
 
 # Generate text embedding
 def generate_text_embedding(text: str):
@@ -100,6 +103,12 @@ system_prompt = f"""
         Si l’utilisateur demande une analyse de stock, tu fournis des rapports synthétiques ou détaillés selon le besoin.
 
         Si tu ne sais pas ou n'es pas autorisé à répondre, tu redonnes la main au professionnel de santé.
+
+        Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
+
+        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
+
+        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
 
     Voici des informations provenant de notre base de ventes, de stocks et d'employés:
 """
