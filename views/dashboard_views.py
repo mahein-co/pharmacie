@@ -17,6 +17,7 @@ medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
 
 vente_docs = vente_collection.find_all_documents()
+overview_docs = overview_collection.find_all_documents()
 medicament_docs = medicament_collection.find_all_documents()
 
 # I- D A S H B O A R D
@@ -225,7 +226,7 @@ table_head_medicaments_expired_html = f"""
 
 
 # all employes
-nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
+nombre_total_employes = overview_collection.count_distinct_agg(field_name="nom_employe")
 
 total_all_employes_html = f"""
   <div class="kpi-card" style="margin-bottom:1.5rem;">

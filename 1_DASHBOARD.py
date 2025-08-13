@@ -12,24 +12,16 @@ from utils import load_data
 import streamlit as st
 
 from datetime import datetime
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
 
-from datetime import timedelta,date
 
 from data.mongodb_ip_manager import MongoDBIPManager
-from data import mongodb_pipelines
 from streamlit.components.v1 import html
-from data.mongodb_client import MongoDBClient
 from itertools import product
-from pipelines import pipelines_ventes
 
 from style import style, icons
 
@@ -100,7 +92,9 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
 
     # 2. EMPLOYEES --------------------------------------------
-    employe_df = pd.DataFrame(list(employe_views.employe_documents))
+    employe_df = pd.DataFrame(list(dashboard_views.overview_docs))
+    employe_df = employe_df.drop_duplicates(subset=['nom_employe'])
+    employe_df = employe_df[['date_embauche', 'salaire']]
     employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
 
     # Calculate ancienneté in years
@@ -108,7 +102,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     employe_df['anciennete'] = (today - employe_df['date_embauche']).dt.days / 365.25
 
     # Remove duplicates by keeping the most recent 'date_embauche' per 'id_employe'
-    employe_df_unique = employe_df.sort_values('date_embauche').drop_duplicates(subset='id_employe', keep='last')
+    employe_df_unique = employe_df.sort_values('date_embauche')
 
     # Keep only relevant columns for analysis
     employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
