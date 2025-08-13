@@ -83,10 +83,12 @@ with st.container():
                 'yanchor': 'top'
             },
             title_font=dict(size=18),
+            paper_bgcolor="rgba(0,0,0,0)",
+            height=335,  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
             showlegend=False,
-            height=400,
-            margin=dict(l=20, r=20, t=20, b=20),
-            xaxis_tickangle=-45
+            # xaxis_tickangle=-45
         )
 
         # Affichage dans Streamlit
@@ -122,7 +124,11 @@ with st.container():
             yaxis_title="Nombre moyen de commandes",
             yaxis=dict(range=[0, df_temps_moyen_fourn["Nombre moyen de commandes"].max() + 2]),
             uniformtext_minsize=8,
-            uniformtext_mode='hide'
+            uniformtext_mode='hide',
+            paper_bgcolor="rgba(0,0,0,0)",
+            height=350,  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
         )
 
         # 🖼️ Affichage dans Streamlit
@@ -164,7 +170,11 @@ with st.container():
               yaxis_title="Temps Moyen Livraison (jours)",
               yaxis=dict(range=[0, df_temps_moyen_fourn["Temps Moyen Livraison"].max() + 2]),
               uniformtext_minsize=8,
-              uniformtext_mode='hide'
+              uniformtext_mode='hide',
+              paper_bgcolor="rgba(0,0,0,0)",
+              height=350,  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
           )
 
           # 🖼️ Affichage dans Streamlit
@@ -199,7 +209,11 @@ with st.container():
               yaxis_title="Taux de retard (%)",
               yaxis=dict(range=[0, df_taux_retard_livraison["Taux retard"].max() + 5]),
               uniformtext_minsize=8,
-              uniformtext_mode='hide'
+              uniformtext_mode='hide',
+              paper_bgcolor="rgba(0,0,0,0)",
+              height=350,  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
           )
 
           # 🖼️ Affichage dans Streamlit
