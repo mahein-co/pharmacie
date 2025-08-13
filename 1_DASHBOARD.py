@@ -92,7 +92,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
 
     # 2. EMPLOYEES --------------------------------------------
-    employe_df = pd.DataFrame(list(dashboard_views.overview_docs))
+    employe_df = pd.DataFrame(list(dashboard_views.all_employes))
     employe_df = employe_df.drop_duplicates(subset=['nom_employe'])
     employe_df = employe_df[['date_embauche', 'salaire']]
     employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
