@@ -37,7 +37,7 @@ html("""
 st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
 
-if employe_views.overview_collection:
+if employe_views.employe_collection:
   st.markdown(employe_views.kpis_html, unsafe_allow_html=True)
 
 
