@@ -138,7 +138,7 @@ def generate_answer(query, retrieved_docs, system_prompt=system_prompt):
         {query}
     """
     response = client_openai.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
