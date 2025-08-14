@@ -307,6 +307,7 @@ with st.container():
     .box {
         color: #7827e6;
         font-family: 'Quicksand', cursive;
+        font-weight: bold;
         font-size: 35px;
         margin-top:4rem;
         margin-bottom:-7rem;
