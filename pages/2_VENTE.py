@@ -40,7 +40,7 @@ st.markdown(vente_views.kpis_html, unsafe_allow_html=True)
 
 
 
-# ========== LEFT SECTION (Visitors + Graph) ==========
+# Scorecard et Top vendeur ---------------------------------
 with st.container():
     col1,col2 = st.columns(2)
 
@@ -164,6 +164,7 @@ with st.container():
         # Fermer carte
         st.markdown('</div>', unsafe_allow_html=True)
 
+# Graphiques Top Médicaments et Moins Vendus -----------------------------
 with st.container():
     col1,col2 = st.columns(2)
 
@@ -293,6 +294,7 @@ with st.container():
         # Fermeture du div .card
         st.markdown('</div>', unsafe_allow_html=True)
 
+# Heatmap des quantités vendues par jour et médicament -----------------------------
 with st.container():
     # Supposons que vente_views.saisonalite soit déjà chargé
     data = vente_views.saisonalite
@@ -318,11 +320,11 @@ with st.container():
         x=x,
         y=y,
         colorscale=[
-            [0, 'rgb(230, 255, 230)'],   # vert très clair
-            [0.5, 'rgb(100, 200, 100)'], # vert moyen
-            [1, 'rgb(0, 100, 0)']        # vert foncé
+            [0, '#E0B0FF'],   
+            [0.5, '#A87BC7'], 
+            [1, '#734A91']    
         ],
-        colorbar=dict(title='Quantité Totale')
+        colorbar=dict(title='Quantité Totale'),
     ))
 
     # Annotations des valeurs dans chaque case
@@ -346,11 +348,22 @@ with st.container():
                 )
 
     fig.update_layout(
-        title='Heatmap des quantités vendues par jour et médicament (avec valeurs)',
+        title={
+            "text":'Répartition des quantités de médicaments vendues par jour de la semaine',
+            'y':0.95,                              
+            'x':0.5, 
+            'xanchor': 'center',                   
+            'yanchor': 'top',                      
+            "font": dict(
+            size=24,       
+            color="#7827e6", 
+        )
+        }, 
         xaxis_title='Jour',
         yaxis_title='Médicaments',
         annotations=annotations,
-        yaxis=dict(autorange='reversed')  # pour que l’ordre vertical soit du haut vers le bas
+        yaxis=dict(autorange='reversed'),
+        height=500 
     )
 
     # Style CSS pour la carte dans Streamlit (optionnel)
@@ -372,10 +385,24 @@ with st.container():
     # Affichage du graphique
     st.plotly_chart(fig, use_container_width=True)
 
+# Graphique d'évolution des ventes par médicament -----------------------------
 with st.container():
+    st.markdown("""
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        .box {
+            color: #7827e6;
+            font-family: 'Quicksand', cursive;
+            font-size: 1.8rem;
+            margin-top:2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        </style>     
+        <div class="box">Évolution des ventes d'un médicament</div>
+    """, unsafe_allow_html=True)
     # --- Mise en page ---
     col1, col2 = st.columns([1, 3])
-
     # --- Style card (optionnel) ---
     st.markdown(
         """
@@ -413,8 +440,8 @@ with st.container():
 
     with col1:
         medoc_list = sorted(df_evolution["Médicaments"].unique())
-        selected_medocs = st.multiselect("Choisir un ou plusieurs médicaments", medoc_list)
-
+        st.markdown("""<div class="little-space"></div>""", unsafe_allow_html=True)
+        selected_medocs = st.multiselect("Choisissez un ou plusieurs médicamentss", medoc_list)
         year_list = sorted(df_evolution["Annee"].unique(), reverse=True)
         selected_years = st.multiselect("Choisir une ou plusieurs années", year_list)
 
@@ -448,8 +475,14 @@ with st.container():
                     markers=True,
                     title=f"Évolution des ventes{title_suffix}")
         fig.update_layout(
+            title=f"Évolution des ventes de {selected_medoc}",
             xaxis_title="Mois",
             yaxis_title="Quantité Totale",
-            template="plotly_white"
+            template="plotly_white",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
+            height=235,
         )
         st.plotly_chart(fig, use_container_width=True)
+

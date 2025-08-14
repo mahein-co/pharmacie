@@ -268,6 +268,12 @@ kpis_style = """
 
 }
 
+.little-space {
+  padding: 12px;
+  height:3px;
+  width:3px;
+}
+
 .kpi-card {
   background: #fff;
   border-radius: 15px;
