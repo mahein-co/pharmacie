@@ -16,7 +16,29 @@ overview_collection = pipeline_overview.overview_collection
 medicament_collection = MongoDBClient(collection_name="medicament")
 employe_collection = MongoDBClient(collection_name="employe")
 
+pipeline_get_employes = [
+  {
+    "$group": {
+      "_id": "$nom_employe", 
+      "date_embauche": { "$last": "$date_embauche" }, 
+      "salaire": { "$last": "$salaire" } 
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "nom_employe": "$_id",
+      "date_embauche": 1,
+      "salaire": 1
+    }
+  }
+] 
+
+all_employes = employe_collection.find_all_documents()
+nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
+
 vente_docs = vente_collection.find_all_documents()
+overview_docs = overview_collection.find_all_documents()
 medicament_docs = medicament_collection.find_all_documents()
 
 # I- D A S H B O A R D
@@ -223,10 +245,7 @@ table_head_medicaments_expired_html = f"""
 </div>
 """
 
-
 # all employes
-nombre_total_employes = employe_collection.count_distinct_agg(field_name="id_employe")
-
 total_all_employes_html = f"""
   <div class="kpi-card" style="margin-bottom:1.5rem;">
     <div style="text-align: left; position:absolute;">
