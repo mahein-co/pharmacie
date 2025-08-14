@@ -187,6 +187,7 @@ pipeline_pertes_expiration = [
   }
 }
 ]
+
 pipeline_pertes_expiration_fig = [
     {
         "$match": {
@@ -222,27 +223,25 @@ pipeline_pertes_expiration_fig = [
     {
         "$project": {
             "_id": 0,
-            "Date": {
-                "$dateToString": {
-                    "format": "%b %Y",
-                    "date": {
-                        "$dateFromParts": {
-                            "year": "$_id.annee",
-                            "month": "$_id.mois",
-                            "day": 1
-                        }
-                    }
-                }
+            "Annee": "$_id.annee",
+            "Mois": {
+                "$arrayElemAt": [
+                    ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"],
+                    { "$subtract": ["$_id.mois", 1] }
+                ]
             },
             "total_pertes": 1
         }
     },
     {
         "$sort": {
-            "Date": 1
+            "Annee": 1,
+            "Mois": 1
         }
     }
 ]
+
+
 
 
 # 6. Nombre total d'employés
@@ -989,39 +988,47 @@ pipeline_taux_retard_livraison = [
 
 # 35.chriffre d'affaire finance filtre:
 pipeline_chiffre_affaire_mensuel = [
-    {
-        "$match": {
-            "quantite": {"$ne": None},
-            "prix_unitaire": {"$ne": None},
-            "date_de_vente": {"$ne": None}
-        }
-    },
-    {
-        "$project": {
-            "quantite": {"$toDouble": "$quantite"},
-            "prix_unitaire": {"$toDouble": "$prix_unitaire"},
-            "mois": { "$dateToString": { "format": "%b", "date": "$date_de_vente" } },
-            "annee": { "$toInt": { "$year": "$date_de_vente" } },
-            "date_sort_mois": { "$dateToString": {"format": "%Y%m", "date": "$date_de_vente"} }
-        }
-    },
-    {
-        "$group": {
-            "_id": { "mois": "$mois", "annee": "$annee" },
-            "chiffre_affaire_mois": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } },
-            "date_sort": { "$first": "$date_sort_mois" }
-        }
-    },
-    { "$sort": { "date_sort": 1 } },
-    {
-        "$project": {
-            "id": { "$add": [1, {"$indexOfArray": ["$date_sort", "$date_sort"]}] },  # optionnel
-            "mois": "$_id.mois",
-            "annee": "$_id.annee",
-            "chiffre_affaire_mois": 1
-        }
+  {
+    "$match": {
+      "quantite": {"$ne": None},
+      "prix_unitaire": {"$ne": None},
+      "date_de_vente": {"$ne": None},
+      "nom_medicament": {"$ne": None}
     }
+  },
+  {
+    "$project": {
+      "nom_medicament": 1,
+      "quantite": { "$toDouble": { "$ifNull": ["$quantite", 0] } },
+      "prix_unitaire": { "$toDouble": { "$ifNull": ["$prix_unitaire", 0] } },
+      "mois": { "$dateToString": { "format": "%b", "date": { "$toDate": "$date_de_vente" } } },
+      "annee": { "$year": { "$toDate": "$date_de_vente" } },
+      "date_sort_mois": { "$dateToString": { "format": "%Y%m", "date": { "$toDate": "$date_de_vente" } } }
+    }
+  },
+  {
+    "$group": {
+      "_id": { 
+        "mois": "$mois", 
+        "annee": "$annee",
+        "nom_medicament": "$nom_medicament"
+      },
+      "chiffre_affaire_mois": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } },
+      "date_sort": { "$first": "$date_sort_mois" }
+    }
+  },
+  { "$sort": { "date_sort": 1 } },
+  {
+    "$project": {
+      "nom_medicament": "$_id.nom_medicament",
+      "mois": "$_id.mois",
+      "annee": "$_id.annee",
+      "chiffre_affaire_mois": 1,
+      "_id": 0
+    }
+  }
 ]
+
 
 pipeline_quantite_mois = [
   {

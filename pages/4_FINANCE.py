@@ -89,63 +89,75 @@ with st.container():
     </style>
 """, unsafe_allow_html=True)
 
+    import calendar
+
     # Chargement des données
     data = finance_views.CA_finance
     df_finance = pd.DataFrame(data)
-    print("valiny : ",df_finance)
-    # # Nettoyage
-    # df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois', 'annee'])
 
-    # col1, col2 = st.columns([1, 3])
-    # with col1:
-    #     filtre = st.selectbox("Afficher par :", ['Mois'])
-        
-    #     # Liste des années disponibles
-    #     annees_dispo = [int(year) for year in sorted(df_finance['annee'].dropna().unique())]
-    #     annee_choisie = st.selectbox("Sélectionner l'année :", annees_dispo)
-        
-    #     st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+    # Nettoyage
+    df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois', 'annee', 'nom_medicament'])
 
-    # with col2:
-    #     # --- Affichage par MOIS ---
-    #     if filtre == "Mois":
-    #         df_actuel = df_mois[df_mois['annee'] == annee_choisie]
-    #         annee_prec = annee_choisie - 1
-    #         df_prec = df_mois[df_mois['annee'] == annee_prec]
+    # 🔹 Ajouter un numéro de mois pour trier (basé sur noms FR ou EN)
+    mois_map = {month: i for i, month in enumerate(calendar.month_abbr) if month}  # {'Jan':1, 'Feb':2,...}
+    df_mois['mois_num'] = df_mois['mois'].map(mois_map)
 
-    #         if not df_prec.empty:
-    #             df_actuel['Année'] = df_actuel['annee'].astype(int)
-    #             df_prec['Année'] = df_prec['annee'].astype(int)
-    #             df_combine = pd.concat([df_actuel, df_prec])
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        filtre = st.selectbox("Afficher par :", ['Mois'])
 
-    #             fig = px.line(
-    #                 df_combine,
-    #                 x="mois",
-    #                 y="chiffre_affaire_mois",
-    #                 color="Année",
-    #                 markers=True,
-    #                 title=f"Chiffre d'affaire mensuel - {annee_choisie} vs {annee_prec}"
-    #             )
-    #         else:
-    #             fig = px.line(
-    #                 df_actuel,
-    #                 x="mois",
-    #                 y="chiffre_affaire_mois",
-    #                 markers=True,
-    #                 title=f"Chiffre d'affaire mensuel - {annee_choisie}"
-    #             )
+        # Multiselect années
+        annees_dispo = sorted(df_finance['annee'].dropna().unique().astype(int))
+        annees_choisies = st.multiselect("Sélectionner les années :", annees_dispo, default=[max(annees_dispo)])
 
-    #         fig.update_traces(mode="lines+markers")
-    #         fig.update_layout(
-    #             title={'x': 0.5, 'xanchor': 'center'},
-    #             title_font=dict(size=18),
-    #             paper_bgcolor="rgba(0,0,0,0)",
-    #             plot_bgcolor="rgba(0,0,0,0)",
-    #             margin=dict(l=0, r=0, t=30, b=0),
-    #             xaxis_title="Mois",
-    #             yaxis_title="Chiffre d'affaire (€)"
-    #         )
-    #         st.plotly_chart(fig, use_container_width=True)
+        # Multiselect médicaments
+        medicaments_dispo = sorted(df_finance['nom_medicament'].dropna().unique())
+        medicaments_choisis = st.multiselect("Sélectionner les médicaments :", medicaments_dispo)
+
+        st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+
+    with col2:
+        # --- Filtrage ---
+        if medicaments_choisis:
+            df_filtre = df_mois[df_mois['nom_medicament'].isin(medicaments_choisis)]
+        else:
+            df_filtre = df_mois.groupby(['mois', 'annee', 'mois_num'], as_index=False).agg({
+                'chiffre_affaire_mois': 'sum'
+            })
+            df_filtre['nom_medicament'] = 'Global'
+
+        if annees_choisies:
+            df_filtre = df_filtre[df_filtre['annee'].isin(annees_choisies)]
+
+        # --- Affichage par MOIS ---
+        if filtre == "Mois" and not df_filtre.empty:
+            df_filtre['Année'] = df_filtre['annee'].astype(int)
+            df_filtre['Ligne'] = df_filtre['nom_medicament'] + " - " + df_filtre['Année'].astype(str)
+
+            # Tri par numéro de mois
+            df_filtre = df_filtre.sort_values(by="mois_num")
+
+            fig = px.line(
+                df_filtre,
+                x="mois",
+                y="chiffre_affaire_mois",
+                color="Ligne",
+                markers=True,
+                title=f"Chiffre d'affaire mensuel - {', '.join(medicaments_choisis) if medicaments_choisis else 'Global'}"
+            )
+
+            fig.update_traces(mode="lines+markers")
+            fig.update_layout(
+                title={'x': 0.5, 'xanchor': 'center'},
+                title_font=dict(size=18),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                margin=dict(l=0, r=0, t=30, b=0),
+                xaxis_title="Mois",
+                yaxis_title="Chiffre d'affaire (€)",
+                xaxis=dict(categoryorder="array", categoryarray=list(mois_map.keys()))
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
 
 with st.container():
@@ -397,11 +409,10 @@ with st.container():
 
         # 🔹 Fin de la carte
         st.markdown("</div>", unsafe_allow_html=True)
-with st.container():
-    col1, col2 = st.columns(2)
 
-    with col1:
-        # 🔹 Style personnalisé (carte)
+#Marge benefinaire
+with st.container():
+     # 🔹 Style personnalisé (carte)
         st.markdown("""
             <style>
                 .custom-card {
@@ -459,63 +470,70 @@ with st.container():
 
         # Affichage dans Streamlit
         st.plotly_chart(fig)
+with st.container():
+
+    col1, col2 = st.columns([1,3])
+
+with col1:
+    # 🔹 Style personnalisé
+    st.markdown("""
+        <style>
+            .custom-card {
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 30px;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 🔹 Données
+    data = finance_views.Evolution_pertes
+    df_pertes = pd.DataFrame(data)
+    df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
+
+    # 🔹 Dictionnaire mois
+    mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
+                 "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
+    df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
+
+    # 🔹 Filtre année
+    annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
+    annee_selectionnee = st.selectbox("Sélectionner l'année", annees_dispo)
+
+    # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
+    annees_a_afficher = [annee_selectionnee]
+    annee_precedente = annee_selectionnee - 1
+    if annee_precedente in df_pertes['Annee'].values:
+        annees_a_afficher.append(annee_precedente)
+
+    df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
+
+    # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
+    mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
+                  "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
+    df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
+    df_graph = df_graph.sort_values(['Annee','Mois'])
 
     with col2:
-    # 🔸 Données récupérées
-        data = finance_views.Evolution_pertes
-        df_pertes = pd.DataFrame(data)
-
-        # 🔸 Renommer la colonne
-        df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
-
-        # 🔸 Conversion de la colonne 'Date' en datetime (ex: 'Jan 2024')
-        df_pertes['Date'] = pd.to_datetime(df_pertes['Date'], format='%b %Y')
-
-        # 🔸 Tri chronologique
-        df_pertes = df_pertes.sort_values('Date')
-
-        # 🔸 (Facultatif) Style CSS pour autres composants
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-
-        # 🔸 Créer le graphique
+        # 🔹 Graphique
         fig = px.line(
-            df_pertes,
-            x='Date',
+            df_graph,
+            x='Mois',
             y='Total Perte',
-            markers=True
+            color='Annee',  # Une couleur par année
+            markers=True,
+            labels={"Total Perte":"Chiffre d'affaire (€)", "Mois":"Mois", "Annee":"Année"}
         )
 
-        # 🔸 Mise en forme du graphique
+        # 🔹 Toujours afficher tous les mois sur l'axe X
+        fig.update_xaxes(categoryorder='array', categoryarray=mois_order)
+
         fig.update_layout(
-            title=dict(
-                text="📉 Évolution mensuelle des pertes",
-                x=0.5,  # Centré horizontalement
-                xanchor='center',
-                yanchor='top',
-                font=dict(size=20)
-            ),
-            xaxis_title="Date",
-            yaxis_title="Total des pertes (Ar)",
+            title=f"📈 Évolution du chiffre d'affaires - {annee_selectionnee} et année précédente",
             font=dict(size=14),
-            plot_bgcolor='white',
+            plot_bgcolor='white'
         )
-
-        # 🔸 Style de la ligne
         fig.update_traces(line=dict(width=3))
-
-        # 🔸 Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
-
-    
-
-    
