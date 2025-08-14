@@ -259,10 +259,10 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
         </div>
     """, unsafe_allow_html=True)
     else:
-    # 📊 Affiche le tableau filtré et paginé
+    # Affiche le tableau filtré et paginé
         render_table(df_page)
 
-    # 📄 Bas de tableau : choix nombre de lignes et navigation
+    # Bas de tableau : choix nombre de lignes et navigation
     col1, col2 = st.columns(2)
 
     with col1:
