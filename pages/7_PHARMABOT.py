@@ -72,6 +72,10 @@ def search_rag_mongo(query, k=200):
     results = list(corpus_collection.aggregate(pipeline))
     return [doc["text"] for doc in results]
 
+def get_last_user_question():
+    messages = [m for m in st.session_state.messages if m["role"] == "user"]
+    return messages[-2]["content"] if len(messages) >= 2 else None
+
     
 # System prompt for the AI
 system_prompt = f"""
@@ -100,23 +104,26 @@ system_prompt = f"""
 
 # Generate AI response
 def generate_answer(query, retrieved_docs):
+    # last_question = get_last_user_question()
     context = "\n\n---\n\n".join(retrieved_docs)
+    # conversation_context = f"Dernière question de l'utilisateur : {last_question}\n" if last_question else ""
+    conversation = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+
     prompt = f"""
-        {system_prompt}
         {context}   
+        {conversation}
         Réponds à la question suivante de manière claire, concise et professionnelle :
         {query}
     """
     response = client_openai.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4",
         messages=[
-            {"role": "system", "content": "Tu es un assistant pharmaceutique."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
         ],
         temperature=0.2
     )
     return response.choices[0].message.content
-
 
 st.set_page_config(page_title="Chatbot Simple", layout="centered")
 # UI Streamlit

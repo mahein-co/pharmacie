@@ -2,6 +2,8 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from streamlit.components.v1 import html
+
 
 # LangChain components
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -33,9 +35,9 @@ st.set_page_config(
 
 
 client_openai = OpenAI(api_key=openai_api_key)
-# model_embedding = "text-embedding-3-small"
+model_embedding = "text-embedding-3-small"
 
-pharm_document_collection = MongoDBClient(collection_name="pharm_documents")
+pharm_document_collection = MongoDBClient(collection_name="pharm_documents").get_collection()
 
 # --- 2. Configuration and Secrets Management ---
 # Connexion to OpenAI API
@@ -118,19 +120,27 @@ def search_rag_mongo(query, k=200):
     results = list(pharm_document_collection.aggregate(pipeline))
     return [doc["text"] for doc in results]
 
+def get_last_user_question():
+    messages = [m for m in st.session_state.messages if m["role"] == "user"]
+    return messages[-2]["content"] if len(messages) >= 2 else None
+
 # Generate AI response
 def generate_answer(query, retrieved_docs, system_prompt=system_prompt):
+    # last_question = get_last_user_question()
     context = "\n\n---\n\n".join(retrieved_docs)
+    # conversation_context = f"Dernière question de l'utilisateur : {last_question}\n" if last_question else ""
+    conversation = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+
     prompt = f"""
-        {system_prompt}
         {context}   
+        {conversation}
         Réponds à la question suivante de manière claire, concise et professionnelle :
         {query}
     """
     response = client_openai.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4",
         messages=[
-            {"role": "system", "content": "Tu es un assistant pharmaceutique."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
         ],
         temperature=0.2
@@ -188,36 +198,54 @@ qa_chain = get_qa_chain(OPENAI_API_KEY, ATLAS_VECTOR_SEARCH_INDEX_NAME)
 
 
 # --- 5. Streamlit App Interface (Chat-based UX) ---
-st.title("Pharmacie de Madagascar AI assistant 🤖")
-
-st.markdown("""
-Bienvenue dans votre assistant pharmacien intelligent !
+html("""
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    
+  .box {
+    color: #7827e6;
+    text-align: center;
+    font-family: 'Quicksand', cursive;
+    font-size: 2.5rem;
+  }
+    .subtitle {
+    text-align: center;
+    color: #48494B;
+    font-family: 'Quicksand', cursive;
+    font-size: 1.2rem;
+  }
+</style>
+<h1 class="box">Pharmacie de Madagascar AI assistant</h1>
+<h4 class="subtitle">Bienvenue dans votre assistant pharmacien intelligent !</h4>
 """)
 
-# Initialize chat history in Streamlit's session state
-# Each message is a dictionary: {"role": "user" or "assistant", "content": "message", "sources": [Document objects]}
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display previous chat messages
+# Afficher l'historique des messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-        # If it's an assistant message and has sources, display them in a collapsed expander
-        if message["role"] == "assistant" and message.get("sources"):
-            with st.expander("🔎 Voir les documents sources"): # This expander is for sources ONLY, defaults to collapsed
-                st.markdown("Ces informations sont basées sur les documents suivants :")
-                for i, doc in enumerate(message["sources"]):
-                    st.markdown(f"**Source Document {i+1}:**")
-                    st.write(f"- Fichier: `{doc.metadata.get('source', 'Inconnue')}`")
-                    st.write(f"- Page/Ligne: {doc.metadata.get('page', 'N/A')}")
-                    st.write(f"- Type: `{doc.metadata.get('document_type', 'N/A')}`")
-                    # Display a snippet of the document content
-                    st.markdown(f"```text\n{doc.page_content[:400]}...\n```")
-                    st.markdown("---")
+
+# Display previous chat messages
+# for message in st.session_state.messages:
+#     with st.chat_message(message["role"]):
+#         st.markdown(message["content"])
+#         # If it's an assistant message and has sources, display them in a collapsed expander
+#         if message["role"] == "assistant" and message.get("sources"):
+#             with st.expander("🔎 Voir les documents sources"): # This expander is for sources ONLY, defaults to collapsed
+#                 st.markdown("Ces informations sont basées sur les documents suivants :")
+#                 for i, doc in enumerate(message["sources"]):
+#                     st.markdown(f"**Source Document {i+1}:**")
+#                     st.write(f"- Fichier: `{doc.metadata.get('source', 'Inconnue')}`")
+#                     st.write(f"- Page/Ligne: {doc.metadata.get('page', 'N/A')}")
+#                     st.write(f"- Type: `{doc.metadata.get('document_type', 'N/A')}`")
+#                     # Display a snippet of the document content
+#                     st.markdown(f"```text\n{doc.page_content[:400]}...\n```")
+#                     st.markdown("---")
 
 # Zone de saisie utilisateur
-if prompt := st.chat_input("Posez votre question ici : "):
+if prompt := st.chat_input("Posez votre question"):
 
     # Ajouter le message utilisateur à l'historique
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -299,17 +327,9 @@ if prompt := st.chat_input("Posez votre question ici : "):
 
 
 # # --- Sidebar for additional info ---
-# with st.sidebar:
+with st.sidebar:
     # Use columns to center the image
     col1_sb, col2_sb, col3_sb = st.columns([1, 2, 1])
-    # with col2_sb: # Place the image in the middle column
-    #     # Make sure you have 'pharmacie_logo.png' in the same directory as app.py
-    #     if os.path.exists("pharmacie_logo.png"):
-    #         st.image("pharmacie_logo.png", width=80)
-    #     else:
-    #         st.markdown("<h2 style='text-align: center;'>Pharmacie de Madagascar</h2>", unsafe_allow_html=True)
-    #         st.warning("Logo image 'pharmacie_logo.png' not found. Displaying text fallback.")
-
     st.header("À propos de l'Assistant")
     st.markdown("""
     Cet assistant est un outil basé sur l'IA, conçu spécifiquement pour
