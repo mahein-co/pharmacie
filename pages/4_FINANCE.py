@@ -1,12 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.express as px
-from pymongo import MongoClient
 from streamlit.components.v1 import html
 from views import finance_views
-from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_finance,pipeline_overview
 
 from style import style
 
@@ -28,54 +24,11 @@ html("""
 <div class="box">Finance</div>
 """)
 
-
-# Data ------------------------------------ 
-# Import des données depuis le backend
-# Récupération des données depuis la vue MongoDB
-# Exemple : extraction brute sans agrégation MongoDB complexe
-# --- Données ---
-# --- Charger les données ---
-
-# --- Style CSS pour la card ---
-
-
-# # Assurer que la colonne est bien au format datetime
-# df['date_de_vente'] = pd.to_datetime(df['date_de_vente'])
-# df['chiffre_affaires'] = df['quantite'] * df['prix_unitaire']
-
-# # Résumés temporels
-# daily_revenue = df.resample('D', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
-# weekly_revenue = df.resample('W', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
-# monthly_revenue = df.resample('ME', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
-# year_revenue = df.resample('YE', on='date_de_vente')['chiffre_affaires'].sum().reset_index()
-
-# filtre = st.selectbox("Filtrer par :", ["Jour", "Semaine", "Mois", "Année"])
-
-# if filtre == "Jour":
-#     df_filtre = daily_revenue.copy()
-#     df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%d %b')
-# elif filtre == "Semaine":
-#     df_filtre = weekly_revenue.copy()
-#     df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('Sem. %W')
-# elif filtre == "Mois":
-#     df_filtre = monthly_revenue.copy()
-#     df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%b %Y')
-# elif filtre == "Année":
-#     df_filtre = year_revenue.copy()
-#     df_filtre['label'] = df_filtre['date_de_vente'].dt.strftime('%Y')
-
-# df_filtre.rename(columns={
-#     'date_de_vente': 'Période',
-#     'chiffre_affaires': "Chiffre d'affaires"
-# }, inplace=True)
-
-# total_chiffre_affaire = df_filtre["Chiffre d'affaires"].sum()
-# dernier_ca = df_filtre["Chiffre d'affaires"].iloc[-1]
-
-
-#importation html et css
+# importation html et css
 st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
+
+# FILTRES ------------------------------------
 with st.container():
     st.markdown("""
     <style>
@@ -102,21 +55,72 @@ with st.container():
     mois_map = {month: i for i, month in enumerate(calendar.month_abbr) if month}  # {'Jan':1, 'Feb':2,...}
     df_mois['mois_num'] = df_mois['mois'].map(mois_map)
 
-    col1, col2 = st.columns([1, 3])
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         filtre = st.selectbox("Afficher par :", ['Mois'])
 
+    with col2:
         # Multiselect années
         annees_dispo = sorted(df_finance['annee'].dropna().unique().astype(int))
         annees_choisies = st.multiselect("Sélectionner les années :", annees_dispo, default=[max(annees_dispo)])
 
+    with col3:
         # Multiselect médicaments
         medicaments_dispo = sorted(df_finance['nom_medicament'].dropna().unique())
         medicaments_choisis = st.multiselect("Sélectionner les médicaments :", medicaments_dispo)
 
-        st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+    # with col4:
+    #     st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
 
-    with col2:
+
+    with col4:
+    # 🔹 Style personnalisé
+        st.markdown("""
+            <style>
+                .custom-card {
+                    background-color: #f9f9f9;
+                    padding: 20px;
+                    border-radius: 15px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 30px;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # 🔹 Données
+        data = finance_views.Evolution_pertes
+        df_pertes = pd.DataFrame(data)
+        df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
+
+        # 🔹 Dictionnaire mois
+        mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
+                    "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
+        df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
+
+        # 🔹 Filtre année
+        annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
+        annee_selectionnee = st.selectbox("Sélectionner l'année", annees_dispo)
+
+        # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
+        annees_a_afficher = [annee_selectionnee]
+        annee_precedente = annee_selectionnee - 1
+        if annee_precedente in df_pertes['Annee'].values:
+            annees_a_afficher.append(annee_precedente)
+
+        df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
+
+        # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
+        mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
+                    "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
+        df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
+        df_graph = df_graph.sort_values(['Annee','Mois'])
+
+# CHIFFRE D'AFFAIRE ------------------------------------
+with st.container():
+    col1, col2 = st.columns(2)
+
+    # Chiffre d'affaire mensuel
+    with col1:
         # --- Filtrage ---
         if medicaments_choisis:
             df_filtre = df_mois[df_mois['nom_medicament'].isin(medicaments_choisis)]
@@ -154,12 +158,39 @@ with st.container():
                 plot_bgcolor="rgba(0,0,0,0)",
                 margin=dict(l=0, r=0, t=30, b=0),
                 xaxis_title="Mois",
+                height=335,
                 yaxis_title="Chiffre d'affaire (€)",
                 xaxis=dict(categoryorder="array", categoryarray=list(mois_map.keys()))
             )
             st.plotly_chart(fig, use_container_width=True)
 
+    # Evolution chiffre d'affaire
+    with col2:
+        # 🔹 Graphique
+        fig = px.line(
+            df_graph,
+            x='Mois',
+            y='Total Perte',
+            color='Annee',  # Une couleur par année
+            markers=True,
+            labels={"Total Perte":"Chiffre d'affaire (€)", "Mois":"Mois", "Annee":"Année"},
+            title=f"Évolution du chiffre d'affaires - {annee_selectionnee} et année précédente",
+        )
 
+        # 🔹 Toujours afficher tous les mois sur l'axe X
+        fig.update_xaxes(categoryorder='array', categoryarray=mois_order)
+
+        fig.update_layout(
+            title={'x': 0.5, 'xanchor': 'center'},
+            font=dict(size=14),
+            plot_bgcolor='white',
+            height=335
+        )
+        fig.update_traces(line=dict(width=3))
+        st.plotly_chart(fig, use_container_width=True)
+
+
+# MEDICAMENT QUI RAPPORTENT MOINS ET PLUS -------------------
 with st.container():
     col1,col2 = st.columns(2)
 
@@ -191,14 +222,14 @@ with st.container():
         # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
-                'text': "💰Médicament rapport Moins",
+                'text': "Médicaments rapportent moins",
                 'y': 0.90,            # Hauteur du titre (1 = tout en haut)
                 'x': 0.5,    # Centre horizontalement
                 'xanchor': 'center',
                 'yanchor': 'top'
             },
             width=400,  # largeur en pixels (plus réaliste que 50)
-            height=350,
+            height=335,
             title_font=dict(size=18),
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
@@ -236,7 +267,7 @@ with st.container():
         # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
-                'text': "💰 Médicament Rapport Plus",
+                'text': "Médicaments rapportent plus",
                 'y': 0.90,            # Hauteur du titre (1 = tout en haut)
                 'x': 0.5,             # Centré horizontalement
                 'xanchor': 'center',  # Ancre horizontale
@@ -253,12 +284,103 @@ with st.container():
         # 🎯 Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
+# MARGE FORTE ET FAIBLE PRIX ------------------------------------
+st.markdown("""
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        .box {
+            color: #7827e6;
+            font-family: 'Quicksand', cursive;
+            font-size: 1.8rem;
+            margin-top:2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        </style>     
+        <div class="box">Marge de prix</div>
+    """, unsafe_allow_html=True)
 
-with st.container():
-    col1,col2 = st.columns(2)
+col1,col2,col3 = st.columns(3)
+with col1:
+    st.markdown("""
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+    </style>
+""", unsafe_allow_html=True) 
+    # 🔹 Données
+    data = finance_views.medoc_forte_marge
+    df_forte_marge = pd.DataFrame(data)
 
-    with col1:
-        st.markdown("""
+    # 🔹 Nettoyage / renommage
+    df_forte_marge.rename(columns={
+        "nom_medicament": "Médicaments",
+        "marge_prix": "Marge"
+    }, inplace=True)
+    df_forte_marge["Marge"] = df_forte_marge["Marge"].round(2)
+    df_forte_marge = df_forte_marge.sort_values(by="Marge", ascending=False)
+
+    # 🔹 CSS pour carte centrée
+    st.markdown("""
+        <style>
+            .custom-card {
+                background-color: #f9f9f9;
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin: 30px auto;
+                max-width: 800px;
+            }
+            .custom-card h4 {
+                text-align: center;
+                font-size: 24px;
+                color: #333333;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 🔹 Graphique
+    fig = px.bar(
+        df_forte_marge,
+        x="Médicaments",
+        y="Marge",
+        text="Marge",
+        color="Marge",
+        color_continuous_scale=px.colors.sequential.Plasma
+    )
+
+    fig.update_layout(
+        xaxis_title="Médicaments",
+        yaxis_title="Marge prix",
+        title={
+                    'text': "Forte marge ",
+                    'x': 0.5,  # Centre horizontalement
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+        title_font=dict(size=18),  # Taille du titre
+        yaxis=dict(range=[0, df_forte_marge["Marge"].max() * 1.2]),
+        showlegend=False,
+        height=320,
+        paper_bgcolor="rgba(0,0,0,0)",  
+        plot_bgcolor="rgba(0,0,0,0)",   
+        margin=dict(l=0, r=0, t=30, b=0),
+    )   
+
+    fig.update_traces(textposition='outside')
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    # 🔹 Fin de la carte
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+with col2:
+    st.markdown("""
         <style>
             .custom-card {
                 background-color: #f9f9f9;
@@ -268,214 +390,73 @@ with st.container():
                 margin-bottom: 30px;
             }
         </style>
-    """, unsafe_allow_html=True) 
-        # 🔹 Données
-        data = finance_views.medoc_forte_marge
-        df_forte_marge = pd.DataFrame(data)
+    """, unsafe_allow_html=True)
+    data = finance_views.medoc_faible_marge
+    df_faible_marge = pd.DataFrame(data)
+    
+    df_faible_marge.rename(columns={
+        "nom_medicament": "Médicaments",
+        "marge_prix": "Marge"
+    }, inplace=True)
+    df_faible_marge["Marge"] = df_faible_marge["Marge"].round(2)
+    df_faible_marge = df_faible_marge.sort_values(by="Marge", ascending=False)
 
-        # 🔹 Nettoyage / renommage
-        df_forte_marge.rename(columns={
-            "nom_medicament": "Médicaments",
-            "marge_prix": "Marge"
-        }, inplace=True)
-        df_forte_marge["Marge"] = df_forte_marge["Marge"].round(2)
-        df_forte_marge = df_forte_marge.sort_values(by="Marge", ascending=False)
+    # 🔹 CSS pour carte centrée
+    st.markdown("""
+        <style>
+            .custom-card {
+                background-color: #f9f9f9;
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin: 30px auto;
+                max-width: 800px;
+            }
+            .custom-card h4 {
+                text-align: center;
+                font-size: 24px;
+                color: #333333;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
-        # 🔹 CSS pour carte centrée
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 25px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin: 30px auto;
-                    max-width: 800px;
-                }
-                .custom-card h4 {
-                    text-align: center;
-                    font-size: 24px;
-                    color: #333333;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+    # 🔹 Graphique
+    fig = px.bar(
+        df_faible_marge,
+        x="Médicaments",
+        y="Marge",
+        text="Marge",
+        color="Marge",
+        color_continuous_scale=px.colors.sequential.Plasma
+    )
 
-        # 🔹 Graphique
-        fig = px.bar(
-            df_forte_marge,
-            x="Médicaments",
-            y="Marge",
-            text="Marge",
-            color="Marge",
-            color_continuous_scale=px.colors.sequential.Plasma
-        )
+    fig.update_layout(
+        xaxis_title="Médicaments",
+        yaxis_title="Marge prix",
+        title={
+                    'text': " Faible marge ",
+                    'x': 0.5,  # Centre horizontalement
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+        title_font=dict(size=18),  # Taille du titre
+        yaxis=dict(range=[0, df_faible_marge["Marge"].max() * 1.2]),
+        showlegend=False,
+        height=320,
+        paper_bgcolor="rgba(0,0,0,0)",  
+        plot_bgcolor="rgba(0,0,0,0)",   
+        margin=dict(l=0, r=0, t=30, b=0),
+    )
 
-        fig.update_layout(
-            xaxis_title="Médicaments",
-            yaxis_title="Marge prix",
-            title={
-                        'text': "Forte marge ",
-                        'x': 0.5,  # Centre horizontalement
-                        'xanchor': 'center',
-                        'yanchor': 'top'
-                    },
-            title_font=dict(size=18),  # Taille du titre
-            yaxis=dict(range=[0, df_forte_marge["Marge"].max() * 1.2]),
-            showlegend=False,
-            height=400,
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
-        )   
+    fig.update_traces(textposition='outside')
 
-        fig.update_traces(textposition='outside')
+    st.plotly_chart(fig, use_container_width=True)
 
-        st.plotly_chart(fig, use_container_width=True)
-
-        # 🔹 Fin de la carte
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        data = finance_views.medoc_faible_marge
-        df_faible_marge = pd.DataFrame(data)
-        
-        df_faible_marge.rename(columns={
-            "nom_medicament": "Médicaments",
-            "marge_prix": "Marge"
-        }, inplace=True)
-        df_faible_marge["Marge"] = df_faible_marge["Marge"].round(2)
-        df_faible_marge = df_faible_marge.sort_values(by="Marge", ascending=False)
-
-        # 🔹 CSS pour carte centrée
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 25px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin: 30px auto;
-                    max-width: 800px;
-                }
-                .custom-card h4 {
-                    text-align: center;
-                    font-size: 24px;
-                    color: #333333;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-
-        # 🔹 Graphique
-        fig = px.bar(
-            df_faible_marge,
-            x="Médicaments",
-            y="Marge",
-            text="Marge",
-            color="Marge",
-            color_continuous_scale=px.colors.sequential.Plasma
-        )
-
-        fig.update_layout(
-            xaxis_title="Médicaments",
-            yaxis_title="Marge prix",
-            title={
-                        'text': " Faible marge ",
-                        'x': 0.5,  # Centre horizontalement
-                        'xanchor': 'center',
-                        'yanchor': 'top'
-                    },
-            title_font=dict(size=18),  # Taille du titre
-            yaxis=dict(range=[0, df_faible_marge["Marge"].max() * 1.2]),
-            showlegend=False,
-            height=400,
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
-        )
-
-        fig.update_traces(textposition='outside')
-
-        st.plotly_chart(fig, use_container_width=True)
-
-        # 🔹 Fin de la carte
-        st.markdown("</div>", unsafe_allow_html=True)
-
-#Marge benefinaire
-with st.container():
-     # 🔹 Style personnalisé (carte)
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-
-        # Chargement des données
-        data = finance_views.marge_benefice_moyen
-        df_marge_moyen = pd.DataFrame(data)
-
-        # Renommage des colonnes
-        df_marge_moyen.rename(columns={
-            "prix_unitaire": "Prix Vente",
-            "prix_fournisseur": "Prix Achats",
-            "marge_prix": "Marge Bénéficiaire"
-        }, inplace=True)
-
-        # Extraction directe des valeurs (sans moyenne)
-        prix_achat = df_marge_moyen.loc[0, "Prix Achats"]
-        marge = df_marge_moyen.loc[0, "Marge Bénéficiaire"]
-        prix_vente = df_marge_moyen.loc[0, "Prix Vente"]
-
-        # Préparation des données pour le funnel chart
-        funnel_data = pd.DataFrame({
-            "Étape": ["Prix Vente","Prix Achats", "Marge Bénéficiaire"],
-            "Valeur": [prix_vente, prix_achat, marge]
-        })
-
-        # Création du graphique entonnoir 2D
-        fig = px.funnel(
-            funnel_data,
-            x="Valeur",
-            y="Étape",
-            title="Graphique entonnoir de la marge bénéficiaire"
-        )
-
-        fig.update_layout(
-                    title={
-                        'text': "Graphique entonnoir de la marge bénéficiaire",
-                        'x': 0.5,  # Centre horizontalement
-                        'xanchor': 'center',
-                        'yanchor': 'top'
-                    },
-                    title_font=dict(size=18),  # Taille du titre
-                    paper_bgcolor="rgba(0,0,0,0)",  
-                    plot_bgcolor="rgba(0,0,0,0)",   
-                    margin=dict(l=0, r=50, t=30, b=0),
-                )
-
-        # Affichage dans Streamlit
-        st.plotly_chart(fig)
-with st.container():
-
-    col1, col2 = st.columns([1,3])
-
-with col1:
-    # 🔹 Style personnalisé
+    # 🔹 Fin de la carte
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+with col3:
+    # 🔹 Style personnalisé (carte)
     st.markdown("""
         <style>
             .custom-card {
@@ -488,52 +469,50 @@ with col1:
         </style>
     """, unsafe_allow_html=True)
 
-    # 🔹 Données
-    data = finance_views.Evolution_pertes
-    df_pertes = pd.DataFrame(data)
-    df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
+    # Chargement des données
+    data = finance_views.marge_benefice_moyen
+    df_marge_moyen = pd.DataFrame(data)
 
-    # 🔹 Dictionnaire mois
-    mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
-                 "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
-    df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
+    # Renommage des colonnes
+    df_marge_moyen.rename(columns={
+        "prix_unitaire": "Prix Vente",
+        "prix_fournisseur": "Prix Achats",
+        "marge_prix": "Marge Bénéficiaire"
+    }, inplace=True)
 
-    # 🔹 Filtre année
-    annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
-    annee_selectionnee = st.selectbox("Sélectionner l'année", annees_dispo)
+    # Extraction directe des valeurs (sans moyenne)
+    prix_achat = df_marge_moyen.loc[0, "Prix Achats"]
+    marge = df_marge_moyen.loc[0, "Marge Bénéficiaire"]
+    prix_vente = df_marge_moyen.loc[0, "Prix Vente"]
 
-    # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
-    annees_a_afficher = [annee_selectionnee]
-    annee_precedente = annee_selectionnee - 1
-    if annee_precedente in df_pertes['Annee'].values:
-        annees_a_afficher.append(annee_precedente)
+    # Préparation des données pour le funnel chart
+    funnel_data = pd.DataFrame({
+        "Étape": ["Prix Vente","Prix Achats", "Marge Bénéficiaire"],
+        "Valeur": [prix_vente, prix_achat, marge]
+    })
 
-    df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
+    # Création du graphique entonnoir 2D
+    fig = px.funnel(
+        funnel_data,
+        x="Valeur",
+        y="Étape",
+    )
 
-    # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
-    mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
-                  "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
-    df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
-    df_graph = df_graph.sort_values(['Annee','Mois'])
+    fig.update_layout(
+                title={
+                    'text': "Marge moyenne des médicaments",
+                    'x': 0.5,  # Centre horizontalement
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+                title_font=dict(size=18),  # Taille du titre
+                paper_bgcolor="rgba(0,0,0,0)",
+                height=320,  
+                plot_bgcolor="rgba(0,0,0,0)",   
+                margin=dict(l=0, r=50, t=30, b=0),
+            )
 
-    with col2:
-        # 🔹 Graphique
-        fig = px.line(
-            df_graph,
-            x='Mois',
-            y='Total Perte',
-            color='Annee',  # Une couleur par année
-            markers=True,
-            labels={"Total Perte":"Chiffre d'affaire (€)", "Mois":"Mois", "Annee":"Année"}
-        )
+    st.markdown("""<div class="little-space"></div>""", unsafe_allow_html=True)
+    # Affichage dans Streamlit
+    st.plotly_chart(fig)
 
-        # 🔹 Toujours afficher tous les mois sur l'axe X
-        fig.update_xaxes(categoryorder='array', categoryarray=mois_order)
-
-        fig.update_layout(
-            title=f"📈 Évolution du chiffre d'affaires - {annee_selectionnee} et année précédente",
-            font=dict(size=14),
-            plot_bgcolor='white'
-        )
-        fig.update_traces(line=dict(width=3))
-        st.plotly_chart(fig, use_container_width=True)

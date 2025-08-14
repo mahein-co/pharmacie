@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html
-from views import employe_views, dashboard_views
-from data.mongodb_client import MongoDBClient
-from pipelines import pipelines_employe
+from views import employe_views, finance_views
 
 from style import style
 
