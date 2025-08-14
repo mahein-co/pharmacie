@@ -411,41 +411,45 @@ with st.container():
     # Forcer ordre des mois
     df_evolution["Mois"] = pd.Categorical(df_evolution["Mois"], categories=ordre_mois, ordered=True)
 
-    # --- Filtre Médicaments & Année ---
     with col1:
         medoc_list = sorted(df_evolution["Médicaments"].unique())
-        selected_medoc = st.selectbox("Choisir un médicament", medoc_list)
+        selected_medocs = st.multiselect("Choisir un ou plusieurs médicaments", medoc_list)
 
         year_list = sorted(df_evolution["Annee"].unique(), reverse=True)
-        current_year = st.selectbox("Année actuelle", year_list, index=0)
+        selected_years = st.multiselect("Choisir une ou plusieurs années", year_list)
 
     # --- Filtrage ---
-    df_current = df_evolution[(df_evolution["Médicaments"] == selected_medoc) & 
-                            (df_evolution["Annee"] == current_year)].sort_values("Mois")
+    if not selected_medocs:
+        # Aucun médicament sélectionné => total global par année
+        if selected_years:
+            # Si certaines années sont sélectionnées, ne prendre que celles-ci
+            df_plot = df_evolution[df_evolution["Annee"].isin(selected_years)]
+        else:
+            df_plot = df_evolution.copy()
+        
+        df_plot = df_plot.groupby(["Annee", "Mois"])["Quantite Totale"].sum().reset_index()
+        df_plot["Legend"] = df_plot["Annee"].astype(str)
+        title_suffix = " (Total Global par Année)"
+    else:
+        # Filtrer par médicaments sélectionnés
+        df_plot = df_evolution[df_evolution["Médicaments"].isin(selected_medocs)]
 
-    previous_year = current_year - 1
-    df_previous = df_evolution[(df_evolution["Médicaments"] == selected_medoc) & 
-                            (df_evolution["Annee"] == previous_year)].sort_values("Mois")
+        # Filtrer par années si sélectionnées
+        if selected_years:
+            df_plot = df_plot[df_plot["Annee"].isin(selected_years)]
+
+        df_plot = df_plot.sort_values(["Médicaments", "Annee", "Mois"])
+        df_plot["Legend"] = df_plot["Médicaments"] + " - " + df_plot["Annee"].astype(str)
+        title_suffix = ""
 
     # --- Graphique ---
     with col2:
-        fig = px.line()
-
-        # Ajouter courbe actuelle
-        if not df_current.empty:
-            fig.add_scatter(x=df_current["Mois"], y=df_current["Quantite Totale"],
-                            mode='lines+markers', name=f"{current_year}")
-
-        # Ajouter courbe précédente si dispo
-        if not df_previous.empty:
-            fig.add_scatter(x=df_previous["Mois"], y=df_previous["Quantite Totale"],
-                            mode='lines+markers', name=f"{previous_year}")
-
+        fig = px.line(df_plot, x="Mois", y="Quantite Totale", color="Legend",
+                    markers=True,
+                    title=f"Évolution des ventes{title_suffix}")
         fig.update_layout(
-            title=f"Évolution des ventes de {selected_medoc}",
             xaxis_title="Mois",
             yaxis_title="Quantité Totale",
             template="plotly_white"
         )
-
         st.plotly_chart(fig, use_container_width=True)
