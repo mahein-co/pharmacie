@@ -53,7 +53,7 @@ with st.container():
         # Trier pour top 3 en montant des ventes
         top_vendeurs = df_top_vendeur.sort_values(by="Chiffre Affaire", ascending=False).head(3)
 
-        # CSS pour la carte
+        # CSS pour la card
         st.markdown(
             """
             <style>
