@@ -438,51 +438,51 @@ with st.container():
     # Forcer ordre des mois
     df_evolution["Mois"] = pd.Categorical(df_evolution["Mois"], categories=ordre_mois, ordered=True)
 
+    # --- Filtre Médicaments & Année ---
     with col1:
         medoc_list = sorted(df_evolution["Médicaments"].unique())
-        st.markdown("""<div class="little-space"></div>""", unsafe_allow_html=True)
-        selected_medocs = st.multiselect("Choisissez un ou plusieurs médicamentss", medoc_list)
+        selected_medocs = st.multiselect("Choisir un ou plusieurs médicaments", medoc_list)
+
         year_list = sorted(df_evolution["Annee"].unique(), reverse=True)
         selected_years = st.multiselect("Choisir une ou plusieurs années", year_list)
 
     # --- Filtrage ---
-    if not selected_medocs:
-        # Aucun médicament sélectionné => total global par année
-        if selected_years:
-            # Si certaines années sont sélectionnées, ne prendre que celles-ci
-            df_plot = df_evolution[df_evolution["Annee"].isin(selected_years)]
+        if not selected_medocs:
+            # Aucun médicament sélectionné => total global par année
+            if selected_years:
+                df_plot = df_evolution[df_evolution["Annee"].isin(selected_years)]
+            else:
+                df_plot = df_evolution.copy()
+            
+            df_plot = df_plot.groupby(["Annee", "Mois"])["Quantite Totale"].sum().reset_index()
+            
+            # Supprimer les lignes où Quantite Totale = 0
+            df_plot = df_plot[df_plot["Quantite Totale"] > 0]
+            
+            df_plot["Legend"] = df_plot["Annee"].astype(str)
+            title_suffix = " (Total Global par Année)"
         else:
-            df_plot = df_evolution.copy()
-        
-        df_plot = df_plot.groupby(["Annee", "Mois"])["Quantite Totale"].sum().reset_index()
-        df_plot["Legend"] = df_plot["Annee"].astype(str)
-        title_suffix = " (Total Global par Année)"
-    else:
-        # Filtrer par médicaments sélectionnés
-        df_plot = df_evolution[df_evolution["Médicaments"].isin(selected_medocs)]
-
-        # Filtrer par années si sélectionnées
-        if selected_years:
-            df_plot = df_plot[df_plot["Annee"].isin(selected_years)]
-
-        df_plot = df_plot.sort_values(["Médicaments", "Annee", "Mois"])
-        df_plot["Legend"] = df_plot["Médicaments"] + " - " + df_plot["Annee"].astype(str)
-        title_suffix = ""
-
+                df_plot = df_evolution[df_evolution["Médicaments"].isin(selected_medocs)]
+                if selected_years:
+                    df_plot = df_plot[df_plot["Annee"].isin(selected_years)]
+                
+                # Supprimer les lignes où Quantite Totale = 0
+                df_plot = df_plot[df_plot["Quantite Totale"] > 0]
+                
+                df_plot["Legend"] = df_plot["Médicaments"] + " - " + df_plot["Annee"].astype(str)
+                title_suffix = ""
     # --- Graphique ---
     with col2:
         fig = px.line(df_plot, x="Mois", y="Quantite Totale", color="Legend",
                     markers=True,
-                    title=f"Évolution des ventes{title_suffix}")
+                    title="Évolution des ventes")
         fig.update_layout(
-            title=f"Évolution des ventes de {selected_medoc}",
             xaxis_title="Mois",
             yaxis_title="Quantité Totale",
             template="plotly_white",
-            paper_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=30, r=30, t=30, b=30),
-            height=235,
+            margin=dict(l=30, r=0, t=30, b=30),
+            height=230,
         )
         st.plotly_chart(fig, use_container_width=True)
-
