@@ -269,7 +269,7 @@ kpis_style = """
 }
 
 .little-space {
-  padding: 12px;
+  padding: 9px;
   height:3px;
   width:3px;
 }
