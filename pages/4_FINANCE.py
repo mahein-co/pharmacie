@@ -78,86 +78,75 @@ st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
 with st.container():
     st.markdown("""
-                <style>
-                    .custom-card {
-                        background-color: #f9f9f9;
-                        padding: 20px;
-                        border-radius: 15px;
-                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                        margin-bottom: 30px;
-                    }
-                </style>
-            """, unsafe_allow_html=True)
+    <style>
+        .custom-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+    # Chargement des données
     data = finance_views.CA_finance
     df_finance = pd.DataFrame(data)
+    print("valiny : ",df_finance)
+    # # Nettoyage
+    # df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois', 'annee'])
 
-    # Nettoyage
-df_mois = df_finance.dropna(subset=['mois', 'chiffre_affaire_mois', 'annee'])
-df_semaine = df_finance.dropna(subset=['semaine', 'chiffre_affaire_semaine', 'annee'])
-
-col1, col2 = st.columns([1, 3])
-with col1:
-    filtre = st.selectbox("Afficher par :", ['Mois', 'Semaine'])
-    
-    # Récupérer la liste des années uniques disponibles
-    annees_dispo = [int(year) for year in sorted(df_finance['annee'].dropna().unique())]
-    annee_choisie = st.selectbox("Sélectionner l'année :", annees_dispo)
-    
-    st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
-
-with col2:
-    if filtre == "Mois":
-        # Filtrer selon l'année choisie
-        df_filtre = df_mois[df_mois['annee'] == annee_choisie]
+    # col1, col2 = st.columns([1, 3])
+    # with col1:
+    #     filtre = st.selectbox("Afficher par :", ['Mois'])
         
-        fig = px.line(
-            df_filtre,
-            x="mois",
-            y="chiffre_affaire_mois",
-            title=f"Chiffre d'affaire mensuel - {int(annee_choisie)}"
-        )
-        fig.update_traces(mode="lines+markers")
-        fig.update_layout(
-            title={
-                'text': f"📊 Chiffre d'affaire mensuel - {int(annee_choisie)}",
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            title_font=dict(size=18),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=30, b=0),
-            xaxis_title="Mois",
-            yaxis_title="Chiffre d'affaire (€)"
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-    elif filtre == "Semaine":
-        df_filtre = df_semaine[df_semaine['annee'] == annee_choisie]
+    #     # Liste des années disponibles
+    #     annees_dispo = [int(year) for year in sorted(df_finance['annee'].dropna().unique())]
+    #     annee_choisie = st.selectbox("Sélectionner l'année :", annees_dispo)
         
-        fig = px.line(
-            df_filtre,
-            x="semaine",
-            y="chiffre_affaire_semaine",
-            title=f"Chiffre d'affaire hebdomadaire - {int(annee_choisie)}"
-        )
-        fig.update_traces(mode="lines+markers")
-        fig.update_layout(
-            title={
-                'text': f"📈 Chiffre d'affaire hebdomadaire - {int(annee_choisie)}",
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            title_font=dict(size=18),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=30, b=0),
-            xaxis_title="Semaine",
-            yaxis_title="Chiffre d'affaire (€)"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    #     st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+
+    # with col2:
+    #     # --- Affichage par MOIS ---
+    #     if filtre == "Mois":
+    #         df_actuel = df_mois[df_mois['annee'] == annee_choisie]
+    #         annee_prec = annee_choisie - 1
+    #         df_prec = df_mois[df_mois['annee'] == annee_prec]
+
+    #         if not df_prec.empty:
+    #             df_actuel['Année'] = df_actuel['annee'].astype(int)
+    #             df_prec['Année'] = df_prec['annee'].astype(int)
+    #             df_combine = pd.concat([df_actuel, df_prec])
+
+    #             fig = px.line(
+    #                 df_combine,
+    #                 x="mois",
+    #                 y="chiffre_affaire_mois",
+    #                 color="Année",
+    #                 markers=True,
+    #                 title=f"Chiffre d'affaire mensuel - {annee_choisie} vs {annee_prec}"
+    #             )
+    #         else:
+    #             fig = px.line(
+    #                 df_actuel,
+    #                 x="mois",
+    #                 y="chiffre_affaire_mois",
+    #                 markers=True,
+    #                 title=f"Chiffre d'affaire mensuel - {annee_choisie}"
+    #             )
+
+    #         fig.update_traces(mode="lines+markers")
+    #         fig.update_layout(
+    #             title={'x': 0.5, 'xanchor': 'center'},
+    #             title_font=dict(size=18),
+    #             paper_bgcolor="rgba(0,0,0,0)",
+    #             plot_bgcolor="rgba(0,0,0,0)",
+    #             margin=dict(l=0, r=0, t=30, b=0),
+    #             xaxis_title="Mois",
+    #             yaxis_title="Chiffre d'affaire (€)"
+    #         )
+    #         st.plotly_chart(fig, use_container_width=True)
+
 
 with st.container():
     col1,col2 = st.columns(2)

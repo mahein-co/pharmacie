@@ -373,7 +373,10 @@ with st.container():
     st.plotly_chart(fig, use_container_width=True)
 
 with st.container():
-    col1,col2 = st.columns([1,3])
+    # --- Mise en page ---
+    col1, col2 = st.columns([1, 3])
+
+    # --- Style card (optionnel) ---
     st.markdown(
         """
         <style>
@@ -389,11 +392,15 @@ with st.container():
         unsafe_allow_html=True
     )
 
-    # Supposons que tes données sont dans vente_views.Medoc_evolution
+    # --- Ordre des mois ---
+    ordre_mois = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
+                "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
+    # --- Récupération des données ---
     data = vente_views.Medoc_evolution
     df_evolution = pd.DataFrame(data)
 
-    # Renommer colonnes si besoin
+    # --- Renommage colonnes ---
     df_evolution.rename(columns={
         "quantite_totale": "Quantite Totale",
         "nom_medicament": "Médicaments",
@@ -401,32 +408,44 @@ with st.container():
         "annee": "Annee"
     }, inplace=True)
 
-    # Dictionnaire de conversion des mois en numéro
-    mois_map = {
-        'Jan': 1, 'Fév': 2, 'Fev': 2, 'Mar': 3, 'Avr': 4, 'Mai': 5, 'Juin': 6,
-        'Juil': 7, 'Aoû': 8, 'Aout': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Déc': 12, 'Dec': 12
-    }
+    # Forcer ordre des mois
+    df_evolution["Mois"] = pd.Categorical(df_evolution["Mois"], categories=ordre_mois, ordered=True)
 
-    # Convertir le mois texte en numéro
-    df_evolution['Mois_Num'] = df_evolution['Mois'].map(mois_map)
-
-    # Créer une colonne Date au 1er jour du mois pour tri et graphique
-    df_evolution['Date'] = pd.to_datetime(dict(year=df_evolution['Annee'], month=df_evolution['Mois_Num'], day=1))
+    # --- Filtre Médicaments & Année ---
     with col1:
-        # Filtre médicaments et année
-        medocs = df_evolution['Médicaments'].unique()
-        annees = df_evolution['Annee'].unique()
+        medoc_list = sorted(df_evolution["Médicaments"].unique())
+        selected_medoc = st.selectbox("Choisir un médicament", medoc_list)
 
-        medicament_choisi = st.selectbox("Choisissez un médicament :", options=sorted(medocs))
-        annee_choisie = st.selectbox("Choisissez une année :", options=sorted(annees))
+        year_list = sorted(df_evolution["Annee"].unique(), reverse=True)
+        current_year = st.selectbox("Année actuelle", year_list, index=0)
 
-        # Appliquer les filtres
-        df_filtre = df_evolution[(df_evolution['Médicaments'] == medicament_choisi) & (df_evolution['Annee'] == annee_choisie)]
-        df_filtre = df_filtre.sort_values('Date')
+    # --- Filtrage ---
+    df_current = df_evolution[(df_evolution["Médicaments"] == selected_medoc) & 
+                            (df_evolution["Annee"] == current_year)].sort_values("Mois")
+
+    previous_year = current_year - 1
+    df_previous = df_evolution[(df_evolution["Médicaments"] == selected_medoc) & 
+                            (df_evolution["Annee"] == previous_year)].sort_values("Mois")
+
+    # --- Graphique ---
     with col2:
-        # Graphique en courbe
-        fig = px.line(df_filtre, x='Date', y='Quantite Totale',
-                    title=f"Évolution des ventes de {medicament_choisi} en {annee_choisie}",
-                    markers=True)
+        fig = px.line()
+
+        # Ajouter courbe actuelle
+        if not df_current.empty:
+            fig.add_scatter(x=df_current["Mois"], y=df_current["Quantite Totale"],
+                            mode='lines+markers', name=f"{current_year}")
+
+        # Ajouter courbe précédente si dispo
+        if not df_previous.empty:
+            fig.add_scatter(x=df_previous["Mois"], y=df_previous["Quantite Totale"],
+                            mode='lines+markers', name=f"{previous_year}")
+
+        fig.update_layout(
+            title=f"Évolution des ventes de {selected_medoc}",
+            xaxis_title="Mois",
+            yaxis_title="Quantité Totale",
+            template="plotly_white"
+        )
 
         st.plotly_chart(fig, use_container_width=True)
