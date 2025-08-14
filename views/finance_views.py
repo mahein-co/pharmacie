@@ -39,7 +39,7 @@ Evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_
 
 
 #chriffre d'affraire
-CA_finance = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_mensuel_et_hebdo,title="recuperation CA jour")
+CA_finance = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_mensuel,title="recuperation CA jour")
 
 
 

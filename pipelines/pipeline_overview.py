@@ -988,7 +988,7 @@ pipeline_taux_retard_livraison = [
 ]
 
 # 35.chriffre d'affaire finance filtre:
-pipeline_chiffre_affaire_mensuel_et_hebdo = [
+pipeline_chiffre_affaire_mensuel = [
     {
         "$match": {
             "quantite": {"$ne": None},
@@ -1000,114 +1000,28 @@ pipeline_chiffre_affaire_mensuel_et_hebdo = [
         "$project": {
             "quantite": {"$toDouble": "$quantite"},
             "prix_unitaire": {"$toDouble": "$prix_unitaire"},
-            "mois": { "$dateToString": { "format": "%b", "date": "$date_de_vente" } },  # Ex : "Jan"
+            "mois": { "$dateToString": { "format": "%b", "date": "$date_de_vente" } },
             "annee": { "$toInt": { "$year": "$date_de_vente" } },
-            "semaine": {
-                "$dateToString": {"format": "%G-S%V", "date": "$date_de_vente"}
-            },
-            "date_sort_mois": {
-                "$dateToString": {"format": "%Y%m", "date": "$date_de_vente"}
-            },
-            "date_sort_semaine": {
-                "$dateToString": {"format": "%G%V", "date": "$date_de_vente"}
-            }
+            "date_sort_mois": { "$dateToString": {"format": "%Y%m", "date": "$date_de_vente"} }
         }
     },
     {
-        "$facet": {
-            "par_mois": [
-                {
-                    "$group": {
-                        "_id": {
-                            "mois": "$mois",
-                            "annee": "$annee"
-                        },
-                        "chiffre_affaire_mois": {
-                            "$sum": {"$multiply": ["$quantite", "$prix_unitaire"]}
-                        },
-                        "date_sort": {"$first": "$date_sort_mois"}
-                    }
-                },
-                {"$sort": {"date_sort": 1}}
-            ],
-            "par_semaine": [
-                {
-                    "$group": {
-                        "_id": "$semaine",
-                        "chiffre_affaire_semaine": {
-                            "$sum": {"$multiply": ["$quantite", "$prix_unitaire"]}
-                        },
-                        "date_sort": {"$first": "$date_sort_semaine"}
-                    }
-                },
-                {"$sort": {"date_sort": 1}}
-            ]
+        "$group": {
+            "_id": { "mois": "$mois", "annee": "$annee" },
+            "chiffre_affaire_mois": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } },
+            "date_sort": { "$first": "$date_sort_mois" }
         }
     },
+    { "$sort": { "date_sort": 1 } },
     {
         "$project": {
-            "combined": {
-                "$map": {
-                    "input": {
-                        "$range": [
-                            0,
-                            {
-                                "$max": [
-                                    {"$size": "$par_mois"},
-                                    {"$size": "$par_semaine"}
-                                ]
-                            }
-                        ]
-                    },
-                    "as": "idx",
-                    "in": {
-                        "id": {"$add": ["$$idx", 1]},
-                        # Extraction mois et année séparés pour par_mois
-                        "mois": {
-                            "$cond": [
-                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
-                                {"$arrayElemAt": ["$par_mois._id.mois", "$$idx"]},
-                                None
-                            ]
-                        },
-                        "annee": {
-                            "$cond": [
-                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
-                                {"$arrayElemAt": ["$par_mois._id.annee", "$$idx"]},
-                                None
-                            ]
-                        },
-                        "chiffre_affaire_mois": {
-                            "$cond": [
-                                {"$lt": ["$$idx", {"$size": "$par_mois"}]},
-                                {"$arrayElemAt": ["$par_mois.chiffre_affaire_mois", "$$idx"]},
-                                None
-                            ]
-                        },
-                        "semaine": {
-                            "$cond": [
-                                {"$lt": ["$$idx", {"$size": "$par_semaine"}]},
-                                {"$arrayElemAt": ["$par_semaine._id", "$$idx"]},
-                                None
-                            ]
-                        },
-                        "chiffre_affaire_semaine": {
-                            "$cond": [
-                                {"$lt": ["$$idx", {"$size": "$par_semaine"}]},
-                                {"$arrayElemAt": ["$par_semaine.chiffre_affaire_semaine", "$$idx"]},
-                                None
-                            ]
-                        }
-                    }
-                }
-            }
+            "id": { "$add": [1, {"$indexOfArray": ["$date_sort", "$date_sort"]}] },  # optionnel
+            "mois": "$_id.mois",
+            "annee": "$_id.annee",
+            "chiffre_affaire_mois": 1
         }
-    },
-    {"$unwind": "$combined"},
-    {"$replaceRoot": {"newRoot": "$combined"}}
+    }
 ]
-
-
 
 pipeline_quantite_mois = [
   {
@@ -1130,7 +1044,7 @@ pipeline_quantite_mois = [
     "$addFields": {
       "mois_nom": {
         "$arrayElemAt": [
-          ["Jan", "Fev", "Mar", "Avr", "Mai", "Juin", "Juil", "Aout", "Sep", "Oct", "Nov", "Dec"],
+          ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
           { "$subtract": ["$_id.mois_num", 1] }
         ]
       },
