@@ -454,23 +454,27 @@ pipeline_medicament_faible_rotation = [
 
 # 17. Médicaments les plus vendus (Top 3)
 pipeline_medicaments_plus_vendus = [
-  {
-    "$group": {
-      "_id": "$nom_medicament",
-      "quantite_totale_vendue": { "$sum": "$quantite" },
-      "nombre_de_ventes": { "$sum": 1 },
-      "categorie": { "$first": "$medicament_categorie" },
-      "fournisseur": { "$first": "$fournisseur" }
+    {
+        "$group": {
+            "_id": {
+                "nom_medicament": "$nom_medicament",
+                "date_de_vente": "$date_de_vente"
+            },
+            "quantite_totale_vendue": { "$sum": "$quantite" }
+        }
+    },
+    {
+        "$project": {
+            "_id": "$_id.nom_medicament",
+            "date_de_vente": "$_id.date_de_vente",
+            "quantite_totale_vendue": 1
+        }
+    },
+    {
+        "$sort": {
+            "quantite_totale_vendue": -1
+        }
     }
-  },
-  {
-    "$sort": {
-      "quantite_totale_vendue": -1
-    }
-  },
-  {
-    "$limit": 3
-  }
 ]
 
 # 18. Médicaments les moins vendus (Bottom 3)
@@ -883,38 +887,35 @@ pipeline_panier_moyen_vente = [
 ]
 
 # 30. Top vendeur
+# 30. Top vendeur
 pipeline_top_vendeur = [
-  {
-    "$group": {
-      "_id": "$nom_employe",
-      "total_ventes": { "$sum": "$quantite" },
-      "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
+    {
+        "$project": {
+            "_id": "$nom_employe",           # le nom de l’employé
+            "chiffre_affaire": { "$multiply": ["$quantite", "$prix_unitaire"] },
+            "date_de_vente": 1               # la vraie date de vente
+        }
+    },
+    {
+        "$sort": { "chiffre_affaire": -1 }     # trie par date, ou par chiffre_affaire
     }
-  },
-  {
-    "$sort": { "total_ventes": -1 }
-  },
-  {
-    "$limit": 3
-  }
 ]
+
 
 # 31. Vendeur non habilité
 pipeline_vendeur_non_habilite = [
   {
-    "$group": {
-      "_id": "$nom_employe",
-      "total_ventes": { "$sum": "$quantite" },
-      "chiffre_affaire": { "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] } }
-    }
-  },
+        "$project": {
+            "_id": "$nom_employe",           # le nom de l’employé
+            "chiffre_affaire": { "$multiply": ["$quantite", "$prix_unitaire"] },
+            "date_de_vente": 1               # la vraie date de vente
+        }
+    },
   {
-    "$sort": { "total_ventes": 1 }
-  },
-  {
-    "$limit": 3
-  }
+    "$sort": { "chiffre_affaire": 1 }
+  }  
 ]
+
 
 # 32. Mois avec le plus d’approvisionnements
 pipeline_mois_plus_approvisionnement = [
