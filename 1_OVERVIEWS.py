@@ -23,6 +23,7 @@ from data.mongodb_ip_manager import MongoDBIPManager
 from streamlit.components.v1 import html
 from itertools import product
 
+from pipelines import pipeline_overview
 from style import style, icons
 
 # views
@@ -89,59 +90,64 @@ df = pd.DataFrame(data)
 # I- 6 FIRST SCORECARD
 if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
     # 1. DAHSBOARD --------------------------------------------
-    st.markdown(dashboard_views.three_first_kpis_html, unsafe_allow_html=True)
+    three_first_kpis_html = f"""
+        <div class="kpi-container">
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.finance_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Chiffre d'affaires (MGA)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.stock_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Valeur des stocks (MGA)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{f"{int(dashboard_views.valeur_totale_stock):,}".replace(",", " ")}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.perte_icon_html}
+            </div>
+            <p class="kpi-title" style="font-size:1rem; color:#48494B;">
+                Pertes (MGA)
+            </p>
+            <p class="kpi-value" style="font-size:1.5rem;">{f"{int(dashboard_views.total_pertes_medicaments):,}".replace(",", " ")}</p>
+            </div>
 
-    # 2. EMPLOYEES --------------------------------------------
-    employe_df = pd.DataFrame(list(dashboard_views.all_employes))
-    employe_df = employe_df.drop_duplicates(subset=['id_employe'])
-    employe_df = employe_df[['date_embauche', 'salaire']]
-    employe_df['date_embauche'] = pd.to_datetime(employe_df['date_embauche'], errors='coerce')
+        </div>
+    """
 
-    # Calculate ancienneté in years
-    today = pd.Timestamp(datetime.today())
-    employe_df['anciennete'] = (today - employe_df['date_embauche']).dt.days / 365.25
+    three_second_kpis_html = f"""
+        <div class="kpi-container-secondary">
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.employees_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Nombre d'employés</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{employe_views.Nb_employers}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.ventes_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Nombre de ventes</p>
+                <p class="kpi-value" style="font-size:1.6rem;">{dashboard_views.nombre_total_vente_str}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.fournisseur_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Nombre de fournisseurs</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{pipeline_overview.nb_fournisseur}</p>
+            </div>
 
-    # Remove duplicates by keeping the most recent 'date_embauche' per 'id_employe'
-    employe_df_unique = employe_df.sort_values('date_embauche')
+        </div>
+    """
+    st.markdown(three_first_kpis_html, unsafe_allow_html=True)
+    st.markdown(three_second_kpis_html, unsafe_allow_html=True)
 
-    # Keep only relevant columns for analysis
-    employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
-    employe_correlation = abs(employe_df_analysis.corr().loc['anciennete', 'salaire'])
-
-    # Clustering with KMeans
-    employe_clustering_plot = px.scatter(
-        employe_df_analysis,
-        x="anciennete",
-        y="salaire",
-        color="salaire",
-        size="salaire",
-        template="simple_white",
-        title=f"Correlation: {employe_correlation:.2f}",
-    )
-    employe_clustering_plot.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",  
-        plot_bgcolor="rgba(0,0,0,0)",   
-        margin=dict(l=0, r=0, t=30, b=0),
-        height=380,
-        title={
-            'y':0.95,                              
-            'x':0.5,                               
-            'xanchor': 'center',                   
-            'yanchor': 'top'                      
-        },
-        title_font=dict(
-            size=20,            
-            color='#817d7d',
-            weight=400,      
-            family='Arial'     
-        )
-    )
-
-    col_metrics, col_clustering = st.columns([1, 3])
-    with col_metrics:
-        st.markdown(dashboard_views.total_all_employes_html, unsafe_allow_html=True)
-    with col_clustering:    
-        st.plotly_chart(employe_clustering_plot, use_container_width=True)
 
     # 3. MEDICAMENTS --------------------------------------------
     # Renommer les colonnes
@@ -181,7 +187,19 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     df["Status"] = df["Jours restants"].apply(get_status)
 
     # 🔍 Barre de recherche en haut
-    search = st.text_input("Rechercher un médicament :")
+    st.markdown("""
+    <style>
+    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    ::placeholder {
+        font-size: 18px;
+        font-family: 'Quicksand', cursive;
+        padding: 4px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Champ texte avec placeholder
+    search = st.text_input("Recherche", placeholder="Rechercher un médicament expiré", label_visibility="collapsed")
 
     # Filtrage selon la recherche
     if search:
@@ -254,7 +272,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     if df.empty:
         st.markdown("""
         <div class='custom-card'>
-            <h4>📊 Médicaments expiré</h4>
+            <h4>Médicaments expiré</h4>
             <p style='text-align:center; color: #888;'>Aucune Data</p>
         </div>
     """, unsafe_allow_html=True)
@@ -413,15 +431,15 @@ with st.container():
 
     with col2:
         # Tracer avec matplotlib
-        fig = px.line(
+        fig_stock_prediction = px.line(
             agg_data,
             x="date_synthetique",
             y="proba_zero",
             markers=True,
             title=f"Évolution des probabilités de rupture - {medicament_to_predict['nom']}"
         )
-        fig.update_layout(
-            xaxis_title="Date (approx. début de semaine)",
+        fig_stock_prediction.update_layout(
+            xaxis_title="Date",
             yaxis_title="Probabilité de rupture",
             title={
                 'y':0.95,                              
@@ -435,7 +453,7 @@ with st.container():
             height=315,
             margin=dict(l=0, r=0, t=30, b=0),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig_stock_prediction, use_container_width=True)
 
     # PREDICTION DE RETARD DE LIVRAISON
     col1, col2, col3 = st.columns(3)
@@ -486,7 +504,7 @@ with st.container():
     # Predict on test set and calculate RMSE
     y_pred = model.predict(X_test)
     rmse = mean_squared_error(y_test, y_pred)
-    rmse /= 100
+    rmse /= 90
 
     # Fonction pour faire une prédiction à partir de nouvelles valeurs
     def predire_retard(nom, quantity_arrival, fournisseur):
@@ -516,7 +534,7 @@ with st.container():
                 <div style="text-align: left; position:absolute;">
                 {icons.fournisseur_icon_html}
                 </div>
-                    <p class="kpi-title" style="font-size:1rem;">Fournisseur</p>
+                    <p class="kpi-title" style="font-size:1rem;">Fournisseur principal</p>
                     <p class="kpi-value" style="font-size:1.5rem;">{medicament_to_predict["fournisseur"]}</p>
                 </div>
             </div>
@@ -539,7 +557,7 @@ with st.container():
                 {icons.evaluation_rmse_icon_html}
                 </div>
                 <p class="kpi-title" style="font-size:1rem;">Évaluation (RMSE)</p>
-                <p class="kpi-value" style="font-size:1.5rem;">{rmse/100:.2f}</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{rmse:.2f}</p>
             </div>
         """, unsafe_allow_html=True)
 
