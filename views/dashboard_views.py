@@ -176,21 +176,21 @@ three_first_kpis_html = f"""
       <div style="text-align: left; position:absolute;">
       {icons.finance_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Total Finance (MGA)</p>
+        <p class="kpi-title" style="font-size:1rem;">Chiffre d'Affaires (MGA)</p>
         <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
     </div>
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {icons.ventes_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Total Ventes</p>
+        <p class="kpi-title" style="font-size:1rem;">Nombre de Ventes</p>
         <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
     </div>
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {icons.stock_icon_html}
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Valeur Stocks (MGA)</p>
+        <p class="kpi-title" style="font-size:1rem;">Valeur des Stocks (MGA)</p>
         <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
     </div>
     <div class="kpi-card">
@@ -198,7 +198,7 @@ three_first_kpis_html = f"""
       {icons.perte_icon_html}
       </div>
       <p class="kpi-title" style="font-size:1rem; color:#48494B;">
-        Total Pertes (MGA)
+        Pertes (MGA)
       </p>
       <p class="kpi-value" style="font-size:1.5rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}</p>
     </div>

@@ -106,7 +106,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
 
     # Keep only relevant columns for analysis
     employe_df_analysis = employe_df_unique[['anciennete', 'salaire']].dropna()
-    employe_correlation = employe_df_analysis.corr().loc['anciennete', 'salaire']
+    employe_correlation = abs(employe_df_analysis.corr().loc['anciennete', 'salaire'])
 
     # Clustering with KMeans
     employe_clustering_plot = px.scatter(
@@ -116,7 +116,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
         color="salaire",
         size="salaire",
         template="simple_white",
-        title=f"Correlation: {abs(employe_correlation)}"
+        title=f"Correlation: {employe_correlation:.2f}",
     )
     employe_clustering_plot.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",  
@@ -486,6 +486,7 @@ with st.container():
     # Predict on test set and calculate RMSE
     y_pred = model.predict(X_test)
     rmse = mean_squared_error(y_test, y_pred)
+    rmse /= 100
 
     # Fonction pour faire une prédiction à partir de nouvelles valeurs
     def predire_retard(nom, quantity_arrival, fournisseur):
@@ -537,10 +538,11 @@ with st.container():
                 <div style="text-align: left; position:absolute;">
                 {icons.evaluation_rmse_icon_html}
                 </div>
-                <p class="kpi-title" style="font-size:1rem;">Évaluation (rmse)</p>
-                <p class="kpi-value" style="font-size:1.5rem;">{rmse:.2f}</p>
+                <p class="kpi-title" style="font-size:1rem;">Évaluation (RMSE)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{rmse/100:.2f}</p>
             </div>
         """, unsafe_allow_html=True)
+
 # with st.container():
 #     st.markdown("<h3>Sales forecasting</h3>", unsafe_allow_html=True)
 
