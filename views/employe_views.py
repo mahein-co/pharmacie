@@ -1,8 +1,6 @@
 from data.mongodb_client import MongoDBClient
 from pipelines import pipeline_overview,pipelines_employe
 
-from style import icons
-
 
 #importation DATABASE via MongoDB
 employe_collection = MongoDBClient(collection_name="employe")
@@ -34,31 +32,3 @@ effectif_par_employe_categorie = employe_collection.make_specific_pipeline(pipel
 
 #effectif employer par fonction
 effectif_par_employe_fonction = employe_collection.make_specific_pipeline(pipeline=pipelines_employe.Eff_fonction, title="recuperation effectifs par fonction")
-
-
-
-kpis_html = f"""
-<div class="kpi-container">
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-        {icons.employees_icon_html}
-      </div>
-        <p class="kpi-title">Nombre Total Employé</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{Nb_employers}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-        {icons.salaire_icon_html}
-      </div>
-        <p class="kpi-title">Salaire Moyen (MGA)</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{salaire_moyen}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-        {icons.age_icon_html}
-      </div>
-        <p class="kpi-title">Age moyen</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{round(age_moyen)} ans</p>
-    </div>
-</div>
-"""
