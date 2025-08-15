@@ -13,5 +13,4 @@ corpus_rag.log
 
 # Constants variables
 .env
-data/config.py
 0.26.0
