@@ -152,10 +152,10 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     # 3. MEDICAMENTS --------------------------------------------
     # Renommer les colonnes
     df.rename(columns={
-        "_id": "Lots",
+        "_id": "Lot",
         "nom_medicament": "Médicament",
         "date_expiration": "Date d'expiration",
-        "quantite_totale_restante": "Quantite restante",
+        "quantite_totale_restante": "Quantité restante",
         "jours_restants": "Jours restants"
     }, inplace=True)
 
@@ -187,17 +187,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     df["Status"] = df["Jours restants"].apply(get_status)
 
     # 🔍 Barre de recherche en haut
-    st.markdown("""
-    <style>
-    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
-    ::placeholder {
-        font-size: 18px;
-        font-family: 'Quicksand', cursive;
-        padding: 4px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
+    st.markdown(style.placeholder_style, unsafe_allow_html=True)
     # Champ texte avec placeholder
     search = st.text_input("Recherche", placeholder="Rechercher un médicament expiré", label_visibility="collapsed")
 

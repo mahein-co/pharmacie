@@ -396,3 +396,13 @@ kpis_style = """
 </style>
 """
 
+placeholder_style = """
+    <style>
+    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    ::placeholder {
+        font-size: 18px;
+        font-family: 'Quicksand', cursive;
+        padding: 4px;
+    }
+    </style>
+    """
