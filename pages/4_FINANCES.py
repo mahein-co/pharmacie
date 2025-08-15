@@ -22,7 +22,7 @@ html("""
     margin-top:-1rem;
   }
 </style>
-<div class="box">Finance</div>
+<div class="box">Finances</div>
 """)
 
 # importation html et css
