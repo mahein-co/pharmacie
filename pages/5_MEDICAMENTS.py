@@ -24,7 +24,7 @@ html("""
     margin-top:-1rem;
   }
 </style>
-<div class="box">Médicament</div>
+<div class="box">Médicaments</div>
 """)
 
 st.markdown(style.custom_css,unsafe_allow_html=True)
