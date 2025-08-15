@@ -73,9 +73,9 @@ with st.container():
         font-family: 'Quicksand', cursive;
         font-weight: bold;
         font-size: 27px;
-        margin-top:2rem;
-        margin-bottom:-12rem;
-        text-align: center;
+        margin-top:3rem;
+        margin-bottom:-5rem;
+        text-align: left;
     }
     </style>
     <p class="box">Anticipation des ruptures de stock d’un médicament</p>
@@ -214,7 +214,7 @@ with st.container():
         font-size: 27px;
         margin-top:4rem;
         margin-bottom:-7rem;
-        text-align: center;
+        text-align: left;
     }
     </style>
     <p class="box">Prédiction du risque de retard de livraison par fournisseur</p>
@@ -459,7 +459,7 @@ with col1:
                 margin-bottom: 30px;
             }
             .custom-card h4 {
-                text-align: center;
+                text-align: left;
                 margin-top: 0;
                 margin-bottom: 20px;
             }
@@ -531,7 +531,7 @@ with col2:
                 margin-bottom: 30px;
             }
             .custom-card h4 {
-                text-align: center;
+                text-align: left;
                 margin-top: 0;
                 margin-bottom: 20px;
             }
@@ -609,7 +609,7 @@ with col1 :
                 margin-bottom: 30px;
             }
             .custom-card h4 {
-                text-align: center;
+                text-align: left;
                 margin-top: 0;
                 margin-bottom: 20px;
             }
@@ -683,7 +683,7 @@ with col2:
                 margin-bottom: 30px;
             }
             .custom-card h4 {
-                text-align: center;
+                text-align: left;
                 margin-top: 0;
                 margin-bottom: 20px;
             }
@@ -756,7 +756,7 @@ st.markdown("""
             margin-bottom: 30px;
         }
         .custom-card h4 {
-            text-align: center;
+            text-align: left;
             margin-top: 0;
             margin-bottom: 20px;
         }
