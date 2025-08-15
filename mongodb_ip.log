@@ -4689,3 +4689,59 @@ AttributeError: 'MongoDBClient' object has no attribute 'collection'. Did you me
 2025-08-08 14:34:02,159 - INFO - **recuperation faible marge** est bien r�ussit.
 2025-08-08 14:34:02,422 - INFO - **recuperation pertes** est bien r�ussit.
 2025-08-08 14:34:02,980 - INFO - **recuperation CA jour** est bien r�ussit.
+2025-08-15 10:33:15,571 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 10:33:16,186 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-15 10:33:16,800 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-15 10:33:17,008 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-15 10:33:19,076 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 10:33:19,280 - INFO - **salaire moyen** est bien réussit.
+2025-08-15 10:33:19,872 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-15 10:33:20,083 - INFO - **age moyen** est bien réussit.
+2025-08-15 10:33:20,276 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-15 10:33:20,896 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-15 10:33:24,175 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 10:33:26,621 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 10:33:29,155 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 10:33:29,500 - INFO - 30 documents récupérés depuis la collection.
+2025-08-15 10:33:29,705 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-15 10:33:33,574 - INFO - 21528 documents récupérés depuis la collection.
+2025-08-15 10:33:53,773 - INFO - 21528 documents récupérés depuis la collection.
+2025-08-15 10:33:54,311 - INFO - 85 documents récupérés depuis la collection.
+2025-08-15 10:33:54,702 - INFO - **Calcul du chiffre d'affaire** est bien réussit.
+2025-08-15 10:33:54,957 - INFO - **Calcul de la valeur totale du stock** est bien réussit.
+2025-08-15 10:33:55,193 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'id_medicament'.
+2025-08-15 10:33:55,449 - INFO - **Calcul des pertes dues aux médicaments invendus** est bien réussit.
+2025-08-15 10:33:55,741 - INFO - **Récupération des médicaments expirés ou bientôt expirés** est bien réussit.
+2025-08-15 10:33:56,005 - INFO - **Récupération des médicaments bientôt expirés** est bien réussit.
+2025-08-15 10:33:56,281 - INFO - **Récupération des médicaments en rupture de stock** est bien réussit.
+2025-08-15 10:33:56,738 - INFO - **Récupération des médicaments avec la plus forte rotation** est bien réussit.
+2025-08-15 10:33:57,352 - INFO - **Récupération des médicaments avec la plus baile rotation** est bien réussit.
+2025-08-15 10:33:57,646 - INFO - **Récupération des médicaments les plus vendus** est bien réussit.
+2025-08-15 10:33:58,172 - INFO - **Récupération des médicaments les moins vendus** est bien réussit.
+2025-08-15 10:33:58,926 - INFO - **Récupération du chiffre d'affaires par jour** est bien réussit.
+2025-08-15 10:33:59,399 - INFO - **Récupération du chiffre d'affaires par semaine** est bien réussit.
+2025-08-15 10:33:59,697 - INFO - **Récupération du chiffre d'affaires par mois** est bien réussit.
+2025-08-15 10:34:00,423 - INFO - **Récupération du chiffre d'affaires par annee** est bien réussit.
+2025-08-15 10:34:01,037 - INFO - **Récupération de la marge bénéficiaire moyenne** est bien réussit.
+2025-08-15 10:34:01,448 - INFO - **Récupération du médicament qui rapporte le plus** est bien réussit.
+2025-08-15 10:34:01,764 - INFO - **Récupération du médicament qui rapporte le moins** est bien réussit.
+2025-08-15 10:34:02,829 - INFO - 📡 IP publique détectée : 129.222.109.39
+2025-08-15 10:34:04,765 - INFO - 🔍 IP 129.222.109.39 est déjà présente dans la liste.
+2025-08-15 10:41:39,551 - INFO - 📡 IP publique détectée : 129.222.109.39
+2025-08-15 10:41:41,885 - INFO - 🔍 IP 129.222.109.39 est déjà présente dans la liste.
+2025-08-15 13:38:13,890 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 13:38:14,297 - INFO - 20 valeurs distinctes trouvées (via aggregation) pour 'lot_id'.
+2025-08-15 13:38:14,489 - INFO - 21528 valeurs distinctes trouvées (via aggregation) pour 'id_vente'.
+2025-08-15 13:38:14,677 - INFO - 4 valeurs distinctes trouvées (via aggregation) pour 'fournisseur'.
+2025-08-15 13:38:16,619 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 13:38:16,802 - INFO - **salaire moyen** est bien réussit.
+2025-08-15 13:38:16,981 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-15 13:38:17,165 - INFO - **age moyen** est bien réussit.
+2025-08-15 13:38:17,334 - INFO - **recuperation effectifs par categorie** est bien réussit.
+2025-08-15 13:38:17,516 - INFO - **recuperation effectifs par fonction** est bien réussit.
+2025-08-15 13:38:19,521 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 13:38:21,405 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 13:38:23,577 - INFO - Connexion MongoDB établie avec succès.
+2025-08-15 13:38:23,758 - INFO - 30 documents récupérés depuis la collection.
+2025-08-15 13:38:23,938 - INFO - 29 valeurs distinctes trouvées (via aggregation) pour 'id_employe'.
+2025-08-15 13:38:31,507 - INFO - 21528 documents récupérés depuis la collection.

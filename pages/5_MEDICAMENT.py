@@ -18,7 +18,7 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
  .box {
-    color: #7827e6;
+    color: #0A9548;
     font-family: 'Dancing Script', cursive;
     font-size: 74px;
     margin-top:-1rem;
