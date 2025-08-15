@@ -116,7 +116,7 @@ def generate_answer(query, retrieved_docs):
         {query}
     """
     response = client_openai.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
@@ -132,7 +132,7 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #7827e6;
+    color: #0A9548;
     text-align: center;
     font-family: 'Quicksand', cursive;
     font-size: 2.5rem;
@@ -144,8 +144,8 @@ html("""
     font-size: 1.2rem;
   }
 </style>
-<h1 class="box">🧠 Assistant Pharmacie</h1>
-<h4 class="subtitle">Posez une question liée aux ventes, employés ou médicaments.</h4>
+<h1 class="box">Assistant analyste de données</h1>
+<h4 class="subtitle">Posez une question sur vos ventes, vos employés ou vos stocks.</h4>
 """)
 
 # Initialiser les messages
@@ -158,7 +158,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Zone de saisie utilisateur
-if prompt := st.chat_input("Posez votre question ici: "):
+if prompt := st.chat_input("Posez votre question ici..."):
 
     # Ajouter le message utilisateur à l'historique
     st.session_state.messages.append({"role": "user", "content": prompt})
