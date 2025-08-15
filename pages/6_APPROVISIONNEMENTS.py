@@ -41,17 +41,36 @@ if appro_views.overview_collection:
 
 
 with st.container():
-    col1,col2 = st.columns(2)
-
-    with col1:
+        # --- Données ---
         data = appro_views.Mois_plus_Appro
-        df_mois_plus_appro = pd.DataFrame(data)
-        # Appliquer le renommage avec inplace=True
-        df_mois_plus_appro.rename(columns={"_id": "Mois", "total_approvisionnement": "Total Approvisionnement"}, inplace=True)
-        df_mois_plus_appro["Mois"] = pd.to_datetime(df_mois_plus_appro["Mois"])
-        df_mois_plus_appro = df_mois_plus_appro.sort_values(by="Mois")
+        df = pd.DataFrame(data)
 
-        # CSS pour la carte
+        # --- Ordre des mois ---
+        mois_order = ["Janv", "Fév", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"]
+        df["Mois"] = pd.Categorical(df["Mois"], categories=mois_order, ordered=True)
+
+        # --- Sélection des années ---
+        selected_years = st.multiselect("Sélectionner Année", sorted(df["Année"].unique()))
+
+        # --- Filtrage par année ---
+        df_filtered = df.copy()
+        if selected_years:
+            df_filtered = df_filtered[df_filtered["Année"].isin(selected_years)]
+        else:
+            # Cas par défaut : total global par année
+            df_filtered = df.groupby(["Année", "Mois"], as_index=False)["total_approvisionnement"].sum()
+
+        # --- Supprimer les mois après le dernier mois avec valeur ---
+        def couper_fin_zero(group):
+            dernier_mois = group.loc[group["total_approvisionnement"] > 0, "Mois"].max()
+            return group[group["Mois"] <= dernier_mois]
+
+        df_filtered = df_filtered.groupby("Année", group_keys=False).apply(couper_fin_zero)
+
+        # --- Tri par année puis par mois ---
+        df_filtered = df_filtered.sort_values(["Année", "Mois"])
+
+        # --- CSS pour la carte ---
         st.markdown("""
             <style>
             .card {
@@ -64,96 +83,45 @@ with st.container():
             </style>
         """, unsafe_allow_html=True)
 
-        # Graphique en ligne sans texte sur les points
+        # --- Graphique ---
         fig = px.line(
-            df_mois_plus_appro,
+            df_filtered,
             x="Mois",
-            y="Total Approvisionnement",
-            markers=True,
-            color_discrete_sequence=px.colors.sequential.Plasma
+            y="total_approvisionnement",
+            color="Année",
+            markers=True
         )
 
         fig.update_layout(
+            title="Évolution Approvisionnement par Mois",
             xaxis_title="Mois",
             yaxis_title="Total Approvisionnement",
-            title={
-                'text': "Approvisionnement par mois",
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            title_font=dict(size=18),
-            paper_bgcolor="rgba(0,0,0,0)",
-            height=335,  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=30, r=30, t=30, b=30),
-            showlegend=False,
-            # xaxis_tickangle=-45
+            xaxis=dict(categoryorder="array", categoryarray=mois_order),
+            hovermode="x unified"
         )
 
-        # Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
-
-    with col2:
-        data = appro_views.Commande_moyen_par_fournisseur
-        df_commande_moyen_fourn = pd.DataFrame(data)
-
-        # 🔽 Tri décroissant par nombre moyen de commandes
-        df_temps_moyen_fourn = df_commande_moyen_fourn.sort_values(by="Nombre moyen de commandes", ascending=False)
-
-        # 📈 Création du graphique
-        fig = px.bar(
-            df_commande_moyen_fourn,
-            x="Fournisseur", 
-            y="Nombre moyen de commandes",
-            text="Nombre moyen de commandes",
-            color="Nombre moyen de commandes",
-            color_continuous_scale=px.colors.sequential.Teal
-        )
-
-        # 🎨 Mise en forme
-        fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-        fig.update_layout(
-            title={
-                'text': "Nombre moyen de commandes par fournisseur",
-                'x': 0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            xaxis_title="Fournisseurs",
-            yaxis_title="Nombre moyen de commandes",
-            yaxis=dict(range=[0, df_temps_moyen_fourn["Nombre moyen de commandes"].max() + 2]),
-            uniformtext_minsize=8,
-            uniformtext_mode='hide',
-            paper_bgcolor="rgba(0,0,0,0)",
-            height=350,  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=30, r=30, t=30, b=30),
-        )
-
-        # 🖼️ Affichage dans Streamlit
-        st.plotly_chart(fig)
 
 
 with st.container():
-      col1,col2 = st.columns(2)
+    col1,col2,col3 = st.columns(3)
 
-      with col1:
+    with col1:
           # 📊 Création du dataframe
           data = appro_views.Temps_moyen_fournisseur
           df_temps_moyen_fourn = pd.DataFrame(data)
 
           # 🧹 Renommage et tri
-          df_temps_moyen_fourn.rename(columns={"_id": "Fournisseurs", "temps_moyen_livraison": "Temps Moyen Livraison"}, inplace=True)
-          df_temps_moyen_fourn = df_temps_moyen_fourn.sort_values(by="Temps Moyen Livraison", ascending=False)
+          df_temps_moyen_fourn.rename(columns={"_id": "Fournisseurs", "temps_moyen_livraison": "Temps"}, inplace=True)
+          df_temps_moyen_fourn = df_temps_moyen_fourn.sort_values(by="Temps", ascending=False)
 
           # 📈 Création du graphique
           fig = px.bar(
               df_temps_moyen_fourn,
               x="Fournisseurs",
-              y="Temps Moyen Livraison",
-              text="Temps Moyen Livraison",
-              color="Temps Moyen Livraison",
+              y="Temps",
+              text="Temps",
+              color="Temps",
               color_continuous_scale=px.colors.sequential.Teal
           )
 
@@ -168,7 +136,7 @@ with st.container():
               },
               xaxis_title="Fournisseurs",
               yaxis_title="Temps Moyen Livraison (jours)",
-              yaxis=dict(range=[0, df_temps_moyen_fourn["Temps Moyen Livraison"].max() + 2]),
+              yaxis=dict(range=[0, df_temps_moyen_fourn["Temps"].max() + 2]),
               uniformtext_minsize=8,
               uniformtext_mode='hide',
               paper_bgcolor="rgba(0,0,0,0)",
@@ -180,19 +148,19 @@ with st.container():
           # 🖼️ Affichage dans Streamlit
           st.plotly_chart(fig)
 
-      with col2:
+    with col2:
           data = appro_views.taux_retard_livraison
           df_taux_retard_livraison = pd.DataFrame(data)
-          df_taux_retard_livraison.rename(columns={"fournisseur": "Fournisseurs", "taux_retard": "Taux retard"}, inplace=True)
-          df_taux_retard_livraison = df_taux_retard_livraison.sort_values(by="Taux retard", ascending=False)
+          df_taux_retard_livraison.rename(columns={"fournisseur": "Fournisseurs", "taux_retard": "Taux"}, inplace=True)
+          df_taux_retard_livraison = df_taux_retard_livraison.sort_values(by="Taux", ascending=False)
 
           # 📈 Création du graphique
           fig = px.bar(
               df_taux_retard_livraison,
               x="Fournisseurs",
-              y="Taux retard",
-              text="Taux retard",
-              color="Taux retard",
+              y="Taux",
+              text="Taux",
+              color="Taux",
               color_continuous_scale=px.colors.sequential.Teal
           )
 
@@ -207,7 +175,7 @@ with st.container():
               },
               xaxis_title="Fournisseurs",
               yaxis_title="Taux de retard (%)",
-              yaxis=dict(range=[0, df_taux_retard_livraison["Taux retard"].max() + 5]),
+              yaxis=dict(range=[0, df_taux_retard_livraison["Taux"].max() + 5]),
               uniformtext_minsize=8,
               uniformtext_mode='hide',
               paper_bgcolor="rgba(0,0,0,0)",
@@ -218,5 +186,45 @@ with st.container():
 
           # 🖼️ Affichage dans Streamlit
           st.plotly_chart(fig)
+
+    with col3:
+            data = appro_views.Commande_moyen_par_fournisseur
+            df_commande_moyen_fourn = pd.DataFrame(data)
+            df_commande_moyen_fourn.rename(columns={"Nombre moyen de commandes": "Nombre"}, inplace=True)
+            # 🔽 Tri décroissant par nombre moyen de commandes
+            df_temps_moyen_fourn = df_commande_moyen_fourn.sort_values(by="Nombre", ascending=False)
+
+            # 📈 Création du graphique
+            fig = px.bar(
+                df_commande_moyen_fourn,
+                x="Fournisseur", 
+                y="Nombre",
+                text="Nombre",
+                color="Nombre",
+                color_continuous_scale=px.colors.sequential.Teal
+            )
+
+            # 🎨 Mise en forme
+            fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
+            fig.update_layout(
+                title={
+                    'text': "Nombre moyen de commandes par fournisseur",
+                    'x': 0.5,
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                },
+                xaxis_title="Fournisseurs",
+                yaxis_title="Nombre moyen de commandes",
+                yaxis=dict(range=[0, df_temps_moyen_fourn["Nombre"].max() + 2]),
+                uniformtext_minsize=8,
+                uniformtext_mode='hide',
+                paper_bgcolor="rgba(0,0,0,0)",
+                height=350,  
+                plot_bgcolor="rgba(0,0,0,0)",   
+                margin=dict(l=30, r=30, t=30, b=30),
+            )
+
+            # 🖼️ Affichage dans Streamlit
+            st.plotly_chart(fig)
 
 

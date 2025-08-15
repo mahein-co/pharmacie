@@ -918,23 +918,49 @@ pipeline_vendeur_non_habilite = [
 
 # 32. Mois avec le plus d’approvisionnements
 pipeline_mois_plus_approvisionnement = [
-  {
-    "$addFields": {
-      "month_year": { "$dateToString": { "format": "%Y-%m", "date": "$arrival_date" } }
+    {
+        "$addFields": {
+            "Année": { "$year": "$arrival_date" },
+            "Mois_num": { "$month": "$arrival_date" }
+        }
+    },
+    {
+        "$addFields": {
+            "Mois": {
+                "$arrayElemAt": [
+                    ["Janv", "Fév", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"],
+                    { "$subtract": ["$Mois_num", 1] }
+                ]
+            }
+        }
+    },
+    {
+        "$group": {
+            "_id": {
+                "Année": "$Année",
+                "Mois": "$Mois",
+                "Mois_num": "$Mois_num",
+                "nom_medicament": "$nom_medicament"
+            },
+            "total_approvisionnement": { "$sum": "$quantity_arrival" }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "Année": "$_id.Année",
+            "Mois": "$_id.Mois",
+            "Médicaments": "$_id.nom_medicament",
+            "total_approvisionnement": 1
+        }
+    },
+    {
+        "$sort": {
+            "Année": 1,
+            "_id.Mois_num": 1,
+            "nom_medicament": 1
+        }
     }
-  },
-  {
-    "$group": {
-      "_id": "$month_year",
-      "total_approvisionnement": { "$sum": "$quantity_arrival" }
-    }
-  },
-  {
-    "$sort": { "total_approvisionnement": -1 }
-  }
-  # {
-  #   "$limit": 3
-  # }
 ]
 
 # 33. Temps moyen de livraison par fournisseur
