@@ -64,23 +64,24 @@ def get_medicament_to_predict(medicament_choisi):
 
 with st.container():
     # Title anticipation de rupture de stock
-    html("""
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    # html("""
+    # <style>
+    #     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
         
-    .box {
-        color: #0A9548;
-        font-family: 'Quicksand', cursive;
-        font-weight: bold;
-        font-size: 27px;
-        margin-top:3rem;
-        margin-bottom:-5rem;
-        text-align: left;
-    }
-    </style>
-    <p class="box">Anticipation des ruptures de stock d’un médicament</p>
-    """)
+    # .box {
+    #     color: #0A9548;
+    #     font-family: 'Quicksand', cursive;
+    #     font-weight: bold;
+    #     font-size: 27px;
+    #     margin-top:3rem;
+    #     margin-bottom:-5rem;
+    #     text-align: left;
+    # }
+    # </style>
+    # <p class="box">Anticipation des ruptures de stock d’un médicament</p>
+    # """)
     
+    st.markdown("""<div class="kpi-container-third">""", unsafe_allow_html=True)
     col1, col2 = st.columns([1, 3])
     with col1:
         options = [item['nom'] for item in medifcament_to_filter]
@@ -182,7 +183,7 @@ with st.container():
             x="date_synthetique",
             y="proba_zero",
             markers=True,
-            title=f"Évolution des probabilités de rupture - {medicament_to_predict['nom']}"
+            title=f"Évolution des probabilités de rupture de stocks - {medicament_to_predict['nom']}"
         )
         fig_stock_prediction.update_layout(
             xaxis_title="Date",
@@ -201,24 +202,26 @@ with st.container():
         )
         st.plotly_chart(fig_stock_prediction, use_container_width=True)
 
+    st.markdown("""</div>""", unsafe_allow_html=True)
+
     # PREDICTION DE RETARD DE LIVRAISON
     # Titre de Prédiction du risque de retard de livraison par fournisseur
-    html("""
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+    # html("""
+    # <style>
+    #     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
         
-    .box {
-        color: #0A9548;
-        font-family: 'Quicksand', cursive;
-        font-weight: bold;
-        font-size: 27px;
-        margin-top:4rem;
-        margin-bottom:-7rem;
-        text-align: left;
-    }
-    </style>
-    <p class="box">Prédiction du risque de retard de livraison par fournisseur</p>
-    """)
+    # .box {
+    #     color: #0A9548;
+    #     font-family: 'Quicksand', cursive;
+    #     font-weight: bold;
+    #     font-size: 27px;
+    #     margin-top:4rem;
+    #     margin-bottom:-7rem;
+    #     text-align: left;
+    # }
+    # </style>
+    # <p class="box">Prédiction du risque de retard de livraison par fournisseur</p>
+    # """)
     
     col1, col2, col3 = st.columns(3)
     st.markdown("""

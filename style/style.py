@@ -265,6 +265,9 @@ kpis_style = """
   margin-bottom: 25px;
   font-family:"Roboto", cursive;
 }
+.kpi-container-third{
+  margin-top:-12rem;
+}
 
 .kpi-container{
   margin-top:-6rem;
