@@ -48,7 +48,7 @@ kpis_html = f"""
       <div style="text-align: left; position:absolute;">
         {icons.medicament_icon_html}
       </div>
-      <p class="kpi-title">Total Medicaments</p>
+      <p class="kpi-title">Nombre de médicaments</p>
       <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.nb_total_medicaments}</p>
     </div>
     <div class="kpi-card">
