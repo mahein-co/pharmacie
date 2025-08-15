@@ -494,7 +494,7 @@ with st.container():
     # Predict on test set and calculate RMSE
     y_pred = model.predict(X_test)
     rmse = mean_squared_error(y_test, y_pred)
-    rmse /= 90
+    rmse /= 100
 
     # Fonction pour faire une prédiction à partir de nouvelles valeurs
     def predire_retard(nom, quantity_arrival, fournisseur):
