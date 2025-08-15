@@ -23,7 +23,7 @@ html("""
     @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
     
   .box {
-    color: #7827e6;
+    color: #286321;
     font-family: 'Dancing Script', cursive;
     font-size: 74px;
     margin-top:-1rem;
@@ -320,9 +320,9 @@ with st.container():
         x=x,
         y=y,
         colorscale=[
-            [0, '#E0B0FF'],   
-            [0.5, '#A87BC7'], 
-            [1, '#734A91']    
+            [0, '#8EA26B'],   
+            [0.5, '#487835'], 
+            [1, '#286321']    
         ],
         colorbar=dict(title='Quantité Totale'),
     ))
@@ -356,7 +356,7 @@ with st.container():
             'yanchor': 'top',                      
             "font": dict(
             size=24,       
-            color="#7827e6", 
+            color="#286321", 
         )
         }, 
         xaxis_title='Jour',
@@ -391,7 +391,7 @@ with st.container():
         <style>
             @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
         .box {
-            color: #7827e6;
+            color: #286321;
             font-family: 'Quicksand', cursive;
             font-size: 1.8rem;
             margin-top:2rem;
