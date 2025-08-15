@@ -259,13 +259,15 @@ kpis_style = """
 }
 
 
-.kpi-container {
+.kpi-container, .kpi-container-secondary {
   display: flex;
   gap: 12px;
   margin-bottom: 25px;
-  margin-top:-6rem;
   font-family:"Roboto", cursive;
+}
 
+.kpi-container{
+  margin-top:-6rem;
 }
 
 .little-space {
