@@ -31,7 +31,7 @@ html("""
   }
      
 </style>
-<div class="box">Approvisionnement - Fournisseur</div>
+<div class="box">Approvisionnements - Fournisseurs</div>
 """)
 
 st.markdown(style.custom_css,unsafe_allow_html=True)
