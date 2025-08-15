@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html
 from views import finance_views
+import calendar
 
 from style import style
 
@@ -42,7 +43,7 @@ with st.container():
     </style>
 """, unsafe_allow_html=True)
 
-    import calendar
+    
 
     # Chargement des données
     data = finance_views.CA_finance
@@ -55,72 +56,65 @@ with st.container():
     mois_map = {month: i for i, month in enumerate(calendar.month_abbr) if month}  # {'Jan':1, 'Feb':2,...}
     df_mois['mois_num'] = df_mois['mois'].map(mois_map)
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns(2)
+
     with col1:
-        filtre = st.selectbox("Afficher par :", ['Mois'])
-
-    with col2:
-        # Multiselect années
-        annees_dispo = sorted(df_finance['annee'].dropna().unique().astype(int))
-        annees_choisies = st.multiselect("Sélectionner les années :", annees_dispo, default=[max(annees_dispo)])
-
-    with col3:
         # Multiselect médicaments
         medicaments_dispo = sorted(df_finance['nom_medicament'].dropna().unique())
         medicaments_choisis = st.multiselect("Sélectionner les médicaments :", medicaments_dispo)
+
+    with col2:
+         # Multiselect années
+        annees_dispo = sorted(df_finance['annee'].dropna().unique().astype(int))
+        annees_choisies = st.multiselect("Sélectionner les années :", annees_dispo, default=[max(annees_dispo)])
 
     # with col4:
     #     st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
 
 
-    with col4:
-    # 🔹 Style personnalisé
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+    # with col4:
+# 🔹 Style personnalisé
+    st.markdown("""
+        <style>
+            .custom-card {
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 30px;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
-        # 🔹 Données
-        data = finance_views.Evolution_pertes
-        df_pertes = pd.DataFrame(data)
-        df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
+    # 🔹 Données
+    data = finance_views.Evolution_pertes
+    df_pertes = pd.DataFrame(data)
+    df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
 
-        # 🔹 Dictionnaire mois
-        mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
-                    "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
-        df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
+    # 🔹 Dictionnaire mois
+    mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
+                "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
+    df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
 
-        # 🔹 Filtre année
-        annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
-        annee_selectionnee = st.selectbox("Sélectionner l'année", annees_dispo)
+    # 🔹 Filtre année
+    annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
+    annee_selectionnee = annees_choisies[-1]  if annees_choisies else max(annees_dispo) # st.selectbox("Sélectionner l'année", annees_dispo)
+    # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
+    annees_a_afficher = [annee_selectionnee]
+    annee_precedente = annee_selectionnee - 1
+    if annee_precedente in df_pertes['Annee'].values:
+        annees_a_afficher.append(annee_precedente)
 
-        # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
-        annees_a_afficher = [annee_selectionnee]
-        annee_precedente = annee_selectionnee - 1
-        if annee_precedente in df_pertes['Annee'].values:
-            annees_a_afficher.append(annee_precedente)
+    df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
 
-        df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
-
-        # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
-        mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
-                    "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
-        df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
-        df_graph = df_graph.sort_values(['Annee','Mois'])
+    # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
+    mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
+                "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
+    df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
+    df_graph = df_graph.sort_values(['Annee','Mois'])
 
 # CHIFFRE D'AFFAIRE ------------------------------------
 with st.container():
-    col1, col2 = st.columns(2)
-
-    # Chiffre d'affaire mensuel
-    with col1:
         # --- Filtrage ---
         if medicaments_choisis:
             df_filtre = df_mois[df_mois['nom_medicament'].isin(medicaments_choisis)]
@@ -128,13 +122,13 @@ with st.container():
             df_filtre = df_mois.groupby(['mois', 'annee', 'mois_num'], as_index=False).agg({
                 'chiffre_affaire_mois': 'sum'
             })
-            df_filtre['nom_medicament'] = 'Global'
+            df_filtre['nom_medicament'] = 'Année'
 
         if annees_choisies:
             df_filtre = df_filtre[df_filtre['annee'].isin(annees_choisies)]
 
         # --- Affichage par MOIS ---
-        if filtre == "Mois" and not df_filtre.empty:
+        if not df_filtre.empty:
             df_filtre['Année'] = df_filtre['annee'].astype(int)
             df_filtre['Ligne'] = df_filtre['nom_medicament'] + " - " + df_filtre['Année'].astype(str)
 
@@ -147,7 +141,7 @@ with st.container():
                 y="chiffre_affaire_mois",
                 color="Ligne",
                 markers=True,
-                title=f"Chiffre d'affaire mensuel - {', '.join(medicaments_choisis) if medicaments_choisis else 'Global'}"
+                title=f"Chiffre d'affaire mensuel - {', '.join(medicaments_choisis) if medicaments_choisis else 'Année'}"
             )
 
             fig.update_traces(mode="lines+markers")
@@ -159,35 +153,11 @@ with st.container():
                 margin=dict(l=0, r=0, t=30, b=0),
                 xaxis_title="Mois",
                 height=335,
-                yaxis_title="Chiffre d'affaire (€)",
+                yaxis_title="Chiffre d'affaire (Ar)",
                 xaxis=dict(categoryorder="array", categoryarray=list(mois_map.keys()))
             )
             st.plotly_chart(fig, use_container_width=True)
 
-    # Evolution chiffre d'affaire
-    with col2:
-        # 🔹 Graphique
-        fig = px.line(
-            df_graph,
-            x='Mois',
-            y='Total Perte',
-            color='Annee',  # Une couleur par année
-            markers=True,
-            labels={"Total Perte":"Chiffre d'affaire (€)", "Mois":"Mois", "Annee":"Année"},
-            title=f"Évolution du chiffre d'affaires - {annee_selectionnee} et année précédente",
-        )
-
-        # 🔹 Toujours afficher tous les mois sur l'axe X
-        fig.update_xaxes(categoryorder='array', categoryarray=mois_order)
-
-        fig.update_layout(
-            title={'x': 0.5, 'xanchor': 'center'},
-            font=dict(size=14),
-            plot_bgcolor='white',
-            height=335
-        )
-        fig.update_traces(line=dict(width=3))
-        st.plotly_chart(fig, use_container_width=True)
 
 
 # MEDICAMENT QUI RAPPORTENT MOINS ET PLUS -------------------
@@ -274,7 +244,7 @@ with st.container():
                 'yanchor': 'bottom'   # Ancre verticale
             },
             width=400,  # largeur en pixels (plus réaliste que 50)
-            height=350, # hauteur en pixels
+            height=335, # hauteur en pixels
             title_font=dict(size=18),  # Taille du titre
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   

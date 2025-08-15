@@ -474,8 +474,7 @@ with st.container():
     # --- Graphique ---
     with col2:
         fig = px.line(df_plot, x="Mois", y="Quantite Totale", color="Legend",
-                    markers=True,
-                    title="Évolution des ventes")
+                    markers=True)
         fig.update_layout(
             xaxis_title="Mois",
             yaxis_title="Quantité Totale",
