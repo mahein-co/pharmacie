@@ -29,7 +29,7 @@ html("""
     margin-top:-1rem;
   }
 </style>
-<div class="box">Vente</div>
+<div class="box">Ventes</div>
 """)
 
 
