@@ -27,5 +27,6 @@ if st.secrets:
     mongo_cluster = os.getenv("MONGO_CLUSTER")
     
     hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-    openai_api_key = os.getenv("OPENAI_API_KEY")  
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    embedding_index_documents = os.getenv("EMBEDDING_INDEX_DOCUMENTS")
 
