@@ -478,24 +478,28 @@ pipeline_medicaments_plus_vendus = [
 ]
 
 # 18. Médicaments les moins vendus (Bottom 3)
-pipeline_medicaments_moins_vendus = [
-  {
-    "$group": {
-      "_id": "$nom_medicament",
-      "quantite_totale_vendue": { "$sum": "$quantite" },
-      "nombre_de_ventes": { "$sum": 1 },
-      "categorie": { "$first": "$medicament_categorie" },
-      "fournisseur": { "$first": "$fournisseur" }
+pipeline_medicaments_moins_vendus =  [
+    {
+        "$group": {
+            "_id": {
+                "nom_medicament": "$nom_medicament",
+                "date_de_vente": "$date_de_vente"
+            },
+            "quantite_totale_vendue": { "$sum": "$quantite" }
+        }
+    },
+    {
+        "$project": {
+            "_id": "$_id.nom_medicament",
+            "date_de_vente": "$_id.date_de_vente",
+            "quantite_totale_vendue": 1
+        }
+    },
+    {
+        "$sort": {
+            "quantite_totale_vendue": 1
+        }
     }
-  },
-  {
-    "$sort": {
-      "quantite_totale_vendue": 1
-    }
-  },
-  {
-    "$limit": 3
-  }
 ]
 
 # 19. Chiffre d’affaires par jour/semaine/mois
@@ -1058,87 +1062,71 @@ pipeline_chiffre_affaire_mensuel = [
 
 
 pipeline_quantite_mois = [
-  {
-    "$addFields": {
-      "annee": { "$year": "$date_de_vente" },
-      "mois_num": { "$month": "$date_de_vente" }
+    {
+        "$addFields": {
+            "annee": { "$year": "$date_de_vente" },
+            "mois_num": { "$month": "$date_de_vente" }
+        }
+    },
+    {
+        "$addFields": {
+            "mois_nom": {
+                "$arrayElemAt": [
+                    ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+                    { "$subtract": ["$mois_num", 1] }
+                ]
+            }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "nom_medicament": 1,
+            "quantite": 1,          # Ici on garde la quantité telle quelle
+            "date_de_vente": 1,     # On ajoute la date de vente
+            "mois": "$mois_nom",
+            "annee": 1
+        }
+    },
+    {
+        "$sort": {
+            "nom_medicament": 1,
+            "annee": 1,
+            "mois": 1
+        }
     }
-  },
-  {
-    "$group": {
-      "_id": {
-        "nom_medicament": "$nom_medicament",
-        "annee": "$annee",
-        "mois_num": "$mois_num"
-      },
-      "quantite_totale": { "$sum": "$quantite" }
-    }
-  },
-  {
-    "$addFields": {
-      "mois_nom": {
-        "$arrayElemAt": [
-          ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-          { "$subtract": ["$_id.mois_num", 1] }
-        ]
-      },
-      "annee": "$_id.annee",
-      "nom_medicament": "$_id.nom_medicament"
-    }
-  },
-  {
-    "$project": {
-      "_id": 0,
-      "nom_medicament": 1,
-      "quantite_totale": 1,
-      "mois": "$mois_nom",
-      "annee": "$annee"
-    }
-  },
-  {
-    "$sort": {
-      "nom_medicament": 1,
-      "annee": 1,
-      "mois": 1
-    }
-  }
 ]
 
+
 pipeline_quantite_jour = [
-  {
-    "$group": {
-      "_id": {
-        "jour": { "$dayOfWeek": "$date_de_vente" },
-        "nom_medicament": "$nom_medicament"
-      },
-      "quantite_totale": { "$sum": "$quantite" }
+    {
+        "$addFields": {
+            "jour": {
+                "$arrayElemAt": [
+                    ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+                    { "$subtract": [{ "$dayOfWeek": "$date_de_vente" }, 1] }
+                ]
+            }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "nom_medicament": 1,
+            "date_de_vente": 1,
+            "jour": 1,
+            "quantite": 1  # si tu veux garder la quantité individuelle
+        }
+    },
+    {
+        "$sort": {
+            "nom_medicament": 1,
+            "date_de_vente": 1
+        }
     }
-  },
-  {
-    "$addFields": {
-      "jour_nom": {
-        "$arrayElemAt": [
-          ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-          { "$subtract": ["$_id.jour", 1] }
-        ]
-      }
-    }
-  },
-  {
-    "$project": {
-      "_id": 0,
-      "nom_medicament": "$_id.nom_medicament",
-      "quantite_totale": 1,
-      "jour": "$jour_nom"
-    }
-  },
-  {
-    "$sort": {
-      "nom_medicament": 1,
-      "jour": 1
-    }
-  }
 ]
+
+
 #36.salaire moyen 
 pipeline_salaire_moyen =[{
      "$group": {

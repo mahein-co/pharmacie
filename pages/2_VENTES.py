@@ -187,20 +187,6 @@ with st.container():
         # --- Top 3 médicaments ---
         top_medicaments = df_agg.sort_values(by="quantite totale vendue", ascending=False).head(3)
 
-        # --- CSS pour la carte ---
-        st.markdown("""
-        <div class="card">
-        <style>
-        .card {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
         # --- Graphique ---
         fig = px.bar(
             top_medicaments,
@@ -236,44 +222,38 @@ with st.container():
 
 
     with col2:
+        # --- Données exemple ---
         data = vente_views.Medoc_moins_vendus
         df_Medoc_moins = pd.DataFrame(data)
-        
-        # Renommer les colonnes
-        df_Medoc_moins.rename(
-            columns={"_id": "Médicaments", "quantite_totale_vendue": "Quantite Totale Vendue"},
-            inplace=True
-        )
+        df_Medoc_moins['date_de_vente'] = pd.to_datetime(df_Medoc_moins['date_de_vente'])
 
-        # Trier pour obtenir les 3 moins vendus
-        Medoc_moins = df_Medoc_moins.sort_values(by="Quantite Totale Vendue", ascending=True).head(3)
+        # --- Définir les bornes si aucune date ---
+        if date_debut is None:
+            date_debut = df_Medoc_moins['date_de_vente'].min()
+        if date_fin is None:
+            date_fin = df_Medoc_moins['date_de_vente'].max()
 
-        # CSS pour la carte
-        st.markdown(
-            """
-            <style>
-            .card {
-                background-color: #f8f9fa;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                margin-bottom: 20px;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+        # --- Filtrer par dates ---
+        df_filtre = df_Medoc_moins[
+            (df_Medoc_moins['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_Medoc_moins['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
 
-        # Graphique Plotly
+        # --- Agrégation par médicament ---
+        df_agg = df_filtre.groupby('_id', as_index=False)['quantite_totale_vendue'].sum()
+        df_agg = df_agg.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "quantite totale vendue"})
+
+        # --- Top 3 moins vendus ---
+        Medoc_moins = df_agg.sort_values(by="quantite totale vendue", ascending=True).head(3)
+
+        # --- Graphique Plotly ---
         fig = px.bar(
             Medoc_moins,
-            x="Quantite Totale Vendue",
+            x="quantite totale vendue",
             y="Médicaments",
             orientation='h',
-            text="Quantite Totale Vendue",
-            color="Quantite Totale Vendue",
+            color="quantite totale vendue",
             color_continuous_scale=px.colors.sequential.Plasma,
-            title="Médicaments Moins Vendus"
         )
 
         fig.update_layout(
@@ -300,81 +280,100 @@ with st.container():
         # Fermeture du div .card
         st.markdown('</div>', unsafe_allow_html=True)
 
+
 # Heatmap des quantités vendues par jour et médicament -----------------------------
 with st.container():
-    # Supposons que vente_views.saisonalite soit déjà chargé
-    data = vente_views.saisonalite
-    df_saison = pd.DataFrame(data)
-    
-    # Renommer les colonnes
-    df_saison.rename(columns={"quantite_totale": "Quantite Totale", "nom_medicament": "Médicaments"}, inplace=True)
+    # --- Données exemple ---
+        data = vente_views.saisonalite
+        df_saison = pd.DataFrame(data)
 
-    # Ordre des jours de la semaine
-    ordre_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-    df_saison['jour'] = pd.Categorical(df_saison['jour'], categories=ordre_jours, ordered=True)
+        # --- Conversion en datetime ---
+        df_saison['date_de_vente'] = pd.to_datetime(df_saison['date_de_vente'])
 
-    # Pivot table : Médicaments en index, jours en colonnes
-    pivot = df_saison.pivot(index='Médicaments', columns='jour', values='Quantite Totale')
+        # --- Définir les bornes si aucune date ---
+        if date_debut is None:
+            date_debut = df_saison['date_de_vente'].min()
+        if date_fin is None:
+            date_fin = df_saison['date_de_vente'].max()
 
-    z = pivot.values.tolist()
-    x = pivot.columns.tolist()
-    y = pivot.index.tolist()
+        # --- Filtrer par dates ---
+        df_filtre = df_saison[
+            (df_saison['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_saison['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
 
-    # Création heatmap avec dégradé vert
-    fig = go.Figure(data=go.Heatmap(
-        z=z,
-        x=x,
-        y=y,
-        colorscale=[
-            [0, '#8EA26B'],   
-            [0.5, '#487835'], 
-            [1, '#0A9548']    
-        ],
-        colorbar=dict(title='Quantité Totale'),
-    ))
+        # --- Renommer les colonnes ---
+        df_filtre.rename(columns={"quantite": "Quantite", "nom_medicament": "Médicaments"}, inplace=True)
 
-    # Annotations des valeurs dans chaque case
-    annotations = []
-    max_val = pivot.max().max() if pivot.max().max() else 0  # éviter erreur si pivot vide
+        # --- Ordre des jours de la semaine ---
+        ordre_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        df_filtre['jour'] = pd.Categorical(df_filtre['jour'], categories=ordre_jours, ordered=True)
 
-    for i, medicament in enumerate(y):
-        for j, jour in enumerate(x):
-            val = z[i][j]
-            if pd.notnull(val):
-                annotations.append(
-                    go.layout.Annotation(
-                        text=str(int(val)),
-                        x=jour,
-                        y=medicament,
-                        showarrow=False,
-                        font=dict(color='white' if val > (max_val / 2) else 'black'),
-                        xanchor='center',
-                        yanchor='middle'
-                    )
-                )
-
-    fig.update_layout(
-        title={
-            "text":'Répartition des quantités de médicaments vendues par jour de la semaine',
-            'y':0.95,                              
-            'x':0.5, 
-            'xanchor': 'center',                   
-            'yanchor': 'top',                      
-            "font": dict(
-            size=24,       
-            color="#0A9548", 
+        # --- Pivot table : Médicaments en index, jours en colonnes, somme des quantités ---
+        pivot = df_filtre.pivot_table(
+            index='Médicaments',
+            columns='jour',
+            values='Quantite',
+            aggfunc='sum',
+            fill_value=0
         )
-        }, 
-        xaxis_title='Jour',
-        yaxis_title='Médicaments',
-        annotations=annotations,
-        yaxis=dict(autorange='reversed'),
-        height=500 
-    )
 
-    # Style CSS pour la carte dans Streamlit (optionnel)
-    st.markdown(
-        """
+        z = pivot.values.tolist()
+        x = pivot.columns.tolist()
+        y = pivot.index.tolist()
+
+        # --- Création heatmap avec dégradé vert ---
+        fig = go.Figure(data=go.Heatmap(
+            z=z,
+            x=x,
+            y=y,
+            colorscale=[
+                [0, '#8EA26B'],   
+                [0.5, '#487835'], 
+                [1, '#0A9548']    
+            ],
+            colorbar=dict(title='Quantité Totale'),
+        ))
+
+        # --- Annotations des valeurs dans chaque case ---
+        annotations = []
+        max_val = pivot.max().max() if pivot.max().max() else 0  # éviter erreur si pivot vide
+
+        for i, medicament in enumerate(y):
+            for j, jour in enumerate(x):
+                val = z[i][j]
+                if pd.notnull(val):
+                    annotations.append(
+                        go.layout.Annotation(
+                            text=str(int(val)),
+                            x=jour,
+                            y=medicament,
+                            showarrow=False,
+                            font=dict(color='white'),
+                            xanchor='center',
+                            yanchor='middle'
+                        )
+                    )
+
+        fig.update_layout(
+            title={
+                "text": 'Répartition des quantités de médicaments vendues par jour de la semaine',
+                'y': 0.95,                              
+                'x': 0.5, 
+                'xanchor': 'center',                   
+                'yanchor': 'top',                      
+                "font": dict(size=24, color="#0A9548")
+            },
+            xaxis_title='Jour',
+            yaxis_title='Médicaments',
+            annotations=annotations,
+            yaxis=dict(autorange='reversed'),
+            height=500 
+        )
+
+        # --- Style CSS pour la carte dans Streamlit (optionnel) ---
+        st.markdown("""
+        <div class="card">
         <style>
         .card {
             background-color: #f8f9fa;
@@ -384,13 +383,11 @@ with st.container():
             margin-bottom: 20px;
         }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+        """, unsafe_allow_html=True)
 
-    # Affichage du graphique
-    st.plotly_chart(fig, use_container_width=True)
-
+        # --- Affichage du graphique ---
+        st.plotly_chart(fig, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 # Graphique d'évolution des ventes par médicament -----------------------------
 with st.container():
     st.markdown("""
@@ -435,7 +432,7 @@ with st.container():
 
     # --- Renommage colonnes ---
     df_evolution.rename(columns={
-        "quantite_totale": "Quantite Totale",
+        "quantite": "Quantite",
         "nom_medicament": "Médicaments",
         "mois": "Mois",
         "annee": "Annee"
@@ -460,10 +457,10 @@ with st.container():
             else:
                 df_plot = df_evolution.copy()
             
-            df_plot = df_plot.groupby(["Annee", "Mois"])["Quantite Totale"].sum().reset_index()
+            df_plot = df_plot.groupby(["Annee", "Mois"])["Quantite"].sum().reset_index()
             
-            # Supprimer les lignes où Quantite Totale = 0
-            df_plot = df_plot[df_plot["Quantite Totale"] > 0]
+            # Supprimer les lignes où Quantite = 0
+            df_plot = df_plot[df_plot["Quantite"] > 0]
             
             df_plot["Legend"] = df_plot["Annee"].astype(str)
             title_suffix = " (Total Global par Année)"
@@ -472,14 +469,14 @@ with st.container():
                 if selected_years:
                     df_plot = df_plot[df_plot["Annee"].isin(selected_years)]
                 
-                # Supprimer les lignes où Quantite Totale = 0
-                df_plot = df_plot[df_plot["Quantite Totale"] > 0]
+                # Supprimer les lignes où Quantite = 0
+                df_plot = df_plot[df_plot["Quantite"] > 0]
                 
                 df_plot["Legend"] = df_plot["Médicaments"] + " - " + df_plot["Annee"].astype(str)
                 title_suffix = ""
     # --- Graphique ---
     with col2:
-        fig = px.line(df_plot, x="Mois", y="Quantite Totale", color="Legend",
+        fig = px.line(df_plot, x="Mois", y="Quantite", color="Legend",
                     markers=True)
         fig.update_layout(
             xaxis_title="Mois",
