@@ -450,7 +450,9 @@ col1, col2 = st.columns(2)
 with col1:
     data = medicament_views.medoc_plus_cher
     df_medoc_plus_cher = pd.DataFrame(data)
-    df_medoc_plus_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix Unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lots"},inplace=True)
+    df_medoc_plus_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lot"},inplace=True)
+    df_medoc_plus_cher = medicament_views.mettre_en_premier(df_medoc_plus_cher, "Médicament")
+
     # 👉 1. CSS global (UNE SEULE FOIS)
     st.markdown("""
         <style>
@@ -512,17 +514,18 @@ with col1:
     if df_medoc_plus_cher.empty:
         st.markdown("""
             <div class='custom-card'>
-                <h4>Liste de médicaments plus chers</h4>
+                <h4>Liste de médicaments les plus chers</h4>
                 <p style='text-align:center; color: #888;'>Aucune Data</p>
             </div>
         """, unsafe_allow_html=True)
     else:
-        render_table(df_medoc_plus_cher, titre="Liste de médicaments plus chers")
+        render_table(df_medoc_plus_cher, titre="Liste de médicaments les plus chers")
 
 with col2:
     data = medicament_views.medoc_moins_cher
     df_medoc_moins_cher = pd.DataFrame(data)
-    df_medoc_moins_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix Unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lots"},inplace=True)
+    df_medoc_moins_cher.rename(columns={"nom_medicament": "Médicament", "prix_unitaire" : "Prix unitaire" , "fournisseur" : "Fournisseur" , "lot_id" : "Lot"},inplace=True)
+    df_medoc_moins_cher = medicament_views.mettre_en_premier(df_medoc_moins_cher, "Médicament")
     # 👉 1. CSS global (UNE SEULE FOIS)
     st.markdown("""
         <style>
@@ -584,12 +587,12 @@ with col2:
     if df_medoc_moins_cher.empty:
         st.markdown("""
             <div class='custom-card'>
-                <h4>Liste de médicaments moins chers</h4>
+                <h4>Liste de médicaments les moins chers</h4>
                 <p style='text-align:center; color: #888;'>Aucune Data</p>
             </div>
         """, unsafe_allow_html=True)
     else:
-        render_table(df_medoc_moins_cher, titre="Liste de médicaments moins chers")
+        render_table(df_medoc_moins_cher, titre="Liste de médicaments les moins chers")
 
 
 # STOCK DE MEDICAMENTS ---------------------------------------------
@@ -600,7 +603,7 @@ with col1 :
     Data = medicament_views.medoc_critique_result
     critique = pd.DataFrame(list(Data))
     critique["lots"]= critique["lots"][0][0]["lot_id"]
-    critique.rename(columns={"_id": "Médicament", "total_quantite": "Total quantite"}, inplace=True)
+    critique.rename(columns={"_id": "Médicament", "total_quantite": "Quantités restantes", "lots":"Lot"}, inplace=True)
 
     st.markdown("""
         <style>
@@ -673,7 +676,7 @@ with col2:
     data = medicament_views.medoc_surplus_result
     df_surplus = pd.DataFrame(data)
     df_surplus["lots"]= df_surplus["lots"][0][0]["lot_id"]
-    df_surplus.rename(columns={"_id":"Médicaments","total_quantite":"Total Quantite"},inplace=True)
+    df_surplus.rename(columns={"_id":"Médicaments","total_quantite":"Quantités restantes", "lots":"Lot"},inplace=True)
 
     # 👉 1. CSS global (UNE SEULE FOIS)
     st.markdown("""
@@ -747,7 +750,8 @@ with col2:
 # MEDICAMENTS EN RUPTURE DE STOCK ---------------------------------
 data = medicament_views.rupture_stock
 df_rupture = pd.DataFrame(data)
-df_rupture.rename(columns={"_id" : "Lots"},inplace=True)
+df_rupture.rename(columns={"_id" : "Lot"},inplace=True)
+df_rupture = medicament_views.mettre_en_premier(df_rupture, "Médicament") 
 # 👉 1. CSS global (UNE SEULE FOIS)
 st.markdown("""
     <style>
@@ -814,7 +818,7 @@ if df_rupture.empty:
         </div>
     """, unsafe_allow_html=True)
 else:
-    render_table(df_rupture, titre="Rupture du stock sur derniers mois")
+    render_table(df_rupture, titre="Rupture de stock sur les derniers mois")
 
 
 # import streamlit as st
