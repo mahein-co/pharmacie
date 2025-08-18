@@ -94,13 +94,7 @@ system_prompt = f"""
         Si on te fournit une date de péremption, tu la compares automatiquement à la date du jour pour évaluer la validité.
         Si l’utilisateur demande une analyse de stock, tu fournis des rapports synthétiques ou détaillés selon le besoin.
         Si tu ne sais pas ou n'es pas autorisé à répondre, tu redonnes la main au professionnel de santé.
-        Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
-        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
-
-        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
-        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
-        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
-        Si on te demande les médicament déjà ou bientôt expirés, tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
+        
 
     Voici des informations provenant de notre base de ventes, de stocks et d'employés:
 """
@@ -113,6 +107,14 @@ def generate_answer(query, retrieved_docs):
     conversation = [{"role": m["role"], "content": m["content"]} for m in st.session_state.data_analyste_messages]
 
     prompt = f"""
+        Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
+        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
+
+        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
+        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
+        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
+        Si on te demande les médicament déjà ou bientôt expirés, tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
+        
         {context}   
         {conversation}
         Réponds à la question suivante de manière claire, concise et professionnelle :
