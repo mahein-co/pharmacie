@@ -45,10 +45,10 @@ medicament_docs = medicament_collection.find_all_documents()
 # 1.1. chiffre d'affaire total
 chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
 df_CA = pd.DataFrame(chiffre_affaire)
-print("valiny: ",df_CA.columns)
+print("valiny: ",df_CA["chiffre_affaire_total"].sum())
 try:
   total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
-  total_chiffre_affaire_str = f"{int(total_chiffre_affaire):,}".replace(",", " ")
+  total_chiffre_affaire_str = f"{int(df_CA['chiffre_affaire_total'].sum()):,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire_str = 0
 
