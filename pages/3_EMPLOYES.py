@@ -44,7 +44,7 @@ if employe_views.employe_collection:
         <div style="text-align: left; position:absolute;">
           {icons.employees_icon_html}
         </div>
-          <p class="kpi-title">Nombre Total Employé</p>
+          <p class="kpi-title">Nombre d'employés</p>
           <p class="kpi-value" style="font-size:1.5rem;">{employe_views.Nb_employers}</p>
       </div>
       <div class="kpi-card">
