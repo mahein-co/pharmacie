@@ -175,7 +175,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
     # 🔍 Barre de recherche en haut
     st.markdown(style.placeholder_style, unsafe_allow_html=True)
     # Champ texte avec placeholder
-    search = st.text_input("Recherche", placeholder="Rechercher un médicament expiré", label_visibility="collapsed")
+    search = st.text_input("Recherche", placeholder="Rechercher un médicament déjà ou bientôt expiré", label_visibility="collapsed")
 
     # Filtrage selon la recherche
     if search:
