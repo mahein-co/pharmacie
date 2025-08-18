@@ -18,75 +18,80 @@ from style import style
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-html("""
-<style>
-    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
-    
-  .box {
-    color: #0A9548;
-    font-family: 'Dancing Script', cursive;
-    font-size: 74px;
-    margin-top:-1rem;
-  }
-</style>
-<div class="box">Ventes</div>
-""")
+col_title, col_empty, col_filter = st.columns([2, 2, 2])
+with col_title:
+    html("""
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        
+    .box {
+        color: #0A9548;
+        font-family: 'Dancing Script', cursive;
+        font-size: 74px;
+        margin-top:-1rem;
+    }
+    </style>
+    <div class="box">Ventes</div>
+    """)
+
 
 
 st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
 with st.container():
-    st.markdown("### Filtrer les ventes par date")
     # Sélecteur de date
-    col1,col2 = st.columns([1,3])
-    with col1:
+    with col_filter:
+        # st.markdown("#### Filtrer les ventes par")
+        col1,col2 = st.columns(2)
         # --- Inputs utilisateur ---
-        date_debut = st.date_input("Date début", value=None)
-        date_fin = st.date_input("Date fin", value=None)
-    with col2:
-        df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
-        # Conversion de la colonne date
-        df_CA["_id"] = pd.to_datetime(df_CA["_id"])
-        # Cas 1 : pas de filtre
-        if not date_debut or not date_fin:
-            somme_CA = df_CA["chiffre_affaire_total"].sum()
+        with col1:
+            date_debut = st.date_input("Date de début du filtre", value=None)
+        with col2:
+            date_fin = st.date_input("Date de fin du filtre", value=None)
+# with col2:
+    df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
+    # Conversion de la colonne date
+    df_CA["_id"] = pd.to_datetime(df_CA["_id"])
+    # Cas 1 : pas de filtre
+    if not date_debut or not date_fin:
+        somme_CA = df_CA["chiffre_affaire_total"].sum()
+    else:
+        # Vérif cohérence des dates
+        if date_fin < date_debut:
+            st.error("⚠️ La date de fin doit être supérieure à la date de début")
+            somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
+
         else:
-            # Vérif cohérence des dates
-            if date_fin < date_debut:
-                st.error("⚠️ La date de fin doit être supérieure à la date de début")
-                somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
+            mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
+            print("Dedans: ", df_CA.loc[mask])
+            somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
+    #ventes
 
-            else:
-                mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
-                print("Dedans: ", df_CA.loc[mask])
-                somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
-        #ventes
+    df_Nb_vente = pd.DataFrame(vente_views.nombre_ventes)
 
-        df_Nb_vente = pd.DataFrame(vente_views.nombre_ventes)
+    # Conversion de la colonne date
+    df_Nb_vente["date_de_vente"] = pd.to_datetime(df_Nb_vente["date_de_vente"])
 
-        # Conversion de la colonne date
-        df_Nb_vente["date_de_vente"] = pd.to_datetime(df_Nb_vente["date_de_vente"])
-
-        # Cas 1 : pas de filtre
-        if not date_debut or not date_fin:
-            somme_ventes = df_Nb_vente["nb_ventes"].sum()
+    # Cas 1 : pas de filtre
+    if not date_debut or not date_fin:
+        somme_ventes = df_Nb_vente["nb_ventes"].sum()
+    else:
+        # Vérif cohérence des dates
+        if date_fin <= date_debut:
+            st.error("⚠️ La date de fin doit être supérieure à la date de début")
+            somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
         else:
-            # Vérif cohérence des dates
-            if date_fin <= date_debut:
-                st.error("⚠️ La date de fin doit être supérieure à la date de début")
-                somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
-            else:
-                mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
-                print("Dedans: ", df_Nb_vente.loc[mask])
-                somme_ventes = df_Nb_vente.loc[mask, "nb_ventes"].sum()
+            mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
+            print("Dedans: ", df_Nb_vente.loc[mask])
+            somme_ventes = df_Nb_vente.loc[mask, "nb_ventes"].sum()
 
-        # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
+    # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
 
-        # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
-        st.markdown(
-            vente_views.get_kpis(chiffre_affaire=somme_CA, nombre_ventes=somme_ventes),
-            unsafe_allow_html=True
-        )
+    # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
+    st.markdown(
+        vente_views.get_kpis(chiffre_affaire=somme_CA, nombre_ventes=somme_ventes),
+        unsafe_allow_html=True
+    )
 
         
 

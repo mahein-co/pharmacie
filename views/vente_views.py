@@ -43,8 +43,8 @@ Medoc_evolution = overview_collection.make_specific_pipeline(pipeline=pipeline_o
 # ========== KPI Cards ===============
 def get_kpis(chiffre_affaire, nombre_ventes) : 
   panier_moyen =  round(chiffre_affaire/ nombre_ventes)
-  chiffre_affaire_str = f"{chiffre_affaire}".replace(",", " ") 
-  nombre_ventes_str = f"{nombre_ventes}".replace(",", " ")
+  chiffre_affaire_str = f"{int(chiffre_affaire):,}".replace(",", " ") 
+  nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
   panier_moyen_str = f"{panier_moyen:,}".replace(",", " ")
   kpis_html = f"""
     <div class="kpi-container">
@@ -52,21 +52,21 @@ def get_kpis(chiffre_affaire, nombre_ventes) :
       <div style="text-align: left; position:absolute;">
       {icons.finance_icon_html}
       </div>
-        <p class="kpi-title"> Total Finance (MGA)</p>
+        <p class="kpi-title"> Chiffre d'affaires (MGA)</p>
         <p class="kpi-value" style="font-size: 1.5rem;">{chiffre_affaire_str}</p>
     </div>
     <div class="kpi-card">
     <div style="text-align: left; position:absolute;">
       {icons.panier_icon_html}
       </div>
-        <p class="kpi-title">Panier Moyen (MGA)</p>
+        <p class="kpi-title">Panier moyen (MGA)</p>
         <p class="kpi-value" style="font-size: 1.5rem;">{panier_moyen_str}</p>
     </div>
     <div class="kpi-card">
     <div style="text-align: left; position:absolute;">
       {icons.ventes_icon_html}
       </div>
-        <p class="kpi-title">Total Ventes</p>
+        <p class="kpi-title">Nombre de ventes</p>
         <p class="kpi-value" style="font-size: 1.5rem;">{nombre_ventes_str}</p>
     </div>
     </div>
