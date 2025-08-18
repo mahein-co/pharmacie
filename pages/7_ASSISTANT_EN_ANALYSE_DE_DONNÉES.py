@@ -8,7 +8,7 @@ from openai import OpenAI
 
 from data.config import openai_api_key
 from data.mongodb_client import MongoDBClient
-from views import dashboard_views, employe_views
+from views import dashboard_views, employe_views, medicament_views
 
 # Logging configuration
 logging.basicConfig(
@@ -99,6 +99,25 @@ system_prompt = f"""
     Voici des informations provenant de notre base de ventes, de stocks et d'employés:
 """
 
+response_prompt = f"""
+Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
+        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
+
+        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
+        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
+        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
+        Si on te demande le salaire moyen des employés, te voici le salaire moyen des employés de la pharmacie: {employe_views.salaire_moyen} MGA.
+        Si on te demande le nombre de médicaments, te voici le nombre de médicaments de la pharmacie: {dashboard_views.nb_total_medicaments} médicaments.
+        Si on te demande le nombre de ventes, te voici le nombre de ventes de la pharmacie: {dashboard_views.nombre_total_vente_str} ventes.
+        Si on te demande les médicament déjà ou bientôt expirés (périmés), tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
+        Si on te demande les médicaments les plus chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_plus_cher}.
+        Si on te demande les médicaments les moins chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_moins_cher}.
+        Si on te demande les médicaments en critique en stock (moins de 70 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_critique}.
+        
+        Si on te demande les médicaments en surplus en stock (plus de 700 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_surplus}.
+
+"""
+
 # Generate AI response
 def generate_answer(query, retrieved_docs):
     # last_question = get_last_user_question()
@@ -107,14 +126,7 @@ def generate_answer(query, retrieved_docs):
     conversation = [{"role": m["role"], "content": m["content"]} for m in st.session_state.data_analyste_messages]
 
     prompt = f"""
-        Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
-        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
-
-        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
-        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
-        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
-        Si on te demande les médicament déjà ou bientôt expirés, tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
-        
+        {response_prompt}        
         {context}   
         {conversation}
         Réponds à la question suivante de manière claire, concise et professionnelle :
