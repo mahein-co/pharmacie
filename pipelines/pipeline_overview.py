@@ -28,22 +28,27 @@ pipeline_chiffre_affaire_total = [
     {
         "$match": {
             "quantite": { "$ne": None },
-            "prix_unitaire": { "$ne": None }
+            "prix_unitaire": { "$ne": None },
+            "date_de_vente": { "$ne": None }
         }
     },
     {
         "$project": {
             "quantite": { "$toDouble": "$quantite" },
-            "prix_unitaire": { "$toDouble": "$prix_unitaire" }
+            "prix_unitaire": { "$toDouble": "$prix_unitaire" },
+            "date_de_vente": 1
         }
     },
     {
         "$group": {
-            "_id": None,
+            "_id": "$date_de_vente",
             "chiffre_affaire_total": {
                 "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] }
             }
         }
+    },
+    {
+        "$sort": { "_id": 1 }
     }
 ]
 
@@ -1186,4 +1191,22 @@ pipeline_eff_fonction = [
             "Effectif": 1
         }
     }
+]
+
+#39 . Nombre de ventes
+pipeline_nb_ventes = [
+    {
+        "$group": {
+            "_id": "$date_de_vente",
+            "nb_ventes": { "$addToSet": "$id_vente" }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "date_de_vente": "$_id",
+            "nb_ventes": { "$size": "$nb_ventes" }
+        }
+    },
+    { "$sort": { "date_de_vente": 1 } }
 ]

@@ -16,12 +16,8 @@ from style import icons
 overview_collection = MongoDBClient(collection_name="overview")
 
 #3--nombres de ventes
-nombre_ventes = overview_collection.count_distinct_agg(field_name="id_vente")
-nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
-
-#2--panier_moyen
-panier_moyen = round(dashboard_views.total_chiffre_affaire / nombre_ventes, 2)
-panier_moyen_str = f"{panier_moyen:,}".replace(",", " ")
+nombre_ventes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_ventes,title="recuperation nb ventes")
+# nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
 
 
 #3.top vendeur
@@ -45,14 +41,19 @@ saisonalite = overview_collection.make_specific_pipeline(pipeline=pipeline_overv
 Medoc_evolution = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_quantite_mois,title="recuperation evolution")
 
 # ========== KPI Cards ===============
-kpis_html = f"""
-<div class="kpi-container">
+def get_kpis(chiffre_affaire, nombre_ventes) : 
+  panier_moyen =  round(chiffre_affaire/ nombre_ventes)
+  chiffre_affaire_str = f"{chiffre_affaire}".replace(",", " ") 
+  nombre_ventes_str = f"{nombre_ventes}".replace(",", " ")
+  panier_moyen_str = f"{panier_moyen:,}".replace(",", " ")
+  kpis_html = f"""
+    <div class="kpi-container">
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {icons.finance_icon_html}
       </div>
         <p class="kpi-title"> Total Finance (MGA)</p>
-        <p class="kpi-value" style="font-size: 1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+        <p class="kpi-value" style="font-size: 1.5rem;">{chiffre_affaire_str}</p>
     </div>
     <div class="kpi-card">
     <div style="text-align: left; position:absolute;">
@@ -68,6 +69,7 @@ kpis_html = f"""
         <p class="kpi-title">Total Ventes</p>
         <p class="kpi-value" style="font-size: 1.5rem;">{nombre_ventes_str}</p>
     </div>
-</div>
-"""
+    </div>
+    """
+  return kpis_html
 
