@@ -34,21 +34,14 @@ kpis_html = f"""
       <div style="text-align: left; position:absolute;">
       {icons.fournisseur_icon_html}
       </div>
-      <p class="kpi-title">Total Fournisseurs</p>
+      <p class="kpi-title">Grossistes - Fournisseurs (nombre)</p>
       <p class="kpi-value" style="font-size:1.5rem;">{pipeline_overview.nb_fournisseur}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-      {icons.approvisionnement_icon_html}
-      </div>
-      <p class="kpi-title">Total Approvisionnements</p>
-      <p class="kpi-value" style="font-size:1.5rem;">{pipeline_overview.total_approvisionnements}</p>
     </div>
     <div class="kpi-card">
       <div style="text-align: left; position:absolute;">
       {icons.commande_icon_html}
       </div>
-      <p class="kpi-title">Commande Moyenne</p>
+      <p class="kpi-title">Commandes moyennes</p>
       <p class="kpi-value" style="font-size:1.5rem;">{int(commande_moyen)}</p>
     </div>
 </div>

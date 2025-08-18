@@ -93,11 +93,16 @@ with st.container():
         )
 
         fig.update_layout(
-            title="Évolution Approvisionnement par Mois",
+            title="Évolution de l’approvisionnement par mois",
             xaxis_title="Mois",
             yaxis_title="Total Approvisionnement",
             xaxis=dict(categoryorder="array", categoryarray=mois_order),
-            hovermode="x unified"
+            hovermode="x unified",
+            height=350,
+            paper_bgcolor="rgba(0,0,0,0)",  
+            plot_bgcolor="rgba(0,0,0,0)",   
+            margin=dict(l=30, r=30, t=30, b=30),
+
         )
 
         st.plotly_chart(fig, use_container_width=True)
