@@ -750,7 +750,8 @@ with col2:
 # MEDICAMENTS EN RUPTURE DE STOCK ---------------------------------
 data = medicament_views.rupture_stock
 df_rupture = pd.DataFrame(data)
-df_rupture.rename(columns={"_id" : "Lot"},inplace=True)
+df_rupture.rename(columns={"_id" : "Lot", "Derniere Vente": "Dernière vente", "categorie" : "Catégorie"},inplace=True)
+df_rupture.drop(columns=["Rupture"], inplace=True)
 df_rupture = medicament_views.mettre_en_premier(df_rupture, "Médicament") 
 # 👉 1. CSS global (UNE SEULE FOIS)
 st.markdown("""
