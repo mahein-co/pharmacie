@@ -44,9 +44,51 @@ with st.container():
         date_debut = st.date_input("Date début", value=None)
         date_fin = st.date_input("Date fin", value=None)
     with col2:
-        st.markdown(vente_views.kpis_html, unsafe_allow_html=True)
+        df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
+        # Conversion de la colonne date
+        df_CA["_id"] = pd.to_datetime(df_CA["_id"])
+        # Cas 1 : pas de filtre
+        if not date_debut or not date_fin:
+            somme_CA = df_CA["chiffre_affaire_total"].sum()
+        else:
+            # Vérif cohérence des dates
+            if date_fin < date_debut:
+                st.error("⚠️ La date de fin doit être supérieure à la date de début")
+                somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
 
+            else:
+                mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
+                print("Dedans: ", df_CA.loc[mask])
+                somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
+        #ventes
 
+        df_Nb_vente = pd.DataFrame(vente_views.nombre_ventes)
+
+        # Conversion de la colonne date
+        df_Nb_vente["date_de_vente"] = pd.to_datetime(df_Nb_vente["date_de_vente"])
+
+        # Cas 1 : pas de filtre
+        if not date_debut or not date_fin:
+            somme_ventes = df_Nb_vente["nb_ventes"].sum()
+        else:
+            # Vérif cohérence des dates
+            if date_fin <= date_debut:
+                st.error("⚠️ La date de fin doit être supérieure à la date de début")
+                somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
+            else:
+                mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
+                print("Dedans: ", df_Nb_vente.loc[mask])
+                somme_ventes = df_Nb_vente.loc[mask, "nb_ventes"].sum()
+
+        # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
+
+        # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
+        st.markdown(
+            vente_views.get_kpis(chiffre_affaire=somme_CA, nombre_ventes=somme_ventes),
+            unsafe_allow_html=True
+        )
+
+        
 
 # Scorecard et Top vendeur ---------------------------------
 with st.container():
