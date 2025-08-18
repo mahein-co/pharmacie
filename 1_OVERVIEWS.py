@@ -59,7 +59,7 @@ html("""
     margin-top:-1rem;
   }
 </style>
-<div class="box">Overviews</div>
+<div class="box">Overview</div>
 """)
 
 # importation de style CSS
