@@ -20,6 +20,8 @@ html("""
     font-family: 'Dancing Script', cursive;
     font-size: 74px;
     margin-top:-1rem;
+    margin-bottom:-7rem;
+     
   }
 </style>
 <div class="box">Finances</div>
@@ -141,7 +143,7 @@ with st.container():
                 y="chiffre_affaire_mois",
                 color="Ligne",
                 markers=True,
-                title=f"Chiffre d'affaire mensuel - {', '.join(medicaments_choisis) if medicaments_choisis else 'Année'}"
+                title=f"Évolution du chiffre d’affaires mensuel - {', '.join(medicaments_choisis) if medicaments_choisis else 'Année'}"
             )
 
             fig.update_traces(mode="lines+markers")
@@ -192,7 +194,7 @@ with st.container():
         # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
-                'text': "Médicaments rapportent moins",
+                'text': "Médicaments qui rapportent le moins",
                 'y': 0.90,            # Hauteur du titre (1 = tout en haut)
                 'x': 0.5,    # Centre horizontalement
                 'xanchor': 'center',
@@ -203,7 +205,7 @@ with st.container():
             title_font=dict(size=18),
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=80, b=0),
+            margin=dict(l=30, r=30, t=80, b=30),
         )
 
         # 🎯 Affichage dans Streamlit
@@ -237,7 +239,7 @@ with st.container():
         # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
-                'text': "Médicaments rapportent plus",
+                'text': "Médicaments qui rapportent le plus",
                 'y': 0.90,            # Hauteur du titre (1 = tout en haut)
                 'x': 0.5,             # Centré horizontalement
                 'xanchor': 'center',  # Ancre horizontale
@@ -248,7 +250,7 @@ with st.container():
             title_font=dict(size=18),  # Taille du titre
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=80, b=0)  # ✅ Un seul margin, t=100 pour espace
+            margin=dict(l=30, r=30, t=80, b=30)  # ✅ Un seul margin, t=100 pour espace
         )
 
         # 🎯 Affichage dans Streamlit
@@ -267,7 +269,7 @@ st.markdown("""
             font-weight: bold;
         }
         </style>     
-        <div class="box">Marge de prix</div>
+        <div class="box">Marges</div>
     """, unsafe_allow_html=True)
 
 col1,col2,col3 = st.columns(3)
@@ -290,10 +292,10 @@ with col1:
     # 🔹 Nettoyage / renommage
     df_forte_marge.rename(columns={
         "nom_medicament": "Médicaments",
-        "marge_prix": "Marge"
+        "marge_prix": "Marges"
     }, inplace=True)
-    df_forte_marge["Marge"] = df_forte_marge["Marge"].round(2)
-    df_forte_marge = df_forte_marge.sort_values(by="Marge", ascending=False)
+    df_forte_marge["Marges"] = df_forte_marge["Marges"].round(2)
+    df_forte_marge = df_forte_marge.sort_values(by="Marges", ascending=False)
 
     # 🔹 CSS pour carte centrée
     st.markdown("""
@@ -318,23 +320,23 @@ with col1:
     fig = px.bar(
         df_forte_marge,
         x="Médicaments",
-        y="Marge",
-        text="Marge",
-        color="Marge",
+        y="Marges",
+        text="Marges",
+        color="Marges",
         color_continuous_scale=px.colors.sequential.Plasma
     )
 
     fig.update_layout(
         xaxis_title="Médicaments",
-        yaxis_title="Marge prix",
+        yaxis_title="Marges prix",
         title={
-                    'text': "Forte marge ",
+                    'text': "Marges élevées ",
                     'x': 0.5,  # Centre horizontalement
                     'xanchor': 'center',
                     'yanchor': 'top'
                 },
         title_font=dict(size=18),  # Taille du titre
-        yaxis=dict(range=[0, df_forte_marge["Marge"].max() * 1.2]),
+        yaxis=dict(range=[0, df_forte_marge["Marges"].max() * 1.2]),
         showlegend=False,
         height=320,
         paper_bgcolor="rgba(0,0,0,0)",  
@@ -366,10 +368,10 @@ with col2:
     
     df_faible_marge.rename(columns={
         "nom_medicament": "Médicaments",
-        "marge_prix": "Marge"
+        "marge_prix": "Marges"
     }, inplace=True)
-    df_faible_marge["Marge"] = df_faible_marge["Marge"].round(2)
-    df_faible_marge = df_faible_marge.sort_values(by="Marge", ascending=False)
+    df_faible_marge["Marges"] = df_faible_marge["Marges"].round(2)
+    df_faible_marge = df_faible_marge.sort_values(by="Marges", ascending=False)
 
     # 🔹 CSS pour carte centrée
     st.markdown("""
@@ -394,23 +396,23 @@ with col2:
     fig = px.bar(
         df_faible_marge,
         x="Médicaments",
-        y="Marge",
-        text="Marge",
-        color="Marge",
+        y="Marges",
+        text="Marges",
+        color="Marges",
         color_continuous_scale=px.colors.sequential.Plasma
     )
 
     fig.update_layout(
         xaxis_title="Médicaments",
-        yaxis_title="Marge prix",
+        yaxis_title="Marges prix",
         title={
-                    'text': " Faible marge ",
+                    'text': " Marges faibles ",
                     'x': 0.5,  # Centre horizontalement
                     'xanchor': 'center',
                     'yanchor': 'top'
                 },
         title_font=dict(size=18),  # Taille du titre
-        yaxis=dict(range=[0, df_faible_marge["Marge"].max() * 1.2]),
+        yaxis=dict(range=[0, df_faible_marge["Marges"].max() * 1.2]),
         showlegend=False,
         height=320,
         paper_bgcolor="rgba(0,0,0,0)",  
@@ -445,32 +447,32 @@ with col3:
 
     # Renommage des colonnes
     df_marge_moyen.rename(columns={
-        "prix_unitaire": "Prix Vente",
-        "prix_fournisseur": "Prix Achats",
-        "marge_prix": "Marge Bénéficiaire"
+        "prix_unitaire": "Prix de vente",
+        "prix_fournisseur": "Prix d'achat",
+        "marge_prix": "Marges bénéficiaires"
     }, inplace=True)
 
     # Extraction directe des valeurs (sans moyenne)
-    prix_achat = df_marge_moyen.loc[0, "Prix Achats"]
-    marge = df_marge_moyen.loc[0, "Marge Bénéficiaire"]
-    prix_vente = df_marge_moyen.loc[0, "Prix Vente"]
+    prix_achat = df_marge_moyen.loc[0, "Prix d'achat"]
+    marge = df_marge_moyen.loc[0, "Marges bénéficiaires"]
+    prix_vente = df_marge_moyen.loc[0, "Prix de vente"]
 
     # Préparation des données pour le funnel chart
     funnel_data = pd.DataFrame({
-        "Étape": ["Prix Vente","Prix Achats", "Marge Bénéficiaire"],
-        "Valeur": [prix_vente, prix_achat, marge]
+        "_": ["Prix de vente","Prix d'achat", "Marges bénéficiaires"],
+        "Valeur": [round(prix_vente), round(prix_achat), round(marge)]
     })
 
     # Création du graphique entonnoir 2D
     fig = px.funnel(
         funnel_data,
         x="Valeur",
-        y="Étape",
+        y="_",
     )
 
     fig.update_layout(
                 title={
-                    'text': "Marge moyenne des médicaments",
+                    'text': "Marges moyennes (MGA)",
                     'x': 0.5,  # Centre horizontalement
                     'xanchor': 'center',
                     'yanchor': 'top'

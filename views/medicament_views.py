@@ -41,6 +41,16 @@ medoc_moins_cher = overview_collection.make_specific_pipeline(pipeline=pipeline_
 medoc_plus_cher = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_medicaments_plus_cher,title="recuperation plus cher")
 
 
+def mettre_en_premier(df, colname):
+    """
+    Déplace la colonne `colname` en première position dans la DataFrame.
+    """
+    if colname not in df.columns:
+        raise ValueError(f"La colonne '{colname}' n'existe pas dans la DataFrame.")
+    
+    cols = [colname] + [col for col in df.columns if col != colname]
+    return df[cols]
+
 # ========== KPI Cards ===============
 kpis_html = f"""
 <div class="kpi-container">

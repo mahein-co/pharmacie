@@ -44,7 +44,7 @@ if employe_views.employe_collection:
         <div style="text-align: left; position:absolute;">
           {icons.employees_icon_html}
         </div>
-          <p class="kpi-title">Nombre Total Employé</p>
+          <p class="kpi-title">Nombre d'employés</p>
           <p class="kpi-value" style="font-size:1.5rem;">{employe_views.Nb_employers}</p>
       </div>
       <div class="kpi-card">
@@ -143,7 +143,7 @@ with st.container():
           ),
           paper_bgcolor="rgba(0,0,0,0)",  
           plot_bgcolor="rgba(0,0,0,0)",   
-          margin=dict(l=20, r=20, t=20, b=20),
+          margin=dict(l=20, r=20, t=40, b=20),
       )
 
       # Affichage dans Streamlit
@@ -172,7 +172,7 @@ with st.container():
           ),
           paper_bgcolor="rgba(0,0,0,0)",  
           plot_bgcolor="rgba(0,0,0,0)",   
-          margin=dict(l=20, r=20, t=20, b=20),
+          margin=dict(l=20, r=20, t=40, b=20),
       )
 
       # Affichage dans Streamlit
