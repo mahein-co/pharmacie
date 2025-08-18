@@ -529,7 +529,7 @@ with st.container():
             template="plotly_white",
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=30, r=0, t=30, b=30),
+            margin=dict(l=30, r=30, t=30, b=30),
             height=230,
         )
         st.plotly_chart(fig, use_container_width=True)
