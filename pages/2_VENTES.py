@@ -47,7 +47,7 @@ with st.container():
         with col1:
             date_debut = st.date_input("Date de début du filtre", value=None)
         with col2:
-            date_fin = st.date_input("Date de fin du filtre", value=None)
+            date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
 # with col2:
     df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
     # Conversion de la colonne date
@@ -58,7 +58,6 @@ with st.container():
     else:
         # Vérif cohérence des dates
         if date_fin < date_debut:
-            st.error("⚠️ La date de fin doit être supérieure à la date de début")
             somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
 
         else:
@@ -77,8 +76,7 @@ with st.container():
         somme_ventes = df_Nb_vente["nb_ventes"].sum()
     else:
         # Vérif cohérence des dates
-        if date_fin <= date_debut:
-            st.error("⚠️ La date de fin doit être supérieure à la date de début")
+        if date_fin < date_debut:
             somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
         else:
             mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
