@@ -84,6 +84,21 @@ with col_filter:
 data = dashboard_views.medicaments_expires
 df = pd.DataFrame(data)
 
+#chriffres d'affraire
+# df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
+# # Conversion de la colonne date
+# df_CA["_id"] = pd.to_datetime(df_CA["_id"])
+# # Cas 1 : pas de filtre
+# if not date_debut or not date_fin:
+#     somme_CA = df_CA["chiffre_affaire_total"].sum()
+# else:
+#     # Vérif cohérence des dates
+#     if date_fin < date_debut:
+#         somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
+
+#     else:
+#         mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
+#         somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
 # I- 6 FIRST SCORECARD
 if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
     # 1. DAHSBOARD --------------------------------------------
@@ -231,7 +246,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
 
     # 🔢 Pagination : affichage tableau avec page
     # Valeurs disponibles
-    rows_per_page_options = [5, 10]
+    rows_per_page_options = [5]
     # Valeur par défaut
     rows_per_page = st.session_state.get("rows_per_page", 5)
 

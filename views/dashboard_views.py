@@ -44,11 +44,10 @@ medicament_docs = medicament_collection.find_all_documents()
 # I- D A S H B O A R D
 # 1.1. chiffre d'affaire total
 chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
-df_CA = pd.DataFrame(chiffre_affaire)
-print("valiny: ",df_CA["chiffre_affaire_total"].sum())
+
 try:
   total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
-  total_chiffre_affaire_str = f"{int(df_CA['chiffre_affaire_total'].sum()):,}".replace(",", " ")
+  total_chiffre_affaire_str = f"{int(total_chiffre_affaire):,}".replace(",", " ")
 except Exception as e:
     total_chiffre_affaire_str = 0
 
@@ -173,40 +172,40 @@ medicament_rapportant_moins = overview_collection.make_specific_pipeline(
 
 # HTML ----------------------------------------------
 three_first_kpis_html = f"""
-<div class="kpi-container">
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-      {icons.finance_icon_html}
+  <div class="kpi-container">
+      <div class="kpi-card">
+        <div style="text-align: left; position:absolute;">
+        {icons.finance_icon_html}
+        </div>
+          <p class="kpi-title" style="font-size:1rem;">Chiffre d'Affaires (MGA)</p>
+          <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Chiffre d'Affaires (MGA)</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-      {icons.ventes_icon_html}
+      <div class="kpi-card">
+        <div style="text-align: left; position:absolute;">
+        {icons.ventes_icon_html}
+        </div>
+          <p class="kpi-title" style="font-size:1rem;">Nombre de Ventes</p>
+          <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Nombre de Ventes</p>
-        <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-      {icons.stock_icon_html}
+      <div class="kpi-card">
+        <div style="text-align: left; position:absolute;">
+        {icons.stock_icon_html}
+        </div>
+          <p class="kpi-title" style="font-size:1rem;">Valeur des Stocks (MGA)</p>
+          <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
       </div>
-        <p class="kpi-title" style="font-size:1rem;">Valeur des Stocks (MGA)</p>
-        <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
-    </div>
-    <div class="kpi-card">
-      <div style="text-align: left; position:absolute;">
-      {icons.perte_icon_html}
+      <div class="kpi-card">
+        <div style="text-align: left; position:absolute;">
+        {icons.perte_icon_html}
+        </div>
+        <p class="kpi-title" style="font-size:1rem; color:#48494B;">
+          Pertes (MGA)
+        </p>
+        <p class="kpi-value" style="font-size:1.5rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}</p>
       </div>
-      <p class="kpi-title" style="font-size:1rem; color:#48494B;">
-        Pertes (MGA)
-      </p>
-      <p class="kpi-value" style="font-size:1.5rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}</p>
-    </div>
 
-</div>
-"""
+  </div>
+  """
 
 def get_status(jours_restants):
     if jours_restants < 1:
