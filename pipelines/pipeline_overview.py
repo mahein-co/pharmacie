@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, time
 
 from data.mongodb_client import MongoDBClient
 
@@ -15,13 +15,6 @@ dans_30_jours = TODAY + timedelta(days=30)
 # COLLECTION
 overview_collection = MongoDBClient(collection_name="overview")
 
-# Récupération de tous les documents de la collection overview
-# overview_docs = overview_collection.find_all_documents()
-
-# Création d'un DataFrame à partir des documents
-# df = pd.DataFrame(overview_docs)
-
-
 # KPIs 
 # 1. Chiffre d'affaires total
 pipeline_chiffre_affaire_total = [
@@ -29,7 +22,7 @@ pipeline_chiffre_affaire_total = [
         "$match": {
             "quantite": { "$ne": None },
             "prix_unitaire": { "$ne": None },
-            "date_de_vente": { "$ne": None }
+            "date_de_vente": {"$ne": None }
         }
     },
     {
@@ -51,6 +44,51 @@ pipeline_chiffre_affaire_total = [
         "$sort": { "_id": 1 }
     }
 ]
+
+def get_chiffre_affaire_total(start_date=None, end_date=None):
+    start_date = datetime.combine(start_date, datetime.min.time()) if start_date else None
+    end_date = datetime.combine(end_date, datetime.max.time()) if end_date else None
+    
+    # Pipelines chiffre d'affaire total with the possibility to filter by date
+    pipeline_chiffre_affaire_total = [
+        {
+            "$match": {
+                "quantite": { "$ne": None },
+                "prix_unitaire": { "$ne": None },
+                "date_de_vente": { "$gte": start_date, "$lte": end_date } if start_date and end_date else {"$ne": None }
+            }
+        },
+        {
+            "$project": {
+                "quantite": { "$toDouble": "$quantite" },
+                "prix_unitaire": { "$toDouble": "$prix_unitaire" },
+                "date_de_vente": 1
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "chiffre_affaire_total": {
+                    "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] }
+                }
+            }
+        },
+        {
+            "$sort": { "_id": 1 }
+        }
+    ]
+
+    # Execute the pipeline
+    chiffre_affaire_result = overview_collection.make_specific_pipeline(pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRE TOTAL")
+    try:
+        # Handle the case where the result is empty
+        chiffre_affaire_total = chiffre_affaire_result[0]["chiffre_affaire_total"] if chiffre_affaire_result else 0
+        # Format the total chiffre d'affaire as a string
+        chiffre_affaire_total_str = f"{int(chiffre_affaire_total):,}".replace(",", " ")
+    except Exception as e:
+        chiffre_affaire_total_str = 0 
+
+    return chiffre_affaire_total_str
 
 # 2. Valeur total des stocks
 pipeline_valeur_totale_stock = [
