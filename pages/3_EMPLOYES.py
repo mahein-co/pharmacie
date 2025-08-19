@@ -19,23 +19,35 @@ from style import style, icons
 # Initialisation
 st.set_page_config(page_title="EMPLOYE", layout="wide")
 
-html("""
-<style>
-    @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
-    
- .box {
-    color: #0A9548;
-    font-family: 'Dancing Script', cursive;
-    font-size: 74px;
-    margin-top:-1rem;
-  }
-</style>
-<div class="box">Employés</div>
-""")
+# PAGE TITLE -----------------------------------------
+col_title, col_empty, col_filter = st.columns([2, 2, 2])
+with col_title:
+  html("""
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Acme&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Merienda:wght@300..900&family=Quicksand:wght@300..700&family=Satisfy&display=swap");
+        
+    .box {
+        color: #0A9548;
+        font-family: 'Dancing Script', cursive;
+        font-size: 74px;
+        margin-top:-1rem;
+      }
+    </style>
+    <div class="box">Employés</div>
+  """)
 
 #importation html et css
 st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
+
+with col_filter:
+    # st.markdown("#### Filtrer les ventes par")
+    col1,col2 = st.columns(2)
+    # --- Inputs utilisateur ---
+    with col1:
+        date_debut = st.date_input("Date de début du filtre", value=None)
+    with col2:
+        date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
 
 if employe_views.employe_collection:
   kpis_html = f"""
