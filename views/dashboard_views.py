@@ -1,12 +1,9 @@
-import streamlit as st
 import pandas as pd
 from data.mongodb_client import MongoDBClient
-from data import mongodb_pipelines
 from st_aggrid import AgGrid
-from st_aggrid.grid_options_builder import GridOptionsBuilder
 
 from pipelines import pipeline_overview
-from views import employe_views
+# from views import employe_views
 
 from style import icons
 
@@ -43,15 +40,6 @@ medicament_docs = medicament_collection.find_all_documents()
 
 # I- D A S H B O A R D
 # 1.2. valeur totale du stock
-valeur_stock = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
-  title="Calcul de la valeur totale du stock"
-)
-try:
-    valeur_totale_stock = valeur_stock[0]["valeur_stock_totale"] if valeur_stock else 0
-except Exception as e:
-    valeur_totale_stock = 0
-    
 # 1.3. nombre total de vente
 nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 
@@ -167,7 +155,7 @@ def format_number_to_str(value):
     """Format a number with spaces as thousands separator."""
     return f"{int(value):,}".replace(",", " ")
 
-def first_container_kpis_html(chiffre_affaire, valeur_totale_stock=valeur_totale_stock, total_pertes_medicaments=total_pertes_medicaments):
+def first_container_kpis_html(chiffre_affaire, valeur_totale_stock, total_pertes_medicaments=total_pertes_medicaments):
     chiffre_affaire = format_number_to_str(chiffre_affaire)
     valeur_totale_stock = format_number_to_str(valeur_totale_stock)
     total_pertes_medicaments = format_number_to_str(total_pertes_medicaments)
@@ -241,30 +229,30 @@ table_head_medicaments_expired_html = f"""
 </div>
 """
 
-# all employes
-total_all_employes_html = f"""
-  <div class="kpi-card" style="margin-bottom:1.5rem;">
-    <div style="text-align: left; position:absolute;">
-      {icons.employees_icon_html}
-    </div>
-    <p class="kpi-title" color:#48494B;">Total Employés</p>
-    <p class="kpi-value" style="font-size:1.5rem;">{nombre_total_employes}</p>
-  </div>
-  <div class="kpi-card" style="margin-bottom:1.5rem;">
-    <div style="text-align: left; position:absolute;">
-      {icons.salaire_icon_html}
-    </div>
-    <p class="kpi-title" color:#48494B;">Salaire Moyen (MGA)</p>
-    <p class="kpi-value" style="font-size:1.5rem;">{employe_views.salaire_moyen}</p>
-  </div>
-  <div class="kpi-card" style="margin-bottom:1.5rem;">
-    <div style="text-align: left; position:absolute;">
-      {icons.age_icon_html}
-    </div>
-    <p class="kpi-title" color:#48494B;">Âge Moyen</p>
-    <p class="kpi-value" style="font-size:1.5rem;">{round(employe_views.age_moyen)} ans</p>
-  </div>
-"""
+# # all employes
+# total_all_employes_html = f"""
+#   <div class="kpi-card" style="margin-bottom:1.5rem;">
+#     <div style="text-align: left; position:absolute;">
+#       {icons.employees_icon_html}
+#     </div>
+#     <p class="kpi-title" color:#48494B;">Total Employés</p>
+#     <p class="kpi-value" style="font-size:1.5rem;">{nombre_total_employes}</p>
+#   </div>
+#   <div class="kpi-card" style="margin-bottom:1.5rem;">
+#     <div style="text-align: left; position:absolute;">
+#       {icons.salaire_icon_html}
+#     </div>
+#     <p class="kpi-title" color:#48494B;">Salaire Moyen (MGA)</p>
+#     <p class="kpi-value" style="font-size:1.5rem;">{employe_views.salaire_moyen}</p>
+#   </div>
+#   <div class="kpi-card" style="margin-bottom:1.5rem;">
+#     <div style="text-align: left; position:absolute;">
+#       {icons.age_icon_html}
+#     </div>
+#     <p class="kpi-title" color:#48494B;">Âge Moyen</p>
+#     <p class="kpi-value" style="font-size:1.5rem;">{round(employe_views.age_moyen)} ans</p>
+#   </div>
+# """
 
 
 # Exemples d'utilisation
