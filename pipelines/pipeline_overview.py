@@ -1,10 +1,4 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from datetime import datetime, timedelta, timezone, time
-
+from datetime import datetime, timedelta
 from data.mongodb_client import MongoDBClient
 
 # CONSTANTS
@@ -17,34 +11,6 @@ overview_collection = MongoDBClient(collection_name="overview")
 
 # KPIs 
 # 1. Chiffre d'affaires total
-pipeline_chiffre_affaire_total = [
-    {
-        "$match": {
-            "quantite": { "$ne": None },
-            "prix_unitaire": { "$ne": None },
-            "date_de_vente": {"$ne": None }
-        }
-    },
-    {
-        "$project": {
-            "quantite": { "$toDouble": "$quantite" },
-            "prix_unitaire": { "$toDouble": "$prix_unitaire" },
-            "date_de_vente": 1
-        }
-    },
-    {
-        "$group": {
-            "_id": "$date_de_vente",
-            "chiffre_affaire_total": {
-                "$sum": { "$multiply": ["$quantite", "$prix_unitaire"] }
-            }
-        }
-    },
-    {
-        "$sort": { "_id": 1 }
-    }
-]
-
 def get_chiffre_affaire_total(start_date=None, end_date=None):
     start_date = datetime.combine(start_date, datetime.min.time()) if start_date else None
     end_date = datetime.combine(end_date, datetime.max.time()) if end_date else None
@@ -84,11 +50,10 @@ def get_chiffre_affaire_total(start_date=None, end_date=None):
         # Handle the case where the result is empty
         chiffre_affaire_total = chiffre_affaire_result[0]["chiffre_affaire_total"] if chiffre_affaire_result else 0
         # Format the total chiffre d'affaire as a string
-        chiffre_affaire_total_str = f"{int(chiffre_affaire_total):,}".replace(",", " ")
     except Exception as e:
-        chiffre_affaire_total_str = 0 
+        chiffre_affaire_total = 0 
 
-    return chiffre_affaire_total_str
+    return chiffre_affaire_total
 
 # 2. Valeur total des stocks
 pipeline_valeur_totale_stock = [
@@ -283,8 +248,6 @@ pipeline_pertes_expiration_fig = [
         }
     }
 ]
-
-
 
 
 # 6. Nombre total d'employés
@@ -1260,7 +1223,7 @@ def get_nombre_de_ventes(start_date=None, end_date=None):
     ]
 
     nombre_ventes_result = overview_collection.make_specific_pipeline(
-        pipeline_nb_ventes, title="recuperation nb ventes"
+        pipeline_nb_ventes, title="recuperation de nombre de ventes"
     )
     
     # Somme totale des ventes
