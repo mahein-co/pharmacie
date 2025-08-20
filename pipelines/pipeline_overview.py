@@ -1210,3 +1210,18 @@ pipeline_nb_ventes = [
     },
     { "$sort": { "date_de_vente": 1 } }
 ]
+
+#40. Nombre total de medicaments 
+
+pipeline_nb_medicaments = [
+    {"$group": {
+        "_id": {"date": "$arrival_date", "medicament": "$nom_medicaments"},
+        "nb_medicaments": {"$sum": 1}   # ou {"$sum": "$quantite"}
+    }},
+    {"$project": {
+        "_id": 0,
+        "arrival_date": "$_id.date",
+        "nom_medicaments": "$_id.medicament",
+        "nb_medicaments": 1
+    }}
+]

@@ -47,6 +47,7 @@ with col_filter:
         date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
 
 
+
 if medicament_views.overview_collection :
   st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
 
