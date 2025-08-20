@@ -74,16 +74,14 @@ with col_title:
 
 # Filtre de date
 with col_filter:
-    col1,col2 = st.columns([2,2])
+    col1,col2 = st.columns([3,2])
     if "date_range" not in st.session_state:
         st.session_state.date_range = None
-    # --- Inputs utilisateur ---
+
     with col1:
         first_date_vente = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
-        st.session_state.date_range = st.date_input("Date de début du filtre", value=(first_date_vente, TODAY))
-        # date_debut = st.date_input("Date de début du filtre", value=None)
+        st.session_state.date_range = st.date_input("CHOISISSEZ 02 DATES", value=(first_date_vente, TODAY))
     with col2:
-        # date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
         chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
         if st.button("Appliquer"):
             if len(st.session_state.date_range) == 2:
