@@ -42,15 +42,6 @@ overview_docs = overview_collection.find_all_documents()
 medicament_docs = medicament_collection.find_all_documents()
 
 # I- D A S H B O A R D
-# 1.1. chiffre d'affaire total
-chiffre_affaire = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="Calcul du chiffre d'affaire")
-
-try:
-  total_chiffre_affaire = chiffre_affaire[0]["chiffre_affaire_total"] if chiffre_affaire else 0
-  total_chiffre_affaire_str = f"{int(total_chiffre_affaire):,}".replace(",", " ")
-except Exception as e:
-    total_chiffre_affaire_str = 0
-
 # 1.2. valeur totale du stock
 valeur_stock = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
@@ -172,41 +163,44 @@ medicament_rapportant_moins = overview_collection.make_specific_pipeline(
 )
 
 # HTML ----------------------------------------------
-three_first_kpis_html = f"""
-  <div class="kpi-container">
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-        {icons.finance_icon_html}
-        </div>
-          <p class="kpi-title" style="font-size:1rem;">Chiffre d'Affaires (MGA)</p>
-          <p class="kpi-value" style="font-size:1.5rem;">{total_chiffre_affaire_str}</p>
-      </div>
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-        {icons.ventes_icon_html}
-        </div>
-          <p class="kpi-title" style="font-size:1rem;">Nombre de Ventes</p>
-          <p class="kpi-value" style="font-size:1.6rem;">{nombre_total_vente_str}</p>
-      </div>
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-        {icons.stock_icon_html}
-        </div>
-          <p class="kpi-title" style="font-size:1rem;">Valeur des Stocks (MGA)</p>
-          <p class="kpi-value" style="font-size:1.5rem;">{f"{int(valeur_totale_stock):,}".replace(",", " ")}</p>
-      </div>
-      <div class="kpi-card">
-        <div style="text-align: left; position:absolute;">
-        {icons.perte_icon_html}
-        </div>
-        <p class="kpi-title" style="font-size:1rem; color:#48494B;">
-          Pertes (MGA)
-        </p>
-        <p class="kpi-value" style="font-size:1.5rem;">{f"{int(total_pertes_medicaments):,}".replace(",", " ")}</p>
-      </div>
+def format_number_to_str(value):
+    """Format a number with spaces as thousands separator."""
+    return f"{int(value):,}".replace(",", " ")
 
-  </div>
-  """
+def first_container_kpis_html(chiffre_affaire, valeur_totale_stock=valeur_totale_stock, total_pertes_medicaments=total_pertes_medicaments):
+    chiffre_affaire = format_number_to_str(chiffre_affaire)
+    valeur_totale_stock = format_number_to_str(valeur_totale_stock)
+    total_pertes_medicaments = format_number_to_str(total_pertes_medicaments)
+
+    three_first_kpis_html = f"""
+        <div class="kpi-container">
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.finance_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Chiffre d'affaires (MGA)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{chiffre_affaire}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.stock_icon_html}
+            </div>
+                <p class="kpi-title" style="font-size:1rem;">Valeur des stocks (MGA)</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{valeur_totale_stock}</p>
+            </div>
+            <div class="kpi-card">
+            <div style="text-align: left; position:absolute;">
+            {icons.perte_icon_html}
+            </div>
+            <p class="kpi-title" style="font-size:1rem; color:#48494B;">
+                Pertes (MGA)
+            </p>
+            <p class="kpi-value" style="font-size:1.5rem;">{total_pertes_medicaments}</p>
+            </div>
+
+        </div>
+    """
+    return three_first_kpis_html
 
 def get_status(jours_restants):
     if jours_restants < 1:
