@@ -79,8 +79,9 @@ except Exception as e:
 
 # 1.6. Dataframe des ventes
 # overview_docs = overview_collection.find_all_documents()
-# df_ventes = pd.DataFrame(overview_docs)
-# df_ventes = df_ventes.drop_duplicates(subset=["id_vente"])
+df_ventes = pd.DataFrame(overview_docs)
+df_ventes = df_ventes.drop_duplicates(subset=["id_vente"])
+first_date_vente = df_ventes["date_de_vente"].min() if not df_ventes.empty else None
     
 # II. MEDICAMENTS
 # 2.1. Médicaments expirés

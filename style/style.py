@@ -270,7 +270,7 @@ kpis_style = """
 }
 
 .kpi-container{
-  margin-top:-6rem;
+  margin-top:-4rem;
 }
 
 .little-space {
@@ -409,3 +409,24 @@ placeholder_style = """
     }
     </style>
     """
+
+button_style = """
+    <style>
+    .stButton > button {
+        background-color: #0A9548 !important;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 3px 7px;
+        border-radius: 7px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1.5rem;
+    }
+    .stButton > button:hover {
+        color: #fff;
+    }
+    </style>
+"""
