@@ -16,8 +16,8 @@ from style import icons
 overview_collection = MongoDBClient(collection_name="overview")
 
 #3--nombres de ventes
-nombre_ventes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_ventes,title="recuperation nb ventes")
-# nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
+# nombre_ventes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_ventes,title="recuperation nb ventes")
+# # nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
 
 
 #3.top vendeur
@@ -67,7 +67,7 @@ def get_kpis(chiffre_affaire, nombre_ventes) :
       {icons.ventes_icon_html}
       </div>
         <p class="kpi-title">Nombre de ventes</p>
-        <p class="kpi-value" style="font-size: 1.5rem;">{nombre_ventes_str}</p>
+        <p class="kpi-value" style="font-size: 1.5rem;">{22}</p>
     </div>
     </div>
     """
