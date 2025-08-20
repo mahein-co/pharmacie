@@ -18,7 +18,7 @@ from style import style
 
 # Initialisation
 st.set_page_config(page_title="Approvisionnement & Fournisseur", layout="wide")
-col_title, col_empty, col_filter = st.columns([2, 2, 2])
+col_title, col_empty, col_filter = st.columns([3, 1, 2])
 with col_title:
     html("""
     <style>
@@ -27,7 +27,7 @@ with col_title:
     .box {
         color: #0A9548;
         font-family: 'Dancing Script', cursive;
-        font-size: 74px;
+        font-size: 45px;
         margin-top:-1rem;
     }
         

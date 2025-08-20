@@ -47,13 +47,13 @@ class MongoDBClient:
         try:
             result = list(self.collection.aggregate(pipeline,  allowDiskUse=True, maxTimeMS=180000))
             if result:
-                logger.info(f"**{title}** est bien réussit.")
+                logger.info(f"Pipeline de {title.upper()} a bien réussi.")
                 return result
             else:
                 return []
 
         except Exception as e:
-            logger.exception(f"Erreur lors de **{title}** avec l'erreur {e}.")
+            logger.exception(f"Erreur lors de {title.upper()} avec l'erreur {e}.")
             return []
         
     def get_collection(self):

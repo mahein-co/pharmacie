@@ -25,6 +25,12 @@ st.markdown("""
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">', unsafe_allow_html=True)
 
+# importation de style CSS
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.table_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+
+
 # PING IP
 def mongodb_ip_manager():   
     manager = MongoDBIPManager()
@@ -42,8 +48,6 @@ with open("style/pharmacie.css", "r") as css_file:
 
 # Sidebar
 with st.sidebar:
-    # if st.button("Recharger les données", key="reload", help="Cliquez pour recharger les données", use_container_width=True):
-    #     st.cache_data.clear()
     st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
 
 # -----------------------------------------------------------------
@@ -64,15 +68,8 @@ with col_title:
     <div class="box">Overview</div>
     """)
 
-# importation de style CSS
-st.markdown(style.custom_css, unsafe_allow_html=True)
-st.markdown(style.table_css, unsafe_allow_html=True)
-st.markdown(style.kpis_style, unsafe_allow_html=True)
-st.markdown(style.clustering_employees_style, unsafe_allow_html=True)
-
-# Sélecteur de date
+# Filtre de date
 with col_filter:
-    # st.markdown("#### Filtrer les ventes par")
     col1,col2 = st.columns(2)
     # --- Inputs utilisateur ---
     with col1:
@@ -84,21 +81,12 @@ with col_filter:
 data = dashboard_views.medicaments_expires
 df = pd.DataFrame(data)
 
-#chriffres d'affraire
-# df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
-# # Conversion de la colonne date
-# df_CA["_id"] = pd.to_datetime(df_CA["_id"])
-# # Cas 1 : pas de filtre
-# if not date_debut or not date_fin:
-#     somme_CA = df_CA["chiffre_affaire_total"].sum()
-# else:
-#     # Vérif cohérence des dates
-#     if date_fin < date_debut:
-#         somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
+# SCORECARD KPIS -----------------------------------------
+# 1. chriffres d'affraire
+if date_debut and date_fin:
+    chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(start_date=date_debut, end_date=date_fin)
+chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
 
-#     else:
-#         mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
-#         somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
 # I- 6 FIRST SCORECARD
 if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
     # 1. DAHSBOARD --------------------------------------------
@@ -109,7 +97,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
             {icons.finance_icon_html}
             </div>
                 <p class="kpi-title" style="font-size:1rem;">Chiffre d'affaires (MGA)</p>
-                <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+                <p class="kpi-value" style="font-size:1.5rem;">{chiffre_affaire}</p>
             </div>
             <div class="kpi-card">
             <div style="text-align: left; position:absolute;">
