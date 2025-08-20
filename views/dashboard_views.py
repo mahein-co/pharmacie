@@ -65,7 +65,7 @@ except Exception as e:
 nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 
 # 1.4. Nombre total de médicaments
-nb_total_medicaments = medicament_collection.count_distinct_agg(field_name="id_medicament")
+nb_total_medicaments = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_medicaments,title="recuperation nb medoc par date de vente")
     
 # 1.5. Total des pertes dues aux médicaments invendus
 pertes_medicaments = overview_collection.make_specific_pipeline(
