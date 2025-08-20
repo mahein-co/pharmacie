@@ -96,6 +96,10 @@ df = pd.DataFrame(data)
 
 
 
+if date_debut and date_fin:
+    nombre_ventes = pipeline_overview.get_nombre_de_ventes(start_date=date_debut, end_date=date_fin)
+nombre_ventes = pipeline_overview.get_nombre_de_ventes()
+nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
 # I- 6 FIRST SCORECARD
 if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
     # 1. DAHSBOARD --------------------------------------------
@@ -144,7 +148,7 @@ if dashboard_views.employe_collection and dashboard_views.overview_collection an
             {icons.ventes_icon_html}
             </div>
                 <p class="kpi-title" style="font-size:1rem;">Nombre de ventes</p>
-                <p class="kpi-value" style="font-size:1.6rem;">{dashboard_views.nombre_total_vente_str}</p>
+                <p class="kpi-value" style="font-size:1.6rem;">{nombre_ventes_str}
             </div>
             <div class="kpi-card">
             <div style="text-align: left; position:absolute;">
