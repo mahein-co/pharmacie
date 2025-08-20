@@ -19,8 +19,25 @@ from style import style
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+#========= importation style ==============
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+st.markdown(style.button_style, unsafe_allow_html=True)
 
+#======== sidebar =====================
+with st.sidebar:
+    st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
+
+#====================GLOBAL VARIABLES =======================
 TODAY = date.today()
+date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
+date_fin = TODAY
+
+# 1. Chiffre d'affaires
+chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
+
+#2. Nombre de ventes
+nombre_ventes = pipeline_overview.get_nombre_de_ventes()
 
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -39,25 +56,35 @@ with col_title:
     """)
 
 
+# FILTRE DATE -------------------------------------------------
+# if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
+with col_filter:
+    col1,col2 = st.columns([3,2])
+    if "date_range" not in st.session_state:
+        st.session_state.date_range = None
 
-st.markdown(style.custom_css, unsafe_allow_html=True)
-st.markdown(style.kpis_style, unsafe_allow_html=True)
-with st.container():
-    # Sélecteur de date
-    with col_filter:
-        col1, col2 = st.columns([2, 2])
-        
-        if "date_range" not in st.session_state:
-            st.session_state.date_range = None
+    with col1:
+        st.session_state.date_range = st.date_input("CHOISISSEZ 02 DATES", value=(date_debut, TODAY))
+    
+    with col2:
+        apply_button = st.button("Appliquer");
 
-        # --- Inputs utilisateur ---
-        with col1:
-            first_date_vente = dashboard_views.first_date_vente or TODAY
-            st.session_state.date_range = st.date_input(
-                "Filtrer par dates",
-                value=(first_date_vente, TODAY)
+
+if apply_button:
+    if len(st.session_state.date_range) == 2:
+        date_debut, date_fin = st.session_state.date_range
+        if (date_debut <= date_fin):
+            # 1. Chiffre d'affaires
+            chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(
+                start_date=date_debut, 
+                end_date=date_fin
             )
-
+            # 2. Nombre de ventes
+            nombre_ventes = pipeline_overview.get_nombre_de_ventes(
+                start_date=date_debut, 
+                end_date=date_fin
+            )
+nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
         # with col2:
         # # # date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
         # #     st.button("Appliquer")
