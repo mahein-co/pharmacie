@@ -12,10 +12,10 @@ TODAY = datetime.today()
 # TODAY = datetime.now(timezone.utc)
 dans_30_jours = TODAY + timedelta(days=30)
 
-# COLLECTION
+# COLLECTIONS -----------------------
 overview_collection = MongoDBClient(collection_name="overview")
 
-# KPIs 
+# KPIs ------------------------------- 
 # 1. Chiffre d'affaires total
 pipeline_chiffre_affaire_total = [
     {
@@ -73,24 +73,38 @@ pipeline_chiffre_affaire_total = [
     # return chiffre_affaire_total_str
 
 # 2. Valeur total des stocks
-pipeline_valeur_totale_stock = [
-    {
-        "$match": {
-            "date_expiration": { "$gt": TODAY },
-            "quantite_restante": { "$gt": 0 }
-        }
-    },
-    {
-        "$group": {
-            "_id": None,
-            "valeur_stock_totale": {
-                "$sum": {
-                    "$multiply": ["$quantite_restante", "$prix_unitaire"]
+def get_valeur_totale_stock(end_date=None):
+    end_date = datetime.combine(end_date, datetime.max.time()) if end_date else TODAY
+
+    pipeline_valeur_totale_stock = [
+        {
+            "$match": {
+                "date_expiration": { "$gt": end_date } if end_date else {"$gt": TODAY },
+                "quantite_restante": { "$gt": 0 }
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "valeur_stock_totale": {
+                    "$sum": {
+                        "$multiply": ["$quantite_restante", "$prix_unitaire"]
+                    }
                 }
             }
         }
-    }
-]
+    ]
+
+    valeur_stock_result = overview_collection.make_specific_pipeline(
+    pipeline=pipeline_valeur_totale_stock, 
+    title="Calcul de la valeur totale du stock"
+    )
+    try:
+        valeur_stock = valeur_stock_result[0]["valeur_stock_totale"] if valeur_stock_result else 0
+    except Exception as e:
+        valeur_stock = 0
+    
+    return valeur_stock
 
 # 3. Medicaments déjà expirés
 pipeline_medicament_expired = [

@@ -4,9 +4,9 @@ from streamlit.components.v1 import html
 import pandas as pd
 from data.mongodb_ip_manager import MongoDBIPManager
 from datetime import date
-from pipelines import pipeline_overview
 from style import style, icons
 from views import dashboard_views, employe_views 
+from pipelines import pipeline_overview
 
 st.markdown("""
     <style>
@@ -54,6 +54,9 @@ date_fin = TODAY
 chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
 # 2. Nombre de ventes
 nombre_ventes = pipeline_overview.get_nombre_de_ventes()
+# 3. Valeur de stock
+valeur_stock = pipeline_overview.get_valeur_totale_stock() 
+
 # DASHBOARD TITLE
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -73,7 +76,6 @@ with col_title:
     """)
 
 # FILTRE DATE -------------------------------------------------
-# if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
 with col_filter:
     col1,col2 = st.columns([3,2])
     if "date_range" not in st.session_state:
@@ -101,7 +103,8 @@ if apply_button:
                 start_date=date_debut, 
                 end_date=date_fin
             )
-nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
+            # 3. Valeur de stock
+            valeur_stock = pipeline_overview.get_valeur_totale_stock(end_date=date_fin)
 
 # SCORECARD KPIS -----------------------------------------
 three_second_kpis_html = f"""
@@ -118,7 +121,7 @@ three_second_kpis_html = f"""
         {icons.ventes_icon_html}
         </div>
             <p class="kpi-title" style="font-size:1rem;">Nombre de ventes</p>
-            <p class="kpi-value" style="font-size:1.6rem;">{nombre_ventes_str}
+            <p class="kpi-value" style="font-size:1.6rem;">{dashboard_views.format_number_to_str(nombre_ventes)}
         </div>
         <div class="kpi-card">
         <div style="text-align: left; position:absolute;">
@@ -131,7 +134,8 @@ three_second_kpis_html = f"""
     </div>
 """
 st.markdown(dashboard_views.first_container_kpis_html(
-    chiffre_affaire
+    chiffre_affaire,
+    valeur_stock
 ), unsafe_allow_html=True)
 st.markdown(three_second_kpis_html, unsafe_allow_html=True)
 
@@ -249,6 +253,7 @@ def render_table(df_part):
         table_html += "</tr>"
     table_html += "</table></div>"
     st.markdown(table_html, unsafe_allow_html=True)
+
 if df.empty:
     st.markdown("""
     <div class='custom-card'>
@@ -257,7 +262,7 @@ if df.empty:
     </div>
 """, unsafe_allow_html=True)
 else:
-# Affiche le tableau filtré et paginé
+    # Affiche le tableau filtré et paginé
     render_table(df_page)
 
 # Bas de tableau : choix nombre de lignes et navigation
@@ -272,7 +277,5 @@ with col2:
     current_page = st.number_input(f"Page (1-{total_pages})", min_value=1, max_value=total_pages, value=current_page, step=1)
     st.session_state["current_page"] = current_page
 
-# else:
-#     st.error("Il est impossible de charger les données depuis la database.")
 
 
