@@ -8,6 +8,7 @@ import streamlit as st
 
 from data.mongodb_ip_manager import MongoDBIPManager
 from streamlit.components.v1 import html
+from datetime import date
 
 from pipelines import pipeline_overview
 from style import style, icons
@@ -20,6 +21,7 @@ st.markdown("""
         [data-testid="stToolbar"] [aria-label="Settings"] {display: none;}
     </style>
 """, unsafe_allow_html=True)
+TODAY = date.today()
 
 # Initialisation
 st.set_page_config(page_title="Dashboard Pharmacie", layout="wide")
@@ -29,6 +31,7 @@ st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs
 st.markdown(style.custom_css, unsafe_allow_html=True)
 st.markdown(style.table_css, unsafe_allow_html=True)
 st.markdown(style.kpis_style, unsafe_allow_html=True)
+st.markdown(style.button_style, unsafe_allow_html=True)
 
 
 # PING IP
@@ -63,6 +66,7 @@ with col_title:
             font-family: 'Dancing Script', cursive;
             font-size: 74px;
             margin-top:-1rem;
+            margin-bottom: 2rem;
         }
     </style>
     <div class="box">Overview</div>
@@ -70,26 +74,35 @@ with col_title:
 
 # Filtre de date
 with col_filter:
-    col1,col2 = st.columns(2)
+    col1,col2 = st.columns([2,2])
+    if "date_range" not in st.session_state:
+        st.session_state.date_range = None
     # --- Inputs utilisateur ---
     with col1:
-        date_debut = st.date_input("Date de début du filtre", value=None)
+        first_date_vente = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
+        st.session_state.date_range = st.date_input("Date de début du filtre", value=(first_date_vente, TODAY))
+        # date_debut = st.date_input("Date de début du filtre", value=None)
     with col2:
-        date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+        # date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+        chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
+        if st.button("Appliquer"):
+            if len(st.session_state.date_range) == 2:
+                date_debut, date_fin = st.session_state.date_range
+                if (date_debut <= date_fin):
+                    chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(start_date=date_debut, end_date=date_fin)
+
 
 # Charger les données
 data = dashboard_views.medicaments_expires
 df = pd.DataFrame(data)
 
-# SCORECARD KPIS -----------------------------------------
-# 1. chriffres d'affraire
-if date_debut and date_fin:
-    chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(start_date=date_debut, end_date=date_fin)
-chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
+
 
 # I- 6 FIRST SCORECARD
 if dashboard_views.employe_collection and dashboard_views.overview_collection and dashboard_views.medicament_collection:
     # 1. DAHSBOARD --------------------------------------------
+    # 1. chriffres d'affraire
+    # SCORECARD KPIS -----------------------------------------
     three_first_kpis_html = f"""
         <div class="kpi-container">
             <div class="kpi-card">

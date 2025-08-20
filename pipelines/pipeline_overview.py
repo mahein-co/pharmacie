@@ -79,7 +79,7 @@ def get_chiffre_affaire_total(start_date=None, end_date=None):
     ]
 
     # Execute the pipeline
-    chiffre_affaire_result = overview_collection.make_specific_pipeline(pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRE TOTAL")
+    chiffre_affaire_result = overview_collection.make_specific_pipeline(pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRES TOTAL")
     try:
         # Handle the case where the result is empty
         chiffre_affaire_total = chiffre_affaire_result[0]["chiffre_affaire_total"] if chiffre_affaire_result else 0
