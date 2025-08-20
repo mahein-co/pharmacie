@@ -6,6 +6,7 @@ import plotly.express as px
 from views import vente_views,dashboard_views
 from data.mongodb_client import MongoDBClient 
 from pipelines import pipeline_overview
+from datetime import date
 
 from style import style
 
@@ -17,6 +18,9 @@ from style import style
 # ========== CSS Style ===============
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
+TODAY = date.today()
 
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -41,398 +45,411 @@ st.markdown(style.kpis_style, unsafe_allow_html=True)
 with st.container():
     # Sélecteur de date
     with col_filter:
-        # st.markdown("#### Filtrer les ventes par")
-        col1,col2 = st.columns(2)
+        col1, col2 = st.columns([2, 2])
+        
+        if "date_range" not in st.session_state:
+            st.session_state.date_range = None
+
         # --- Inputs utilisateur ---
         with col1:
-            date_debut = st.date_input("Date de début du filtre", value=None)
-        with col2:
-            date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
-# with col2:
-    df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
-    # Conversion de la colonne date
-    df_CA["_id"] = pd.to_datetime(df_CA["_id"])
-    # Cas 1 : pas de filtre
-    if not date_debut or not date_fin:
-        somme_CA = df_CA["chiffre_affaire_total"].sum()
-    else:
-        # Vérif cohérence des dates
-        if date_fin < date_debut:
-            somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
+            first_date_vente = dashboard_views.first_date_vente or TODAY
+            st.session_state.date_range = st.date_input(
+                "Filtrer par dates",
+                value=(first_date_vente, TODAY)
+            )
 
-        else:
-            mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
-            print("Dedans: ", df_CA.loc[mask])
-            somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
-    #ventes
+        # with col2:
+        # # # date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+        # #     st.button("Appliquer")
 
-    df_Nb_vente = pd.DataFrame(vente_views.nombre_ventes)
+        # date_debut = st.date_input("Date de début du filtre", value=None)
+        # with col2:
+        #     date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+# # with col2:
+#     df_CA = pd.DataFrame(dashboard_views.chiffre_affaire)
+#     # Conversion de la colonne date
+#     df_CA["_id"] = pd.to_datetime(df_CA["_id"])
+#     # Cas 1 : pas de filtre
+#     if not date_debut or not date_fin:
+#         somme_CA = df_CA["chiffre_affaire_total"].sum()
+#     else:
+#         # Vérif cohérence des dates
+#         if date_fin < date_debut:
+#             somme_CA = df_CA["chiffre_affaire_total"].sum()  # fallback sur total
 
-    # Conversion de la colonne date
-    df_Nb_vente["date_de_vente"] = pd.to_datetime(df_Nb_vente["date_de_vente"])
+#         else:
+#             mask = (df_CA["_id"].dt.date >= date_debut) & (df_CA["_id"].dt.date <= date_fin)
+#             print("Dedans: ", df_CA.loc[mask])
+#             somme_CA = df_CA.loc[mask, "chiffre_affaire_total"].sum()
+#     #ventes
 
-    # Cas 1 : pas de filtre
-    if not date_debut or not date_fin:
-        somme_ventes = df_Nb_vente["nb_ventes"].sum()
-    else:
-        # Vérif cohérence des dates
-        if date_fin < date_debut:
-            somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
-        else:
-            mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
-            print("Dedans: ", df_Nb_vente.loc[mask])
-            somme_ventes = df_Nb_vente.loc[mask, "nb_ventes"].sum()
+#     df_Nb_vente = pd.DataFrame(vente_views.nombre_ventes)
+
+#     # Conversion de la colonne date
+#     df_Nb_vente["date_de_vente"] = pd.to_datetime(df_Nb_vente["date_de_vente"])
+
+#     # Cas 1 : pas de filtre
+#     if not date_debut or not date_fin:
+#         somme_ventes = df_Nb_vente["nb_ventes"].sum()
+#     else:
+#         # Vérif cohérence des dates
+#         if date_fin < date_debut:
+#             somme_ventes = df_Nb_vente["nb_ventes"].sum()  # fallback sur total
+#         else:
+#             mask = (df_Nb_vente["date_de_vente"].dt.date >= date_debut) & (df_Nb_vente["date_de_vente"].dt.date <= date_fin)
+#             print("Dedans: ", df_Nb_vente.loc[mask])
+#             somme_ventes = df_Nb_vente.loc[mask, "nb_ventes"].sum()
 
     # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
 
     # Affichage KPI (avec formatage sans décimales et séparateurs milliers)
-    st.markdown(
-        vente_views.get_kpis(chiffre_affaire=somme_CA, nombre_ventes=somme_ventes),
-        unsafe_allow_html=True
-    )
+    # st.markdown(
+    #     vente_views.get_kpis(chiffre_affaire=somme_CA, nombre_ventes=somme_ventes),
+    #     unsafe_allow_html=True
+    # )
 
         
 
 # Scorecard et Top vendeur ---------------------------------
-with st.container():
-    col1,col2 = st.columns(2)
+# with st.container():
+#     col1,col2 = st.columns(2)
 
-    with col1:
-       # Données exemple
-        data = vente_views.top_vendeur
-        df_top_vendeur = pd.DataFrame(data)
-        df_top_vendeur['date_de_vente'] = pd.to_datetime(df_top_vendeur['date_de_vente'])
+#     with col1:
+#        # Données exemple
+#         data = vente_views.top_vendeur
+#         df_top_vendeur = pd.DataFrame(data)
+#         df_top_vendeur['date_de_vente'] = pd.to_datetime(df_top_vendeur['date_de_vente'])
 
-        # --- Cas où aucune date n'est sélectionnée ---
-        if date_debut is None and date_fin is None:
-            # Agrégation globale par vendeur
-            df_agg = df_top_vendeur.groupby('_id', as_index=False)['chiffre_affaire'].sum()
-            df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
-            top_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=False).head(3)
+#         # --- Cas où aucune date n'est sélectionnée ---
+#         if date_debut is None and date_fin is None:
+#             # Agrégation globale par vendeur
+#             df_agg = df_top_vendeur.groupby('_id', as_index=False)['chiffre_affaire'].sum()
+#             df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
+#             top_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=False).head(3)
 
-        # --- Cas où des dates sont sélectionnées ---
-        else:
-            if date_debut is None:
-                date_debut = df_top_vendeur['date_de_vente'].min()
-            if date_fin is None:
-                date_fin = df_top_vendeur['date_de_vente'].max()
+#         # --- Cas où des dates sont sélectionnées ---
+#         else:
+#             if date_debut is None:
+#                 date_debut = df_top_vendeur['date_de_vente'].min()
+#             if date_fin is None:
+#                 date_fin = df_top_vendeur['date_de_vente'].max()
 
-            df_filtre = df_top_vendeur[
-                (df_top_vendeur['date_de_vente'] >= pd.to_datetime(date_debut)) &
-                (df_top_vendeur['date_de_vente'] <= pd.to_datetime(date_fin))
-            ]
+#             df_filtre = df_top_vendeur[
+#                 (df_top_vendeur['date_de_vente'] >= pd.to_datetime(date_debut)) &
+#                 (df_top_vendeur['date_de_vente'] <= pd.to_datetime(date_fin))
+#             ]
 
-            df_agg = df_filtre.groupby('_id', as_index=False)['chiffre_affaire'].sum()
-            df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
-            top_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=False).head(3)
+#             df_agg = df_filtre.groupby('_id', as_index=False)['chiffre_affaire'].sum()
+#             df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
+#             top_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=False).head(3)
 
-        # --- Graphique Plotly ---
-        fig = px.bar(
-            top_vendeurs,
-            x="Chiffre d’affaires",
-            y="Vendeur",
-            orientation='h',
-            color="Chiffre d’affaires",
-            color_continuous_scale=px.colors.sequential.Plasma,
-            title="Top 3 vendeurs"
-        )
-        fig.update_layout(
-            title=dict(text="Top 3 vendeurs", x=0.5, xanchor='center', font=dict(size=20, color='black')),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=30, b=0),
-            xaxis_title="Montant des ventes",
-            yaxis_title="Vendeur",
-            showlegend=False,
-            height=350,
-        )
-        fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
+#         # --- Graphique Plotly ---
+#         fig = px.bar(
+#             top_vendeurs,
+#             x="Chiffre d’affaires",
+#             y="Vendeur",
+#             orientation='h',
+#             color="Chiffre d’affaires",
+#             color_continuous_scale=px.colors.sequential.Plasma,
+#             title="Top 3 vendeurs"
+#         )
+#         fig.update_layout(
+#             title=dict(text="Top 3 vendeurs", x=0.5, xanchor='center', font=dict(size=20, color='black')),
+#             paper_bgcolor="rgba(0,0,0,0)",
+#             plot_bgcolor="rgba(0,0,0,0)",
+#             margin=dict(l=0, r=0, t=30, b=0),
+#             xaxis_title="Montant des ventes",
+#             yaxis_title="Vendeur",
+#             showlegend=False,
+#             height=350,
+#         )
+#         fig.update_yaxes(autorange="reversed")
+#         fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
-        st.plotly_chart(fig, use_container_width=True)
+#         st.plotly_chart(fig, use_container_width=True)
 
-    with col2:
+#     with col2:
     
-        # Données
-        data = vente_views.vendeur_non_habilite
-        df_vendeur_non_habilite = pd.DataFrame(data)
-        # --- Agrégation et top vendeurs ---
-        df_vendeur_non_habilite['date_de_vente'] = pd.to_datetime(df_vendeur_non_habilite['date_de_vente'])
+#         # Données
+#         data = vente_views.vendeur_non_habilite
+#         df_vendeur_non_habilite = pd.DataFrame(data)
+#         # --- Agrégation et top vendeurs ---
+#         df_vendeur_non_habilite['date_de_vente'] = pd.to_datetime(df_vendeur_non_habilite['date_de_vente'])
 
-        if date_debut is None and date_fin is None:
-            df_agg = df_vendeur_non_habilite.groupby('_id', as_index=False)['chiffre_affaire'].sum()
-            df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
-            non_habilite_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=True).head(3)
-        else:
-            if date_debut is None:
-                date_debut = df_vendeur_non_habilite['date_de_vente'].min()
-            if date_fin is None:
-                date_fin = df_vendeur_non_habilite['date_de_vente'].max()
+#         if date_debut is None and date_fin is None:
+#             df_agg = df_vendeur_non_habilite.groupby('_id', as_index=False)['chiffre_affaire'].sum()
+#             df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
+#             non_habilite_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=True).head(3)
+#         else:
+#             if date_debut is None:
+#                 date_debut = df_vendeur_non_habilite['date_de_vente'].min()
+#             if date_fin is None:
+#                 date_fin = df_vendeur_non_habilite['date_de_vente'].max()
 
-            df_filtre = df_vendeur_non_habilite[
-                (df_vendeur_non_habilite['date_de_vente'] >= pd.to_datetime(date_debut)) &
-                (df_vendeur_non_habilite['date_de_vente'] <= pd.to_datetime(date_fin))
-            ]
-            df_agg = df_filtre.groupby('_id', as_index=False)['chiffre_affaire'].sum()
-            df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
-            non_habilite_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=True).head(3)
+#             df_filtre = df_vendeur_non_habilite[
+#                 (df_vendeur_non_habilite['date_de_vente'] >= pd.to_datetime(date_debut)) &
+#                 (df_vendeur_non_habilite['date_de_vente'] <= pd.to_datetime(date_fin))
+#             ]
+#             df_agg = df_filtre.groupby('_id', as_index=False)['chiffre_affaire'].sum()
+#             df_agg = df_agg.rename(columns={"_id": "Vendeur", "chiffre_affaire": "Chiffre d’affaires"})
+#             non_habilite_vendeurs = df_agg.sort_values(by="Chiffre d’affaires", ascending=True).head(3)
 
-        # --- Graphique ---
-        fig = px.bar(
-            non_habilite_vendeurs,
-            x="Chiffre d’affaires",
-            y="Vendeur",
-            orientation='h',
-            color="Chiffre d’affaires",
-            color_discrete_sequence=px.colors.qualitative.Set2
-        )
+#         # --- Graphique ---
+#         fig = px.bar(
+#             non_habilite_vendeurs,
+#             x="Chiffre d’affaires",
+#             y="Vendeur",
+#             orientation='h',
+#             color="Chiffre d’affaires",
+#             color_discrete_sequence=px.colors.qualitative.Set2
+#         )
 
-        fig.update_layout(
-            title=dict(text="Vendeurs non habilités", x=0.5, xanchor='center', font=dict(size=20, color='black')),
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
-            xaxis_title="Montant des ventes",
-            yaxis_title="Vendeur",
-            showlegend=False,
-            height=350
-        )
-        fig.update_yaxes(autorange="reversed")
+#         fig.update_layout(
+#             title=dict(text="Vendeurs non habilités", x=0.5, xanchor='center', font=dict(size=20, color='black')),
+#             paper_bgcolor="rgba(0,0,0,0)",  
+#             plot_bgcolor="rgba(0,0,0,0)",   
+#             margin=dict(l=0, r=0, t=30, b=0),
+#             xaxis_title="Montant des ventes",
+#             yaxis_title="Vendeur",
+#             showlegend=False,
+#             height=350
+#         )
+#         fig.update_yaxes(autorange="reversed")
 
-        st.plotly_chart(fig, use_container_width=True)
-
-
-
-# Graphiques Top Médicaments et Moins Vendus -----------------------------
-with st.container():
-    col1,col2 = st.columns(2)
-
-    with col1:
-        # --- Données exemple ---
-        data = vente_views.top_medicaments
-        df_top_medicaments = pd.DataFrame(data)
-        df_top_medicaments['date_de_vente'] = pd.to_datetime(df_top_medicaments['date_de_vente'])
-
-        # --- Définir les bornes si aucune date ---
-        if date_debut is None:
-            date_debut = df_top_medicaments['date_de_vente'].min()
-        if date_fin is None:
-            date_fin = df_top_medicaments['date_de_vente'].max()
-
-        # --- Filtrer par dates ---
-        df_filtre = df_top_medicaments[
-            (df_top_medicaments['date_de_vente'] >= pd.to_datetime(date_debut)) &
-            (df_top_medicaments['date_de_vente'] <= pd.to_datetime(date_fin))
-        ]
-
-        # --- Agrégation par médicament ---
-        df_agg = df_filtre.groupby('_id', as_index=False)['quantite_totale_vendue'].sum()
-        df_agg = df_agg.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "quantite totale vendue"})
-
-        # --- Top 3 médicaments ---
-        top_medicaments = df_agg.sort_values(by="quantite totale vendue", ascending=False).head(3)
-
-        # --- Graphique ---
-        fig = px.bar(
-            top_medicaments,
-            x="quantite totale vendue",
-            y="Médicaments",
-            orientation='h',
-            color="quantite totale vendue",
-            color_continuous_scale=px.colors.sequential.Plasma,
-        )
-
-        fig.update_layout(
-            title=dict(
-                text="Médicaments les plus vendus",
-                x=0.5,
-                xanchor='center',
-                font=dict(size=20, color='black')
-            ),
-            xaxis_title="Quantité vendue",
-            yaxis_title="Médicaments",
-            showlegend=False,
-            height=350,
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
-        )
-
-        fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
-
-        st.plotly_chart(fig, use_container_width=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
+#         st.plotly_chart(fig, use_container_width=True)
 
 
-    with col2:
-        # --- Données exemple ---
-        data = vente_views.Medoc_moins_vendus
-        df_Medoc_moins = pd.DataFrame(data)
-        df_Medoc_moins['date_de_vente'] = pd.to_datetime(df_Medoc_moins['date_de_vente'])
 
-        # --- Définir les bornes si aucune date ---
-        if date_debut is None:
-            date_debut = df_Medoc_moins['date_de_vente'].min()
-        if date_fin is None:
-            date_fin = df_Medoc_moins['date_de_vente'].max()
+# # Graphiques Top Médicaments et Moins Vendus -----------------------------
+# with st.container():
+#     col1,col2 = st.columns(2)
 
-        # --- Filtrer par dates ---
-        df_filtre = df_Medoc_moins[
-            (df_Medoc_moins['date_de_vente'] >= pd.to_datetime(date_debut)) &
-            (df_Medoc_moins['date_de_vente'] <= pd.to_datetime(date_fin))
-        ]
+#     with col1:
+#         # --- Données exemple ---
+#         data = vente_views.top_medicaments
+#         df_top_medicaments = pd.DataFrame(data)
+#         df_top_medicaments['date_de_vente'] = pd.to_datetime(df_top_medicaments['date_de_vente'])
 
-        # --- Agrégation par médicament ---
-        df_agg = df_filtre.groupby('_id', as_index=False)['quantite_totale_vendue'].sum()
-        df_agg = df_agg.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "quantite totale vendue"})
+#         # --- Définir les bornes si aucune date ---
+#         if date_debut is None:
+#             date_debut = df_top_medicaments['date_de_vente'].min()
+#         if date_fin is None:
+#             date_fin = df_top_medicaments['date_de_vente'].max()
 
-        # --- Top 3 moins vendus ---
-        Medoc_moins = df_agg.sort_values(by="quantite totale vendue", ascending=True).head(3)
+#         # --- Filtrer par dates ---
+#         df_filtre = df_top_medicaments[
+#             (df_top_medicaments['date_de_vente'] >= pd.to_datetime(date_debut)) &
+#             (df_top_medicaments['date_de_vente'] <= pd.to_datetime(date_fin))
+#         ]
 
-        # --- Graphique Plotly ---
-        fig = px.bar(
-            Medoc_moins,
-            x="quantite totale vendue",
-            y="Médicaments",
-            orientation='h',
-            color="quantite totale vendue",
-            color_continuous_scale=px.colors.sequential.Plasma,
-        )
+#         # --- Agrégation par médicament ---
+#         df_agg = df_filtre.groupby('_id', as_index=False)['quantite_totale_vendue'].sum()
+#         df_agg = df_agg.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "quantite totale vendue"})
 
-        fig.update_layout(
-            title=dict(
-                text="Médicaments les moins vendus",
-                x=0.5,
-                xanchor='center',
-                font=dict(size=20, color='black')
-            ),
-            xaxis_title="Quantité vendue",
-            yaxis_title="Médicaments",
-            showlegend=False,
-            height=350,
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=0, r=0, t=30, b=0),
-        )
+#         # --- Top 3 médicaments ---
+#         top_medicaments = df_agg.sort_values(by="quantite totale vendue", ascending=False).head(3)
 
-        fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
+#         # --- Graphique ---
+#         fig = px.bar(
+#             top_medicaments,
+#             x="quantite totale vendue",
+#             y="Médicaments",
+#             orientation='h',
+#             color="quantite totale vendue",
+#             color_continuous_scale=px.colors.sequential.Plasma,
+#         )
 
-        st.plotly_chart(fig, use_container_width=True)
+#         fig.update_layout(
+#             title=dict(
+#                 text="Médicaments les plus vendus",
+#                 x=0.5,
+#                 xanchor='center',
+#                 font=dict(size=20, color='black')
+#             ),
+#             xaxis_title="Quantité vendue",
+#             yaxis_title="Médicaments",
+#             showlegend=False,
+#             height=350,
+#             paper_bgcolor="rgba(0,0,0,0)",  
+#             plot_bgcolor="rgba(0,0,0,0)",   
+#             margin=dict(l=0, r=0, t=30, b=0),
+#         )
 
-        # Fermeture du div .card
-        st.markdown('</div>', unsafe_allow_html=True)
+#         fig.update_yaxes(autorange="reversed")
+#         fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
+
+#         st.plotly_chart(fig, use_container_width=True)
+
+#         st.markdown('</div>', unsafe_allow_html=True)
 
 
-# Heatmap des quantités vendues par jour et médicament -----------------------------
-with st.container():
-    # --- Données exemple ---
-        data = vente_views.saisonalite
-        df_saison = pd.DataFrame(data)
+#     with col2:
+#         # --- Données exemple ---
+#         data = vente_views.Medoc_moins_vendus
+#         df_Medoc_moins = pd.DataFrame(data)
+#         df_Medoc_moins['date_de_vente'] = pd.to_datetime(df_Medoc_moins['date_de_vente'])
 
-        # --- Conversion en datetime ---
-        df_saison['date_de_vente'] = pd.to_datetime(df_saison['date_de_vente'])
+#         # --- Définir les bornes si aucune date ---
+#         if date_debut is None:
+#             date_debut = df_Medoc_moins['date_de_vente'].min()
+#         if date_fin is None:
+#             date_fin = df_Medoc_moins['date_de_vente'].max()
 
-        # --- Définir les bornes si aucune date ---
-        if date_debut is None:
-            date_debut = df_saison['date_de_vente'].min()
-        if date_fin is None:
-            date_fin = df_saison['date_de_vente'].max()
+#         # --- Filtrer par dates ---
+#         df_filtre = df_Medoc_moins[
+#             (df_Medoc_moins['date_de_vente'] >= pd.to_datetime(date_debut)) &
+#             (df_Medoc_moins['date_de_vente'] <= pd.to_datetime(date_fin))
+#         ]
 
-        # --- Filtrer par dates ---
-        df_filtre = df_saison[
-            (df_saison['date_de_vente'] >= pd.to_datetime(date_debut)) &
-            (df_saison['date_de_vente'] <= pd.to_datetime(date_fin))
-        ]
+#         # --- Agrégation par médicament ---
+#         df_agg = df_filtre.groupby('_id', as_index=False)['quantite_totale_vendue'].sum()
+#         df_agg = df_agg.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "quantite totale vendue"})
 
-        # --- Renommer les colonnes ---
-        df_filtre.rename(columns={"quantite": "Quantite", "nom_medicament": "Médicaments"}, inplace=True)
+#         # --- Top 3 moins vendus ---
+#         Medoc_moins = df_agg.sort_values(by="quantite totale vendue", ascending=True).head(3)
 
-        # --- Ordre des jours de la semaine ---
-        ordre_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-        df_filtre['jour'] = pd.Categorical(df_filtre['jour'], categories=ordre_jours, ordered=True)
+#         # --- Graphique Plotly ---
+#         fig = px.bar(
+#             Medoc_moins,
+#             x="quantite totale vendue",
+#             y="Médicaments",
+#             orientation='h',
+#             color="quantite totale vendue",
+#             color_continuous_scale=px.colors.sequential.Plasma,
+#         )
 
-        # --- Pivot table : Médicaments en index, jours en colonnes, somme des quantités ---
-        pivot = df_filtre.pivot_table(
-            index='Médicaments',
-            columns='jour',
-            values='Quantite',
-            aggfunc='sum',
-            fill_value=0
-        )
+#         fig.update_layout(
+#             title=dict(
+#                 text="Médicaments les moins vendus",
+#                 x=0.5,
+#                 xanchor='center',
+#                 font=dict(size=20, color='black')
+#             ),
+#             xaxis_title="Quantité vendue",
+#             yaxis_title="Médicaments",
+#             showlegend=False,
+#             height=350,
+#             paper_bgcolor="rgba(0,0,0,0)",  
+#             plot_bgcolor="rgba(0,0,0,0)",   
+#             margin=dict(l=0, r=0, t=30, b=0),
+#         )
 
-        z = pivot.values.tolist()
-        x = pivot.columns.tolist()
-        y = pivot.index.tolist()
+#         fig.update_yaxes(autorange="reversed")
+#         fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
-        # --- Création heatmap avec dégradé vert ---
-        fig = go.Figure(data=go.Heatmap(
-            z=z,
-            x=x,
-            y=y,
-            colorscale=[
-                [0, '#8EA26B'],   
-                [0.5, '#487835'], 
-                [1, '#0A9548']    
-            ],
-            colorbar=dict(title='Quantité Totale'),
-        ))
+#         st.plotly_chart(fig, use_container_width=True)
 
-        # --- Annotations des valeurs dans chaque case ---
-        annotations = []
-        max_val = pivot.max().max() if pivot.max().max() else 0  # éviter erreur si pivot vide
+#         # Fermeture du div .card
+#         st.markdown('</div>', unsafe_allow_html=True)
 
-        for i, medicament in enumerate(y):
-            for j, jour in enumerate(x):
-                val = z[i][j]
-                if pd.notnull(val):
-                    annotations.append(
-                        go.layout.Annotation(
-                            text=str(int(val)),
-                            x=jour,
-                            y=medicament,
-                            showarrow=False,
-                            font=dict(color='white'),
-                            xanchor='center',
-                            yanchor='middle'
-                        )
-                    )
 
-        fig.update_layout(
-            title={
-                "text": 'Répartition des quantités de médicaments vendues par jour de la semaine',
-                'y': 0.95,                              
-                'x': 0.5, 
-                'xanchor': 'center',                   
-                'yanchor': 'top',                      
-                "font": dict(size=24, color="#0A9548")
-            },
-            xaxis_title='Jour',
-            yaxis_title='Médicaments',
-            annotations=annotations,
-            yaxis=dict(autorange='reversed'),
-            height=500 
-        )
+# # Heatmap des quantités vendues par jour et médicament -----------------------------
+# with st.container():
+#     # --- Données exemple ---
+#         data = vente_views.saisonalite
+#         df_saison = pd.DataFrame(data)
 
-        # --- Style CSS pour la carte dans Streamlit (optionnel) ---
-        st.markdown("""
-        <div class="card">
-        <style>
-        .card {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+#         # --- Conversion en datetime ---
+#         df_saison['date_de_vente'] = pd.to_datetime(df_saison['date_de_vente'])
 
-        # --- Affichage du graphique ---
-        st.plotly_chart(fig, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+#         # --- Définir les bornes si aucune date ---
+#         if date_debut is None:
+#             date_debut = df_saison['date_de_vente'].min()
+#         if date_fin is None:
+#             date_fin = df_saison['date_de_vente'].max()
+
+#         # --- Filtrer par dates ---
+#         df_filtre = df_saison[
+#             (df_saison['date_de_vente'] >= pd.to_datetime(date_debut)) &
+#             (df_saison['date_de_vente'] <= pd.to_datetime(date_fin))
+#         ]
+
+#         # --- Renommer les colonnes ---
+#         df_filtre.rename(columns={"quantite": "Quantite", "nom_medicament": "Médicaments"}, inplace=True)
+
+#         # --- Ordre des jours de la semaine ---
+#         ordre_jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+#         df_filtre['jour'] = pd.Categorical(df_filtre['jour'], categories=ordre_jours, ordered=True)
+
+#         # --- Pivot table : Médicaments en index, jours en colonnes, somme des quantités ---
+#         pivot = df_filtre.pivot_table(
+#             index='Médicaments',
+#             columns='jour',
+#             values='Quantite',
+#             aggfunc='sum',
+#             fill_value=0
+#         )
+
+#         z = pivot.values.tolist()
+#         x = pivot.columns.tolist()
+#         y = pivot.index.tolist()
+
+#         # --- Création heatmap avec dégradé vert ---
+#         fig = go.Figure(data=go.Heatmap(
+#             z=z,
+#             x=x,
+#             y=y,
+#             colorscale=[
+#                 [0, '#8EA26B'],   
+#                 [0.5, '#487835'], 
+#                 [1, '#0A9548']    
+#             ],
+#             colorbar=dict(title='Quantité Totale'),
+#         ))
+
+#         # --- Annotations des valeurs dans chaque case ---
+#         annotations = []
+#         max_val = pivot.max().max() if pivot.max().max() else 0  # éviter erreur si pivot vide
+
+#         for i, medicament in enumerate(y):
+#             for j, jour in enumerate(x):
+#                 val = z[i][j]
+#                 if pd.notnull(val):
+#                     annotations.append(
+#                         go.layout.Annotation(
+#                             text=str(int(val)),
+#                             x=jour,
+#                             y=medicament,
+#                             showarrow=False,
+#                             font=dict(color='white'),
+#                             xanchor='center',
+#                             yanchor='middle'
+#                         )
+#                     )
+
+#         fig.update_layout(
+#             title={
+#                 "text": 'Répartition des quantités de médicaments vendues par jour de la semaine',
+#                 'y': 0.95,                              
+#                 'x': 0.5, 
+#                 'xanchor': 'center',                   
+#                 'yanchor': 'top',                      
+#                 "font": dict(size=24, color="#0A9548")
+#             },
+#             xaxis_title='Jour',
+#             yaxis_title='Médicaments',
+#             annotations=annotations,
+#             yaxis=dict(autorange='reversed'),
+#             height=500 
+#         )
+
+#         # --- Style CSS pour la carte dans Streamlit (optionnel) ---
+#         st.markdown("""
+#         <div class="card">
+#         <style>
+#         .card {
+#             background-color: #f8f9fa;
+#             padding: 20px;
+#             border-radius: 15px;
+#             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+#             margin-bottom: 20px;
+#         }
+#         </style>
+#         """, unsafe_allow_html=True)
+
+#         # --- Affichage du graphique ---
+#         st.plotly_chart(fig, use_container_width=True)
+#         st.markdown('</div>', unsafe_allow_html=True)
 # Graphique d'évolution des ventes par médicament -----------------------------
 with st.container():
     st.markdown("""
