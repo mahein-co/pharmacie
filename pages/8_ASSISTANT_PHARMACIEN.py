@@ -6,14 +6,14 @@ from streamlit.components.v1 import html
 
 
 # LangChain components
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
-from langchain.prompts import PromptTemplate
-from langchain_community.vectorstores import MongoDBAtlasVectorSearch
-from langchain_core.documents import Document
-from langchain_community.callbacks import StreamlitCallbackHandler # For streaming answers
-from langchain_core.messages import HumanMessage, AIMessage # For LangChain chat history format
+# from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+# from langchain.chains import ConversationalRetrievalChain
+# from langchain.memory import ConversationBufferMemory
+# from langchain.prompts import PromptTemplate
+# from langchain_community.vectorstores import MongoDBAtlasVectorSearch
+# from langchain_core.documents import Document
+# from langchain_community.callbacks import StreamlitCallbackHandler # For streaming answers
+# from langchain_core.messages import HumanMessage, AIMessage # For LangChain chat history format
 from openai import OpenAI
 
 from data.mongodb_client import MongoDBClient
@@ -51,15 +51,15 @@ MONGO_URI = f"""
 ATLAS_VECTOR_SEARCH_INDEX_NAME = embedding_index_documents
 
 # Display errors and stop if critical secrets are missing
-if not OPENAI_API_KEY:
-    st.error("OpenAI API key not found. Please set it in your environment variables or Streamlit secrets.")
-    st.stop()
-if not MONGO_URI:
-    st.error("MongoDB URI not found. Please set it in your environment variables or Streamlit secrets.")
-    st.stop()
-if not ATLAS_VECTOR_SEARCH_INDEX_NAME:
-    st.error("Atlas Vector Search Index Name not found. Please set it in your environment variables or Streamlit secrets.")
-    st.stop()
+# if not OPENAI_API_KEY:
+#     st.error("OpenAI API key not found. Please set it in your environment variables or Streamlit secrets.")
+#     st.stop()
+# if not MONGO_URI:
+#     st.error("MongoDB URI not found. Please set it in your environment variables or Streamlit secrets.")
+#     st.stop()
+# if not ATLAS_VECTOR_SEARCH_INDEX_NAME:
+#     st.error("Atlas Vector Search Index Name not found. Please set it in your environment variables or Streamlit secrets.")
+#     st.stop()
 
 system_prompt = """
 Vous êtes un assistant pharmacien pour la Pharmacie de Madagascar.
@@ -82,10 +82,10 @@ Question : {question}
 Veuillez répondre de manière professionnelle, scientifiquement rigoureux et utile :
 """
 
-PHARM_PROMPT = PromptTemplate(
-    template=PHARM_PROMPT_TEMPLATE,
-    input_variables=["context", "question"]
-)
+# PHARM_PROMPT = PromptTemplate(
+#     template=PHARM_PROMPT_TEMPLATE,
+#     input_variables=["context", "question"]
+# )
 
 # Generate text embedding
 def generate_text_embedding(text: str):
@@ -102,7 +102,7 @@ def search_rag_mongo(query, k=200):
     pipeline = [
         {
             "$vectorSearch": {
-                "index": embedding_index_documents, 
+                "index": "embedding_index_documents", 
                 "queryVector": query_embedding,
                 "path": "embedding",
                 "numCandidates": 2000,   
@@ -150,8 +150,8 @@ def generate_answer(query, retrieved_docs, system_prompt=system_prompt):
 
 # --- 4. Initialize MongoDB Atlas Vector Store and Embeddings (Cached) ---
 # @st.cache_resource ensures this function runs only once across reruns
-@st.cache_resource
-def get_qa_chain(openai_api_key, index_name):
+# @st.cache_resource
+# def get_qa_chain(openai_api_key, index_name):
     try:
         collection = MongoDBClient(collection_name="pharm_documents").get_collection()
 
@@ -194,7 +194,7 @@ def get_qa_chain(openai_api_key, index_name):
         st.stop()
 
 # Get the RAG chain instance
-qa_chain = get_qa_chain(OPENAI_API_KEY, ATLAS_VECTOR_SEARCH_INDEX_NAME)
+# qa_chain = get_qa_chain(OPENAI_API_KEY, ATLAS_VECTOR_SEARCH_INDEX_NAME)
 
 
 # --- 5. Streamlit App Interface (Chat-based UX) ---

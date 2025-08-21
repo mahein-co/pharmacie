@@ -77,7 +77,7 @@ with st.container():
 
     # Extraire les valeurs
     nombre_ventes = df_nbventes["nb_ventes"].sum() if not df_nbventes.empty else 0
-    chiffre_affaire = df_CA["chiffre_affaire"].sum() if not df_CA.empty else 0
+    chiffre_affaire = df_CA["chiffre_affaire_total"].sum() if not df_CA.empty else 0
 
     # Affichage KPI
     st.markdown(vente_views.get_kpis(chiffre_affaire=chiffre_affaire,nombre_ventes=nombre_ventes),unsafe_allow_html=True)

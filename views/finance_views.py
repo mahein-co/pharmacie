@@ -49,7 +49,7 @@ kpis_html = f"""
         {icons.finance_icon_html}
     </div>
     <p class="kpi-title">Total Finance (MGA)</p>
-    <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.total_chiffre_affaire_str}</p>
+    <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.chiffre_affaire}</p>
   </div>
 """
 
