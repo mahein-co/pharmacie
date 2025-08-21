@@ -41,7 +41,14 @@ pipeline_chiffre_affaire_total = [
         }
     },
     {
-        "$sort": { "_id": 1 }
+        "$project": {
+            "_id": 0,
+            "date_de_vente": "$_id",
+            "chiffre_affaire_total": 1
+        }
+    },
+    {
+        "$sort": { "date_de_vente": 1 }
     }
 ]
 
@@ -50,15 +57,15 @@ pipeline_chiffre_affaire_total = [
 #     end_date = datetime.combine(end_date, datetime.max.time()) if end_date else None
     
 # Pipelines chiffre d'affaire total with the possibility to filter by date
-pipeline_chiffre_affaire_total = [
-    {"$project": {
-        "ca": {"$multiply": [{"$toDouble": "$quantite"}, {"$toDouble": "$prix_unitaire"}]},
-        "date_de_vente": {"$dateTrunc": {"date": "$date_de_vente", "unit": "day"}}
-    }},
-    {"$group": {"_id": "$date_de_vente", "chiffre_affaire": {"$sum": "$ca"}}},
-    {"$project": {"_id": 0, "date_de_vente": "$_id", "chiffre_affaire": 1}},
-    {"$sort": {"date_de_vente": 1}}
-]
+# pipeline_chiffre_affaire_total = [
+#     {"$project": {
+#         "ca": {"$multiply": [{"$toDouble": "$quantite"}, {"$toDouble": "$prix_unitaire"}]},
+#         "date_de_vente": {"$dateTrunc": {"date": "$date_de_vente", "unit": "day"}}
+#     }},
+#     {"$group": {"_id": "$date_de_vente", "chiffre_affaire": {"$sum": "$ca"}}},
+#     {"$project": {"_id": 0, "date_de_vente": "$_id", "chiffre_affaire": 1}},
+#     {"$sort": {"date_de_vente": 1}}
+# ]
 
 
 

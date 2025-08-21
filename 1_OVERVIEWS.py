@@ -5,7 +5,7 @@ import pandas as pd
 from data.mongodb_ip_manager import MongoDBIPManager
 from datetime import date
 from style import style, icons
-from views import dashboard_views, employe_views 
+from views import dashboard_views, employe_views,vente_views
 from pipelines import pipeline_overview
 
 st.markdown("""
@@ -60,6 +60,11 @@ date_fin = TODAY
 
 #1. Chiffre d'affaires
 df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
+chiffre_affaire = df_CA["chiffre_affaire_total"].sum()
+
+#2.Nombres ventes
+df_nbventes = pd.DataFrame(vente_views.nombre_ventes)
+nb_ventes = df_nbventes["nb_ventes"].sum()
 # DASHBOARD TITLE
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -92,23 +97,30 @@ with col_filter:
 
 # 1. DAHSBOARD --------------------------------------------
 # 1. chriffres d'affraire
-# if apply_button:
-#     if len(st.session_state.date_range) == 2:
-#         date_debut, date_fin = st.session_state.date_range
-#         if (date_debut <= date_fin):
-            # # 1. Chiffre d'affaires
-            # chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(
-            #     start_date=date_debut, 
-            #     end_date=date_fin
-            # )
-            # # 2. Nombre de ventes
+if apply_button:
+    if len(st.session_state.date_range) == 2:
+        date_debut, date_fin = st.session_state.date_range
+        if (date_debut <= date_fin):
+            # 1. Chiffre d'affaires
+            # Conversion en datetime
+            df_CA["date_de_vente"] = pd.to_datetime(df_CA["date_de_vente"])
+            # Filtre des dates (élément par élément)
+            date_filter = (df_CA["date_de_vente"].dt.date >= date_debut) & (df_CA["date_de_vente"].dt.date <= date_fin)
+            # Somme du chiffre d'affaires
+            chiffre_affaire = df_CA.loc[date_filter, "chiffre_affaire_total"].sum()
+
+            # 2. Nombre de ventes
+            # df_nbventes["date_de_vente"] = pd.to_datetime(df_nbventes["date_de_vente"])
+            # date_filter = (df_nbventes["date_de_vente"].dt.date >= date_debut) and (df_nbventes["date_de_vente"].dt.date <= date_fin)
+            # nb_ventes = df_nbventes.loc[date_filter, "nb_ventes"].sum()
             # nombre_ventes = pipeline_overview.get_nombre_de_ventes(
             #     start_date=date_debut, 
             #     end_date=date_fin
             # )
-            # # 3. Valeur de stock
+            # 3. Valeur de stock
             # valeur_stock = pipeline_overview.get_valeur_totale_stock(end_date=date_fin)
 
+valeur_stock = 0
 # SCORECARD KPIS -----------------------------------------
 three_second_kpis_html = f"""
     <div class="kpi-container-secondary">
@@ -124,7 +136,7 @@ three_second_kpis_html = f"""
         {icons.ventes_icon_html}
         </div>
             <p class="kpi-title" style="font-size:1rem;">Nombre de ventes</p>
-            <p class="kpi-value" style="font-size:1.6rem;">{dashboard_views.format_number_to_str(nombre_ventes)}
+            <p class="kpi-value" style="font-size:1.6rem;">{nb_ventes}
         </div>
         <div class="kpi-card">
         <div style="text-align: left; position:absolute;">
