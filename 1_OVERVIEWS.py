@@ -60,7 +60,6 @@ date_fin = TODAY
 
 #1. Chiffre d'affaires
 df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
-print("valiny: ",df_CA)
 # DASHBOARD TITLE
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -93,22 +92,22 @@ with col_filter:
 
 # 1. DAHSBOARD --------------------------------------------
 # 1. chriffres d'affraire
-if apply_button:
-    if len(st.session_state.date_range) == 2:
-        date_debut, date_fin = st.session_state.date_range
-        if (date_debut <= date_fin):
-            # 1. Chiffre d'affaires
-            chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(
-                start_date=date_debut, 
-                end_date=date_fin
-            )
-            # 2. Nombre de ventes
-            nombre_ventes = pipeline_overview.get_nombre_de_ventes(
-                start_date=date_debut, 
-                end_date=date_fin
-            )
-            # 3. Valeur de stock
-            valeur_stock = pipeline_overview.get_valeur_totale_stock(end_date=date_fin)
+# if apply_button:
+#     if len(st.session_state.date_range) == 2:
+#         date_debut, date_fin = st.session_state.date_range
+#         if (date_debut <= date_fin):
+            # # 1. Chiffre d'affaires
+            # chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(
+            #     start_date=date_debut, 
+            #     end_date=date_fin
+            # )
+            # # 2. Nombre de ventes
+            # nombre_ventes = pipeline_overview.get_nombre_de_ventes(
+            #     start_date=date_debut, 
+            #     end_date=date_fin
+            # )
+            # # 3. Valeur de stock
+            # valeur_stock = pipeline_overview.get_valeur_totale_stock(end_date=date_fin)
 
 # SCORECARD KPIS -----------------------------------------
 three_second_kpis_html = f"""

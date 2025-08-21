@@ -1218,40 +1218,29 @@ pipeline_eff_fonction = [
 ]
 
 #39 . Nombre de ventes
-def get_nombre_de_ventes(start_date=None, end_date=None):
-    start_date = datetime.combine(start_date, datetime.min.time()) if start_date else None
-    end_date = datetime.combine(end_date, datetime.max.time()) if end_date else None
-    pipeline_nb_ventes = [
-        {
-            "$match": {
-                "id_vente": { "$ne": None },
-                "date_de_vente": { "$gte": start_date, "$lte": end_date } if start_date and end_date else {"$ne": None }
-            }
-        },
-        {
-            "$group": {
-                "_id": "$date_de_vente",
-                "nb_ventes": { "$addToSet": "$id_vente" }
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                "date_de_vente": "$_id",
-                "nb_ventes": { "$size": "$nb_ventes" }
-            }
-        },
-        { "$sort": { "date_de_vente": 1 } }
-    ]
 
-    nombre_ventes_result = overview_collection.make_specific_pipeline(
-        pipeline_nb_ventes, title="recuperation nb ventes"
-    )
-    
-    # Somme totale des ventes
-    nombre_ventes = sum(item["nb_ventes"] for item in nombre_ventes_result) if nombre_ventes_result else 0
+pipeline_nb_ventes = [
+    {
+        "$match": {
+            "id_vente": { "$ne": None }
+        }
+    },
+    {
+        "$group": {
+            "_id": "$date_de_vente",
+            "nb_ventes": { "$addToSet": "$id_vente" }
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "date_de_vente": "$_id",
+            "nb_ventes": { "$size": "$nb_ventes" }
+        }
+    },
+    { "$sort": { "date_de_vente": 1 } }
+]
 
-    return nombre_ventes
 
 #40. Nombre total de medicaments 
 
