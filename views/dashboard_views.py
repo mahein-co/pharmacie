@@ -61,7 +61,11 @@ except Exception as e:
 df_ventes = pd.DataFrame(overview_docs)
 df_ventes = df_ventes.drop_duplicates(subset=["id_vente"])
 first_date_vente = df_ventes["date_de_vente"].min() if not df_ventes.empty else None
-    
+
+
+# Execute the pipeline
+chiffre_affaire_total = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRE TOTAL")
+
 # II. MEDICAMENTS
 # 2.1. Médicaments expirés
 medicaments_expires = overview_collection.make_specific_pipeline(

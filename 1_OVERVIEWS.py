@@ -50,13 +50,17 @@ date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vent
 date_fin = TODAY
 
 # -----------------------------------------------------------------
-# 1. Chiffre d'affaires
-chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
-# 2. Nombre de ventes
-nombre_ventes = pipeline_overview.get_nombre_de_ventes()
-# 3. Valeur de stock
-valeur_stock = pipeline_overview.get_valeur_totale_stock() 
+# # 1. Chiffre d'affaires
+# chiffre_affaire = pipeline_overview.get_chiffre_affaire_total()
+# # 2. Nombre de ventes
+# nombre_ventes = pipeline_overview.get_nombre_de_ventes()
+# # 3. Valeur de stock
+# valeur_stock = pipeline_overview.get_valeur_totale_stock() 
 
+
+#1. Chiffre d'affaires
+df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
+print("valiny: ",df_CA)
 # DASHBOARD TITLE
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:

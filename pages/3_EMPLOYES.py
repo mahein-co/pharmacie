@@ -4,7 +4,7 @@ import plotly.express as px
 from streamlit.components.v1 import html
 from views import employe_views, dashboard_views
 
-from datetime import datetime
+from datetime import datetime,date
 
 from style import style, icons
 
@@ -18,6 +18,20 @@ from style import style, icons
 
 # Initialisation
 st.set_page_config(page_title="EMPLOYE", layout="wide")
+
+#========= importation style ==============
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+st.markdown(style.button_style, unsafe_allow_html=True)
+
+# Sidebar
+with st.sidebar:
+    st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
+
+# GLOBAL VARIABLES ------------------------------------------------
+TODAY = date.today()
+date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
+date_fin = TODAY
 
 # PAGE TITLE -----------------------------------------
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
@@ -36,18 +50,20 @@ with col_title:
     <div class="box">Employés</div>
   """)
 
-#importation html et css
-st.markdown(style.custom_css, unsafe_allow_html=True)
-st.markdown(style.kpis_style, unsafe_allow_html=True)
 
+# FILTRE DATE -------------------------------------------------
 with col_filter:
-    # st.markdown("#### Filtrer les ventes par")
-    col1,col2 = st.columns(2)
-    # --- Inputs utilisateur ---
+    col1,col2 = st.columns([3,2])
+    if "date_range" not in st.session_state:
+        st.session_state.date_range = None
+
     with col1:
-        date_debut = st.date_input("Date de début du filtre", value=None)
+        st.session_state.date_range = st.date_input("CHOISISSEZ 02 DATES", value=(date_debut, TODAY))
+    
     with col2:
-        date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+        apply_button = st.button("Appliquer");
+
+
 
 if employe_views.employe_collection:
   kpis_html = f"""

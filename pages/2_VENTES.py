@@ -74,17 +74,8 @@ if apply_button:
     if len(st.session_state.date_range) == 2:
         date_debut, date_fin = st.session_state.date_range
         if (date_debut <= date_fin):
-            # 1. Chiffre d'affaires
-            chiffre_affaire = pipeline_overview.get_chiffre_affaire_total(
-                start_date=date_debut, 
-                end_date=date_fin
-            )
-            # 2. Nombre de ventes
-            nombre_ventes = pipeline_overview.get_nombre_de_ventes(
-                start_date=date_debut, 
-                end_date=date_fin
-            )
-nombre_ventes_str = f"{nombre_ventes:,}".replace(",", " ")
+
+
         # with col2:
         # # # date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
         # #     st.button("Appliquer")
