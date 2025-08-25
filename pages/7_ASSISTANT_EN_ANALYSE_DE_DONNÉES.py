@@ -36,8 +36,8 @@ model_embedding = "text-embedding-3-small"
 # Connexion MongoDB Atlas
 corpus_collection = MongoDBClient(collection_name="corpus_rag").get_collection()
 
-perte_total_medicaments = f"{dashboard_views.total_pertes_medicaments}".replace(",", " ")
-valeur_stock_restant = f"{dashboard_views.valeur_totale_stock}".replace(",", " ")
+# perte_total_medicaments = f"{dashboard_views.total_pertes_medicaments}".replace(",", " ")
+# valeur_stock_restant = f"{dashboard_views.valeur_totale_stock}".replace(",", " ")
 
 # Generate text embedding
 def generate_text_embedding(text: str):
@@ -100,11 +100,9 @@ system_prompt = f"""
 """
 
 response_prompt = f"""
-Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.total_chiffre_affaire_str} MGA.
+Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.chiffre_affaire} MGA.
         Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
 
-        Si on te demande la perte due aux médicaments invendus, te voici la perte: {perte_total_medicaments} MGA.
-        Si on te demande la valeur totale de stock restant des médicaments, te voici la valeur totale de stock des médicaments: {valeur_stock_restant} ventes.
         Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
         Si on te demande le salaire moyen des employés, te voici le salaire moyen des employés de la pharmacie: {employe_views.salaire_moyen} MGA.
         Si on te demande le nombre de médicaments, te voici le nombre de médicaments de la pharmacie: {dashboard_views.nb_total_medicaments} médicaments.

@@ -4,7 +4,8 @@ import plotly.express as px
 from streamlit.components.v1 import html
 from data.mongodb_client import MongoDBClient
 from pipelines import pipeline_overview
-from views import appro_views
+from views import appro_views,dashboard_views
+from datetime import date
 
 from style import style
 
@@ -12,7 +13,14 @@ from style import style
 
 
 
+#========= importation style ==============
+st.markdown(style.custom_css, unsafe_allow_html=True)
+st.markdown(style.kpis_style, unsafe_allow_html=True)
+st.markdown(style.button_style, unsafe_allow_html=True)
 
+# Sidebar
+with st.sidebar:
+    st.sidebar.image("assets/images/logoMahein.png", caption="", use_container_width=True)
 
 
 
@@ -35,17 +43,25 @@ with col_title:
     <div class="box">Approvisionnements - Fournisseurs</div>
     """)
 
-st.markdown(style.custom_css,unsafe_allow_html=True)
-st.markdown(style.kpis_style,unsafe_allow_html=True)
 
+# GLOBAL VARIABLES ------------------------------------------------
+TODAY = date.today()
+date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
+date_fin = TODAY
+
+
+
+# FILTRE DATE -------------------------------------------------
 with col_filter:
-    # st.markdown("#### Filtrer les ventes par")
-    col1,col2 = st.columns(2)
-    # --- Inputs utilisateur ---
+    col1,col2 = st.columns([3,2])
+    if "date_range" not in st.session_state:
+        st.session_state.date_range = None
+
     with col1:
-        date_debut = st.date_input("Date de début du filtre", value=None)
+        st.session_state.date_range = st.date_input("CHOISISSEZ 02 DATES", value=(date_debut, TODAY))
+    
     with col2:
-        date_fin = st.date_input("Date de fin du filtre", value=None, min_value=(date_debut))
+        apply_button = st.button("Appliquer");
 
 
 

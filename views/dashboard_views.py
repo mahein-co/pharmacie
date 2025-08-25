@@ -45,6 +45,8 @@ nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 
 # 1.4. Nombre total de médicaments
 nb_total_medicaments = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_medicaments,title="recuperation nb medoc par date de vente")
+df_nb_medoc = pd.DataFrame(nb_total_medicaments)
+nb_medoc = df_nb_medoc["nb_medicaments"].sum()
     
 # 1.5. Total des pertes dues aux médicaments invendus
 pertes_medicaments = overview_collection.make_specific_pipeline(
@@ -65,6 +67,8 @@ first_date_vente = df_ventes["date_de_vente"].min() if not df_ventes.empty else 
 
 # Execute the pipeline
 chiffre_affaire_total = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRE TOTAL")
+df_CA = pd.DataFrame(chiffre_affaire_total)
+chiffre_affaire = df_CA["chiffre_affaire_total"].sum()
 
 # II. MEDICAMENTS
 # 2.1. Médicaments expirés

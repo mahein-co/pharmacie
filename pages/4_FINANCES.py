@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html
-from views import finance_views,dashboard_views
+from views import finance_views, dashboard_views
 from datetime import date
 import calendar
 
