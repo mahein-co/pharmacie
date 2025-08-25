@@ -516,3 +516,57 @@ with col3:
     # Affichage dans Streamlit
     st.plotly_chart(fig)
 
+from dashbot.chat_finance import create_chatbot 
+
+CA_mois = "\n".join([f"{row['mois']}: {row['annee']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
+rapporte_plus = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_plus.iterrows()])
+rapporte_moins = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_moins.iterrows()])
+forte_marge = "\n".join([f"{row['Médicaments']}: {row['Marge']}" for _, row in df_forte_marge.iterrows()])
+faible_marge = "\n".join([f"{row['Médicaments']}: {row['Marge']}" for _, row in df_faible_marge.iterrows()])
+moyenne_marge = "\n".join([f"{row['Prix Vente']}: {row['Prix Achats']}: {row['Marge Bénéficiaire']}" for _, row in df_marge_moyen.iterrows()])
+
+qa = create_chatbot()
+
+
+# prompt prêt à l’emploi
+prompt = f"""
+Voici les données des finances :
+
+Chiffre d'affaire mensuel :
+{CA_mois}
+
+Médicaments qui rapportent moins :
+{rapporte_moins}
+
+Médicaments qui rapportent plus :
+{rapporte_plus}
+
+Forte marge de prix des médicamants :
+{forte_marge}
+
+Faible marge de prix des médicamants :
+{faible_marge}
+
+Marge moyenne de prix des médicamants :
+{moyenne_marge}
+"""
+
+# Chatbot interactif
+st.title("💬 Chatbot Analyse des employés")
+
+if "messages_employe" not in st.session_state:
+    st.session_state.messages_employe = []
+
+for msg in st.session_state.messages_employe:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if question := st.chat_input("Posez une question sur les employés"):
+    st.session_state.messages_employe.append({"role": "user", "content": question})
+    st.chat_message("user").write(question)
+
+    # On combine la question de l’utilisateur avec les données préparées
+    full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
+    response = qa.run(full_prompt)
+
+    st.session_state.messages_employe.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)

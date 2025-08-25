@@ -245,4 +245,45 @@ with st.container():
             # 🖼️ Affichage dans Streamlit
             st.plotly_chart(fig)
 
+from dashbot.chat_approvisionnement import create_chatbot
 
+qa = create_chatbot()
+
+# Préparation des données 
+total_approvisionnement = "\n".join([f"{row['Mois']}: {row['Année']}: {row['total_approvisionnement']}" for _, row in df_filtered.iterrows()])
+temps_moyen_livraison = "\n".join([f"{row['Fournisseurs']}: {row['Temps']}" for _, row in df_temps_moyen_fourn.iterrows()])
+taux_retard_livraison = "\n".join([f"{row['Fournisseurs']}: {row['Taux']}" for _, row in df_taux_retard_livraison.iterrows()])
+Commande_moyen_fourn =  "\n".join([f"{row['Fournisseur']}: {row['Nombre']}" for _, row in df_commande_moyen_fourn.iterrows()])
+
+prompt = f"""
+Voici les données des approvisionnements :
+
+Total approvisionnement :
+{total_approvisionnement}
+
+Temps moyen de livraison par fournisseur :
+{temps_moyen_livraison}
+
+Nombre moyen de commandes par fournisseur :
+{Commande_moyen_fourn}
+"""
+
+# Chatbot interactif
+st.title("💬 Chatbot Analyse des employés")
+
+if "messages_employe" not in st.session_state:
+    st.session_state.messages_employe = []
+
+for msg in st.session_state.messages_employe:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if question := st.chat_input("Posez une question sur les employés"):
+    st.session_state.messages_employe.append({"role": "user", "content": question})
+    st.chat_message("user").write(question)
+
+    # On combine la question de l’utilisateur avec les données préparées
+    full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
+    response = qa.run(full_prompt)
+
+    st.session_state.messages_employe.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)
