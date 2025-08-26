@@ -872,14 +872,14 @@ from dashbot.chat_medicament import create_chatbot
 st.title("💬 Chatbot Analyse des finances")
 
 # Preparation des donnees  
-forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in df_forte_rotation.iterrows()])
-faible_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in df_faible_rotation.iterrows()])
+forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_forte.iterrows()])
+faible_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_faible.iterrows()])
 medoc_plus_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_plus_cher.iterrows()])
-medoc_moins_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_moins_cher.iterrows()])
+medoc_moins_cher = "\n".join([f"{row['Médicament']}: {row['Lot']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_moins_cher.iterrows()])
 
-critique = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Total quantite']}" for _, row in critique.iterrows()])
+critique = "\n".join([f"{row['Médicament']}: {row['Lot']}: {row['Quantités restantes']}" for _, row in critique.iterrows()])
 
-surplus = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Total Quantite']}" for _, row in df_surplus.iterrows()])
+surplus = "\n".join([f"{row['Médicaments']}: {row['Lot']}: {row['Quantités restantes']}" for _, row in df_surplus.iterrows()])
 
 qa = create_chatbot()
 
