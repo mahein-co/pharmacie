@@ -872,7 +872,7 @@ from dashbot.chat_medicament import create_chatbot
 st.title("💬 Chatbot Analyse des finances")
 
 # Preparation des donnees  
-forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_forte.iterrows()])
+forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantité totale vendue']}" for _, row in Medoc_forte.iterrows()])
 faible_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_faible.iterrows()])
 medoc_plus_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_plus_cher.iterrows()])
 medoc_moins_cher = "\n".join([f"{row['Médicament']}: {row['Lot']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_moins_cher.iterrows()])
