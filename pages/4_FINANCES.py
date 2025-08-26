@@ -535,7 +535,7 @@ with col3:
 
 from dashbot.chat_finance import create_chatbot 
 
-# CA_mois = "\n".join([f"{row['mois']}: {row['Année']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
+CA_mois = "\n".join([f"{row['mois']}: {row['Année']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
 rapporte_plus = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_plus.iterrows()])
 rapporte_moins = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_moins.iterrows()])
 forte_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_forte_marge.iterrows()])
@@ -550,6 +550,7 @@ prompt = f"""
 Voici les données des finances :
 
 Chiffre d'affaire mensuel :
+{CA_mois}
 
 Médicaments qui rapportent moins :
 {rapporte_moins}

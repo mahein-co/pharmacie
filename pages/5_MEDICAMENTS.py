@@ -872,14 +872,41 @@ from dashbot.chat_medicament import create_chatbot
 st.title("💬 Chatbot Analyse des finances")
 
 # Preparation des donnees  
-forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantité totale vendue']}" for _, row in Medoc_forte.iterrows()])
-faible_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_faible.iterrows()])
-medoc_plus_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_plus_cher.iterrows()])
-medoc_moins_cher = "\n".join([f"{row['Médicament']}: {row['Lot']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_moins_cher.iterrows()])
+# Médicaments forte rotation
+forte_rotation = "\n".join([
+    f"{row['Médicaments']}: {row['Quantité totale vendue']}" 
+    for _, row in Medoc_forte.iterrows()
+])
 
-critique = "\n".join([f"{row['Médicament']}: {row['Lot']}: {row['Quantités restantes']}" for _, row in critique.iterrows()])
+# Médicaments faible rotation
+faible_rotation = "\n".join([
+    f"{row['Médicaments']}: {row['Quantité totale vendue']}" 
+    for _, row in Medoc_faible.iterrows()
+])
 
-surplus = "\n".join([f"{row['Médicaments']}: {row['Lot']}: {row['Quantités restantes']}" for _, row in df_surplus.iterrows()])
+# Médicaments les plus chers
+medoc_plus_cher = "\n".join([
+    f"{row['Médicament']}: {row['Lot']}: {row['Fournisseur']}: {row['Prix unitaire']}" 
+    for _, row in df_medoc_plus_cher.iterrows()
+])
+
+# Médicaments les moins chers
+medoc_moins_cher = "\n".join([
+    f"{row['Médicament']}: {row['Lot']}: {row['Fournisseur']}: {row['Prix unitaire']}" 
+    for _, row in df_medoc_moins_cher.iterrows()
+])
+
+# Stock critique
+critique_txt = "\n".join([
+    f"{row['Médicament']}: {row['Lot']}: {row['Quantités restantes']}" 
+    for _, row in critique.iterrows()
+])
+
+# Stock surplus
+surplus = "\n".join([
+    f"{row['Médicaments']}: {row['Lot']}: {row['Quantités restantes']}" 
+    for _, row in df_surplus.iterrows()
+])
 
 qa = create_chatbot()
 
@@ -901,7 +928,7 @@ Médicaments moins cher :
 {medoc_moins_cher}
 
 Médicaments en critique de stock: 
-{critique}
+{critique_txt}
 
 Médicamants surplus :
 {surplus}
