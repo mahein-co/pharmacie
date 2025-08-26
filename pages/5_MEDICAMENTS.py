@@ -839,15 +839,15 @@ def render_table(df_rupture, titre="Tableau des données"):
     st.markdown(table_html, unsafe_allow_html=True)
 
 # 👉 3. Appel
-if df_rupture.empty:
-    st.markdown("""
+    if df_rupture.empty:
+        st.markdown("""
         <div class='custom-card'>
             <h4>Rupture du stock sur derniers mois</h4>
             <p style='text-align:center; color: #888;'>Aucune Data</p>
         </div>
     """, unsafe_allow_html=True)
-else:
-    render_table(df_rupture, titre="Rupture de stock sur les derniers mois")
+    else:
+        render_table(df_rupture, titre="Rupture de stock sur les derniers mois")
 
 from dashbot.chat_medicament import create_chatbot
 
