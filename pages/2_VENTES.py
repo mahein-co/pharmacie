@@ -537,3 +537,56 @@ with st.container():
             height=500
         )
         st.plotly_chart(fig, use_container_width=True)
+from dashbot.chat_vente import create_chatbot
+
+qa = create_chatbot()
+
+# Préparation des données 
+top_vendeurs_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre Affaire']}" for _, row in top_vendeurs.iterrows()])
+vendeurs_non_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre Affaire']}" for _, row in non_habilite_vendeurs.iterrows()])
+top_meds_text = "\n".join([f"{row['Médicaments']}: {row['quantite totale vendue']}" for _, row in top_medicaments.iterrows()])
+moins_meds_text = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_moins.iterrows()])
+saison_text = "\n".join([f"{row['Médicaments']} ({row['jour']}): {row['Quantite Totale']}" for _, row in df_saison.iterrows()])
+evolution_text = "\n".join([f"{row['Legend']} - {row['Mois']} {row['Annee']}: {row['Quantite Totale']:}" for _, row in df_plot.iterrows()])
+
+# Prompt complet 
+prompt = f"""
+Voici les données de ventes :
+
+Top 3 vendeurs :
+{top_vendeurs_text}
+
+Vendeurs non habilités :
+{vendeurs_non_text}
+
+Top 3 médicaments :
+{top_meds_text}
+
+Médicaments les moins vendus :
+{moins_meds_text}
+
+Saisonnalité (ventes par jour et médicament) :
+{saison_text}
+
+Évolution des ventes par mois (proportionnelle) :
+{evolution_text}
+"""
+
+# Chatbot interactif 
+st.title("💬 Chatbot Analyse des ventes")
+
+if "messages_vente" not in st.session_state:
+    st.session_state.messages_vente = []
+
+for msg in st.session_state.messages_vente:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if question := st.chat_input("Posez une question sur les ventes"):
+    st.session_state.messages_vente.append({"role": "user", "content": question})
+    st.chat_message("user").write(question)
+
+    full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
+    response = qa.run(full_prompt)
+
+    st.session_state.messages_vente.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)

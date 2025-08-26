@@ -935,23 +935,23 @@ Médicamants surplus :
 """
 
 # Chatbot interactif
-st.title("💬 Chatbot Analyse des employés")
+st.title("💬 Chatbot Analyse des médicaments")
 
-if "messages_employe" not in st.session_state:
-    st.session_state.messages_employe = []
+if "messages_medicament" not in st.session_state:
+    st.session_state.messages_medicament = []
 
-for msg in st.session_state.messages_employe:
+for msg in st.session_state.messages_medicament:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if question := st.chat_input("Posez une question sur les employés"):
-    st.session_state.messages_employe.append({"role": "user", "content": question})
+if question := st.chat_input("Posez une question sur les médicaments"):
+    st.session_state.messages_medicament.append({"role": "user", "content": question})
     st.chat_message("user").write(question)
 
     # On combine la question de l’utilisateur avec les données préparées
     full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
     response = qa.run(full_prompt)
 
-    st.session_state.messages_employe.append({"role": "assistant", "content": response})
+    st.session_state.messages_medicament.append({"role": "assistant", "content": response})
     st.chat_message("assistant").write(response)
 # import streamlit as st
 # import pandas as pd
