@@ -31,6 +31,12 @@ TODAY = date.today()
 date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
 date_fin = TODAY
 
+#Nombre de medicaments
+df_nb_medoc = pd.DataFrame(dashboard_views.nb_total_medicaments)
+nb_medoc = df_nb_medoc["nb_medicaments"].sum()
+print("valiny : ",df_nb_medoc)
+
+
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
     html("""
@@ -61,7 +67,12 @@ with col_filter:
         apply_button = st.button("Appliquer");
 
 
+if apply_button:
+    if len(st.session_state.date_range) == 2:
+        date_debut, date_fin = st.session_state.date_range
+        if (date_debut <= date_fin):
 
+            df_nb_medoc["date_de_vente"] = pd.to_datetime(df_nb_medoc["date_de_vente"])
 
 if medicament_views.overview_collection :
   st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
@@ -363,36 +374,39 @@ with st.container():
     col1, col2 = st.columns(2)
 
     with col1:
+        # Récupérer les données
+        # --- Données ---
         data = medicament_views.medoc_forte_rotation
         df_forte_rotation = pd.DataFrame(data)
+        df_forte_rotation['date_de_vente'] = pd.to_datetime(df_forte_rotation['date_de_vente'])
 
-        # ✅ Renommage correct des colonnes
-        df_forte_rotation.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "Quantités totales vendues"}, inplace=True)
+        # --- Vérifier si bouton Appliquer cliqué ---
+        if apply_button and st.session_state.date_range:
+            date_debut, date_fin = st.session_state.date_range
+        else:
+            date_debut, date_fin = df_forte_rotation['date_de_vente'].min(), df_forte_rotation['date_de_vente'].max()
 
-        df_forte_rotation = df_forte_rotation.sort_values(by="Quantités totales vendues", ascending=False).head(3)
+        # --- Filtrer ---
+        df_filtre = df_forte_rotation[
+            (df_forte_rotation['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_forte_rotation['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
 
-        # CSS pour la carte
-        st.markdown("""
-            <style>
-            .card {
-                background-color: #f8f9fa;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        # --- Agrégation ---
+        df_agg = df_filtre.groupby('nom_medicament', as_index=False)['quantite_totale_vendue'].sum()
+        df_agg = df_agg.rename(columns={"nom_medicament": "Médicaments", "quantite_totale_vendue": "Quantité totale vendue"})
 
-        # Graphique
+        # --- Top 3 plus vendus ---
+        Medoc_forte = df_agg.sort_values(by="Quantité totale vendue", ascending=False).head(3)
+
+        # --- Graphique ---
         fig = px.bar(
-            df_forte_rotation,
-            x="Quantités totales vendues",
+            Medoc_forte,
+            x="Quantité totale vendue",
             y="Médicaments",
             orientation='h',
-            text="Quantités totales vendues",
-            color="Quantités totales vendues",
+            color="Quantité totale vendue",
             color_continuous_scale=px.colors.sequential.Plasma,
-            title="Médicaments à forte rotation"
         )
 
         fig.update_layout(
@@ -402,51 +416,55 @@ with st.container():
                 xanchor='center',
                 font=dict(size=20, color='black')
             ),
-            xaxis_title="Quantités vendues",
+            xaxis_title="Quantité vendue",
             yaxis_title="Médicaments",
             showlegend=False,
             height=350,
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=20, r=20, t=30, b=20),
+            margin=dict(l=0, r=0, t=30, b=0),
         )
+
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside')
+        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+
 
     with col2:
+        # --- Données ---
         data = medicament_views.medoc_faible_rotation
         df_faible_rotation = pd.DataFrame(data)
 
-        # ✅ Renommage correct des colonnes
-        df_faible_rotation.rename(columns={"_id": "Médicaments", "quantite_totale_vendue": "Quantités totales vendues"}, inplace=True)
+        df_faible_rotation['date_de_vente'] = pd.to_datetime(df_faible_rotation['date_de_vente'])
 
-        df_faible_rotation = df_faible_rotation.sort_values(by="Quantités totales vendues", ascending=False).head(3)
+        # --- Vérifier si bouton Appliquer cliqué ---
+        if apply_button and st.session_state.date_range:
+            date_debut, date_fin = st.session_state.date_range
+        else:
+            date_debut, date_fin = df_faible_rotation['date_de_vente'].min(), df_faible_rotation['date_de_vente'].max()
 
-        # CSS pour la carte
-        st.markdown("""
-            <style>
-            .card {
-                background-color: #f8f9fa;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        # --- Filtrer ---
+        df_filtre = df_faible_rotation[
+            (df_faible_rotation['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_faible_rotation['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
 
-        # Graphique
+        # --- Agrégation ---
+        df_agg = df_filtre.groupby('nom_medicament', as_index=False)['quantite_totale_vendue'].sum()
+        df_agg = df_agg.rename(columns={"nom_medicament": "Médicaments", "quantite_totale_vendue": "Quantité totale vendue"})
+
+        # --- Top 3 moins vendus (faible rotation) ---
+        Medoc_faible = df_agg.sort_values(by="Quantité totale vendue", ascending=True).head(3)
+
+        # --- Graphique ---
         fig = px.bar(
-            df_faible_rotation,
-            x="Quantités totales vendues",
+            Medoc_faible,
+            x="Quantité totale vendue",
             y="Médicaments",
             orientation='h',
-            text="Quantités totales vendues",
-            color="Quantités totales vendues",
+            color="Quantité totale vendue",
             color_continuous_scale=px.colors.sequential.Plasma,
-            title="Médicaments à faible rotation"
         )
 
         fig.update_layout(
@@ -456,20 +474,20 @@ with st.container():
                 xanchor='center',
                 font=dict(size=20, color='black')
             ),
-            xaxis_title="Quantités vendues",
+            xaxis_title="Quantité vendue",
             yaxis_title="Médicaments",
             showlegend=False,
             height=350,
             paper_bgcolor="rgba(0,0,0,0)",  
             plot_bgcolor="rgba(0,0,0,0)",   
             margin=dict(l=0, r=0, t=30, b=0),
-            # margin=dict(l=20, r=20, t=50, b=10)
         )
+
         fig.update_yaxes(autorange="reversed")
-        fig.update_traces(textposition='outside')
+        fig.update_traces(textposition='outside', textfont=dict(color='#48494B'))
 
         st.plotly_chart(fig, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # MEDICAMENTS LES PLUS CHERS ET MOINS CHERS -----------------------

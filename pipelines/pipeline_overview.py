@@ -70,38 +70,30 @@ pipeline_chiffre_affaire_total = [
 
 
 # 2. Valeur total des stocks
-def get_valeur_totale_stock(end_date=None):
-    end_date = datetime.combine(end_date, datetime.max.time()) if end_date else TODAY
+# def get_valeur_totale_stock(end_date=None):
+#     end_date = datetime.combine(end_date, datetime.max.time()) if end_date else TODAY
 
-    pipeline_valeur_totale_stock = [
-        {
-            "$match": {
-                "date_expiration": { "$gt": end_date } if end_date else {"$gt": TODAY },
-                "quantite_restante": { "$gt": 0 }
-            }
-        },
-        {
-            "$group": {
-                "_id": None,
-                "valeur_stock_totale": {
-                    "$sum": {
-                        "$multiply": ["$quantite_restante", "$prix_unitaire"]
-                    }
-                }
-            }
+pipeline_valeur_totale_stock = [
+    {
+        "$match": {
+            "quantite_restante": {"$gt": 0}  # on garde uniquement les produits en stock
         }
-    ]
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "date_expiration": 1,     # date d'expiration
+            "quantite_restante": 1    # quantité restante
+        }
+    }
+]
 
-    valeur_stock_result = overview_collection.make_specific_pipeline(
-    pipeline=pipeline_valeur_totale_stock, 
-    title="Calcul de la valeur totale du stock"
-    )
-    try:
-        valeur_stock = valeur_stock_result[0]["valeur_stock_totale"] if valeur_stock_result else 0
-    except Exception as e:
-        valeur_stock = 0
+    # try:
+    #     valeur_stock = valeur_stock_result[0]["valeur_stock_totale"] if valeur_stock_result else 0
+    # except Exception as e:
+    #     valeur_stock = 0
     
-    return valeur_stock
+    # return valeur_stock
 
 # 3. Medicaments déjà expirés
 pipeline_medicament_expired = [
@@ -198,84 +190,88 @@ pipeline_medicament_bientot_expire = [
 pipeline_pertes_expiration = [
     {
         "$match": {
-            "date_expiration": { "$lt": TODAY },
-            "quantite_restante": { "$gt": 0 }
+            "date_expiration": {"$lt": TODAY},
+            "quantite_restante": {"$gt": 0}
         }
     },
     {
         "$project": {
-            "perte": {
-                "$multiply": ["$quantite_restante", "$prix_unitaire"]
-            }
-        }
-    },
-   {
-  "$group": {
-    "_id": None,
-    "total_pertes": {
-      "$sum": {
-        "$subtract": [
-          { "$divide": ["$perte", 4] },
-          350
-        ]
-      }
-    }
-  }
-}
-]
-
-pipeline_pertes_expiration_fig = [
-    {
-        "$match": {
-            "date_expiration": { "$lt": TODAY },
-            "quantite_restante": { "$gt": 0 }
-        }
-    },
-    {
-        "$project": {
-            "perte": {
-                "$multiply": ["$quantite_restante", "$prix_unitaire"]
-            },
-            "annee": { "$year": "$date_expiration" },
-            "mois": { "$month": "$date_expiration" }
+            "date_expiration": 1,
+            "perte": {"$multiply": ["$quantite_restante", "$prix_unitaire"]}
         }
     },
     {
         "$group": {
-            "_id": {
-                "annee": "$annee",
-                "mois": "$mois"
-            },
+            "_id": "$date_expiration",
             "total_pertes": {
-                "$sum": {
-                    "$subtract": [
-                        { "$divide": ["$perte", 4] },
-                        350
-                    ]
-                }
+                "$sum": {"$subtract": [{"$divide": ["$perte", 4]}, 350]}
             }
         }
     },
     {
         "$project": {
             "_id": 0,
-            "Annee": "$_id.annee",
-            "Mois": {
-                "$arrayElemAt": [
-                    ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"],
-                    { "$subtract": ["$_id.mois", 1] }
-                ]
-            },
+            "date_expiration": "$_id",
             "total_pertes": 1
         }
     },
     {
-        "$sort": {
-            "Annee": 1,
-            "Mois": 1
-        }
+        "$sort": {"date_expiration": 1}  # optionnel : trier par date
     }
 ]
+
+# pipeline_pertes_expiration_fig = [
+#     {
+#         "$match": {
+#             "date_expiration": { "$lt": TODAY },
+#             "quantite_restante": { "$gt": 0 }
+#         }
+#     },
+#     {
+#         "$project": {
+#             "perte": {
+#                 "$multiply": ["$quantite_restante", "$prix_unitaire"]
+#             },
+#             "annee": { "$year": "$date_expiration" },
+#             "mois": { "$month": "$date_expiration" }
+#         }
+#     },
+#     {
+#         "$group": {
+#             "_id": {
+#                 "annee": "$annee",
+#                 "mois": "$mois"
+#             },
+#             "total_pertes": {
+#                 "$sum": {
+#                     "$subtract": [
+#                         { "$divide": ["$perte", 4] },
+#                         350
+#                     ]
+#                 }
+#             }
+#         }
+#     },
+#     {
+#         "$project": {
+#             "_id": 0,
+#             "Annee": "$_id.annee",
+#             "Mois": {
+#                 "$arrayElemAt": [
+#                     ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"],
+#                     { "$subtract": ["$_id.mois", 1] }
+#                 ]
+#             },
+#             "total_pertes": 1
+#         }
+#     },
+#     {
+#         "$sort": {
+#             "Annee": 1,
+#             "Mois": 1
+#         }
+#     }
+# ]
 
 
 
@@ -435,58 +431,59 @@ pipeline_rupture_stock = [
 # 15. Médicament avec la plus forte rotation
 pipeline_medicament_forte_rotation = [
   {
-    "$match": {
-      "date_de_vente": {
-        "$gte": TODAY - timedelta(days=120)
-      }
-    }
-  },
-  {
     "$group": {
-      "_id": "$nom_medicament",
-      "quantite_totale_vendue": { "$sum": "$quantite" },
-      "nombre_de_ventes": { "$sum": 1 },
-      "categorie": { "$first": "$medicament_categorie" },
-      "fournisseur": { "$first": "$fournisseur" }
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "date_de_vente": "$date_de_vente"
+      },
+      "quantite_totale_vendue": { "$sum": "$quantite" }
     }
   },
   {
-    "$sort": {
-      "quantite_totale_vendue": -1
-    }
-  },
-  {
-    "$limit": 3 
-  }
-]
-
-# 16. Médicament avec la plus faible rotation
-pipeline_medicament_faible_rotation = [
-  {
-    "$match": {
-      "date_de_vente": {
-        "$gte": TODAY - timedelta(days=120)
-      }
-    }
-  },
-  {
-    "$group": {
-      "_id": "$nom_medicament",
-      "quantite_totale_vendue": { "$sum": "$quantite" },
-      "nombre_de_ventes": { "$sum": 1 },
-      "categorie": { "$first": "$medicament_categorie" },
-      "fournisseur": { "$first": "$fournisseur" }
-    }
-  },
-  {
-    "$sort": {
+    "$project": {
+      "_id": 0,
+      "date_de_vente": "$_id.date_de_vente",
+      "nom_medicament": "$_id.nom_medicament",
       "quantite_totale_vendue": 1
     }
   },
   {
-    "$limit": 3 
+    "$sort": {
+      "date_de_vente": 1,
+      "quantite_totale_vendue": -1
+    }
   }
 ]
+
+
+# 16. Médicament avec la plus faible rotation
+pipeline_medicament_faible_rotation = [
+  {
+    "$group": {
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "date_de_vente": "$date_de_vente"
+      },
+      "quantite_totale_vendue": { "$sum": "$quantite" }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "date_de_vente": "$_id.date_de_vente",
+      "nom_medicament": "$_id.nom_medicament",
+      "quantite_totale_vendue": 1
+    }
+  },
+  {
+    "$sort": {
+      "date_de_vente": 1,
+      "quantite_totale_vendue": 1   # tri croissant = faible rotation
+    }
+  }
+]
+
+
 
 # 17. Médicaments les plus vendus (Top 3)
 pipeline_medicaments_plus_vendus = [
@@ -664,46 +661,64 @@ pipeline_medicament_rapporte_plus = [
   {
     "$project": {
       "nom_medicament": 1,
-      "gain_total": {
-        "$multiply": ["$marge_prix", "$quantite"]
-      }
+      "date_de_vente": 1,
+      "gain_total": { "$multiply": ["$marge_prix", "$quantite"] }
     }
   },
   {
     "$group": {
-      "_id": "$nom_medicament",
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "date_de_vente": "$date_de_vente"
+      },
       "total_gain": { "$sum": "$gain_total" }
     }
   },
   {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": "$_id.nom_medicament",
+      "date_de_vente": "$_id.date_de_vente",
+      "total_gain": 1
+    }
+  },
+  {
     "$sort": { "total_gain": -1 }
-  },{
-      "$limit":3
   }
 ]
+
 
 # 22. Medicament qui rapporte le moins
 pipeline_medicament_rapporte_moins = [
   {
     "$project": {
       "nom_medicament": 1,
-      "gain_total": {
-        "$multiply": ["$marge_prix", "$quantite"]
-      }
+      "date_de_vente": 1,
+      "gain_total": { "$multiply": ["$marge_prix", "$quantite"] }
     }
   },
   {
     "$group": {
-      "_id": "$nom_medicament",
+      "_id": {
+        "nom_medicament": "$nom_medicament",
+        "date_de_vente": "$date_de_vente"
+      },
       "total_gain": { "$sum": "$gain_total" }
     }
   },
   {
+    "$project": {
+      "_id": 0,
+      "nom_medicament": "$_id.nom_medicament",
+      "date_de_vente": "$_id.date_de_vente",
+      "total_gain": 1
+    }
+  },
+  {
     "$sort": { "total_gain": 1 }
-  },{
-      "$limit":3
   }
 ]
+
 
 # 23. Quantité de medicaments approvisionnés
 pipeline_quatite_medicament_approvisionne = [
@@ -741,11 +756,11 @@ pipeline_plus_faible_marge = [
             "categorie": {"$first": "$medicament_categorie"},
             "prix_unitaire": {"$first": "$prix_unitaire"},
             "prix_fournisseur": {"$first": "$prix_fournisseur"},
-            "lot_id": {"$first": "$lot_id"}
+            "lot_id": {"$first": "$lot_id"},
+            "date_de_vente": {"$first": "$date_de_vente"}
         }
     },
     {"$sort": {"marge_min": 1}},  # Tri par marge croissante
-    {"$limit": 3},
     {
         "$project": {
             "_id": 0,
@@ -754,10 +769,12 @@ pipeline_plus_faible_marge = [
             "medicament_categorie": "$categorie",
             "prix_unitaire": 1,
             "prix_fournisseur": 1,
-            "lot_id": 1
+            "lot_id": 1,
+            "date_de_vente": 1
         }
     }
 ]
+
 
 # pipeline_plus_faible_marge = [
 #     {"$sort": {"marge_prix": 1}},  # Tri croissant
@@ -784,11 +801,11 @@ pipeline_plus_forte_marge = [
             "categorie": {"$first": "$medicament_categorie"},
             "prix_unitaire": {"$first": "$prix_unitaire"},
             "prix_fournisseur": {"$first": "$prix_fournisseur"},
-            "lot_id": {"$first": "$lot_id"}
+            "lot_id": {"$first": "$lot_id"},
+            "date_de_vente": {"$first": "$date_de_vente"}
         }
     },
     {"$sort": {"marge_max": -1}},
-    {"$limit": 3},
     {"$project": {
         "_id": 0,
         "nom_medicament": "$_id",
@@ -796,9 +813,11 @@ pipeline_plus_forte_marge = [
         "medicament_categorie": "$categorie",
         "prix_unitaire": 1,
         "prix_fournisseur": 1,
-        "lot_id": 1
+        "lot_id": 1,
+        "date_de_vente": 1
     }}
 ]
+
 
 # pipeline_plus_forte_marge = [
 #     {"$sort": {"marge_prix": -1}},  # Tri décroissant
