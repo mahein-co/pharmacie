@@ -550,7 +550,6 @@ prompt = f"""
 Voici les données des finances :
 
 Chiffre d'affaire mensuel :
-{CA_mois}
 
 Médicaments qui rapportent moins :
 {rapporte_moins}
