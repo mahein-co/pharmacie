@@ -206,5 +206,44 @@ with st.container():
       # Affichage dans Streamlit
       st.plotly_chart(fig, use_container_width=True)
 
+from dashbot.chat_employe import create_chatbot
 
+qa = create_chatbot()
+
+effectif_categorie_dict = df_eff_categorie.to_dict(orient='records')
+effectif_fonction_dict = df_eff_fonction.to_dict(orient='records')
+
+effectif_categorie_text = "\n".join([f"{row['Categorie']}: {row['Effectif']}" for row in effectif_categorie_dict])
+effectif_fonction_text = "\n".join([f"{row['Fonction']}: {row['Effectif']}" for row in effectif_fonction_dict])
+
+# prompt prêt à l’emploi
+prompt = f"""
+Voici les données des employés :
+
+Répartition par catégories :
+{effectif_categorie_text}
+
+Répartition par fonctions :
+{effectif_fonction_text}
+"""
+
+# Chatbot interactif
+st.title("💬 Chatbot Analyse des employés")
+
+if "messages_employe" not in st.session_state:
+    st.session_state.messages_employe = []
+
+for msg in st.session_state.messages_employe:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if question := st.chat_input("Posez une question sur les employés"):
+    st.session_state.messages_employe.append({"role": "user", "content": question})
+    st.chat_message("user").write(question)
+
+    # On combine la question de l’utilisateur avec les données préparées
+    full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
+    response = qa.run(full_prompt)
+
+    st.session_state.messages_employe.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)
 

@@ -867,7 +867,65 @@ if df_rupture.empty:
 else:
     render_table(df_rupture, titre="Rupture de stock sur les derniers mois")
 
+from dashbot.chat_medicament import create_chatbot
 
+st.title("💬 Chatbot Analyse des finances")
+
+# Preparation des donnees  
+forte_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in df_forte_rotation.iterrows()])
+faible_rotation = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in df_faible_rotation.iterrows()])
+medoc_plus_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_plus_cher.iterrows()])
+medoc_moins_cher = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Fournisseur']}: {row['Prix Unitaire']}" for _, row in df_medoc_moins_cher.iterrows()])
+
+critique = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Total quantite']}" for _, row in critique.iterrows()])
+
+surplus = "\n".join([f"{row['Médicament']}: {row['Lots']}: {row['Total Quantite']}" for _, row in df_surplus.iterrows()])
+
+qa = create_chatbot()
+
+
+# prompt prêt à l’emploi
+prompt = f"""
+Voici les données des médicaments :
+
+Médicaments forte rotation :
+{forte_rotation}
+
+Médicaments faible rotation :
+{faible_rotation}
+
+Médicaments plus cher :
+{medoc_plus_cher}
+
+Médicaments moins cher :
+{medoc_moins_cher}
+
+Médicaments en critique de stock: 
+{critique}
+
+Médicamants surplus :
+{surplus}
+"""
+
+# Chatbot interactif
+st.title("💬 Chatbot Analyse des employés")
+
+if "messages_employe" not in st.session_state:
+    st.session_state.messages_employe = []
+
+for msg in st.session_state.messages_employe:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if question := st.chat_input("Posez une question sur les employés"):
+    st.session_state.messages_employe.append({"role": "user", "content": question})
+    st.chat_message("user").write(question)
+
+    # On combine la question de l’utilisateur avec les données préparées
+    full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
+    response = qa.run(full_prompt)
+
+    st.session_state.messages_employe.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)
 # import streamlit as st
 # import pandas as pd
 
