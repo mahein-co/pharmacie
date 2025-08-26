@@ -35,7 +35,7 @@ medoc_forte_marge = overview_collection.make_specific_pipeline(pipeline=pipeline
 medoc_faible_marge = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_plus_faible_marge,title="recuperation faible marge")
 
 #Evolution Total des pertes dues aux médicaments invendus ou abîmés
-Evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_pertes_expiration_fig,title="recuperation pertes")
+Evolution_pertes = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_pertes_expiration,title="recuperation pertes")
 
 
 #chriffre d'affraire
@@ -43,14 +43,13 @@ CA_finance = overview_collection.make_specific_pipeline(pipeline=pipeline_overvi
 
 
 
-kpis_html = f"""
-  <div class="kpi-card">
-    <div style="text-align: left; position:absolute;">
-        {icons.finance_icon_html}
-    </div>
-    <p class="kpi-title">Total Finance (MGA)</p>
-    <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.chiffre_affaire}</p>
-  </div>
-"""
-
+# kpis_html = f"""
+#   <div class="kpi-card">
+#     <div style="text-align: left; position:absolute;">
+#         {icons.finance_icon_html}
+#     </div>
+#     <p class="kpi-title">Total Finance (MGA)</p>
+#     <p class="kpi-value" style="font-size:1.5rem;">{dashboard_views.first_container_kpis_html(chiffre_affaire)}</p>
+# #   </div>
+# """
 

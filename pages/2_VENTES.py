@@ -33,6 +33,15 @@ TODAY = date.today()
 date_debut = dashboard_views.first_date_vente if dashboard_views.first_date_vente else TODAY
 date_fin = TODAY
 
+
+#1. Chiffre d'affaires
+df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
+chiffre_affaire = df_CA["chiffre_affaire_total"].sum()
+
+#2.Nombres ventes
+df_nbventes = pd.DataFrame(vente_views.nombre_ventes)
+nombre_ventes = df_nbventes["nb_ventes"].sum()
+
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
     html("""
@@ -64,23 +73,31 @@ with col_filter:
         apply_button = st.button("Appliquer");
 
 with st.container():
-    if apply_button and st.session_state.date_range:
-        start_date, end_date = st.session_state.date_range
-        # Ici tu dois appliquer le filtre dans la requête si tu veux 
-        # Mais si tes vues ne prennent pas de paramètres, elles renvoient toujours tout
-        df_nbventes = pd.DataFrame(vente_views.nombre_ventes)
-        df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
-    else:
-        # Même chose : pas de filtre, donc tout
-        df_nbventes = pd.DataFrame(vente_views.nombre_ventes)
-        df_CA = pd.DataFrame(dashboard_views.chiffre_affaire_total)
+    if len(st.session_state.date_range) == 2:
+        date_debut, date_fin = st.session_state.date_range
+        if (date_debut <= date_fin):
 
-    # Extraire les valeurs
-    nombre_ventes = df_nbventes["nb_ventes"].sum() if not df_nbventes.empty else 0
-    chiffre_affaire = df_CA["chiffre_affaire_total"].sum() if not df_CA.empty else 0
+            # 1. Chiffre d'affaires
+            # Conversion en datetime
+            df_CA["date_de_vente"] = pd.to_datetime(df_CA["date_de_vente"])
+            # Filtre des dates (élément par élément)
+            date_filter = (df_CA["date_de_vente"].dt.date >= date_debut) & (df_CA["date_de_vente"].dt.date <= date_fin)
+            # Somme du chiffre d'affaires
+            chiffre_affaire = df_CA.loc[date_filter, "chiffre_affaire_total"].sum()
+
+            # 2. Nombre de ventes
+            df_nbventes["date_de_vente"] = pd.to_datetime(df_nbventes["date_de_vente"])
+
+            date_filter = (
+                (df_nbventes["date_de_vente"].dt.date >= date_debut) & 
+                (df_nbventes["date_de_vente"].dt.date <= date_fin)
+            )
+
+            nombre_ventes = df_nbventes.loc[date_filter, "nb_ventes"].sum()
+        
 
     # Affichage KPI
-    st.markdown(vente_views.get_kpis(chiffre_affaire=chiffre_affaire,nombre_ventes=nombre_ventes),unsafe_allow_html=True)
+    st.markdown(vente_views.get_kpis(chiffre_affaire,nombre_ventes),unsafe_allow_html=True)
 
 # Scorecard et Top vendeur ---------------------------------
 with st.container():

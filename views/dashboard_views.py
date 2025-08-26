@@ -47,16 +47,12 @@ nombre_total_vente_str = f"{pipeline_overview.total_sales:,}".replace(",", " ")
 nb_total_medicaments = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_nb_medicaments,title="recuperation nb medoc par date de vente")
 df_nb_medoc = pd.DataFrame(nb_total_medicaments)
 nb_medoc = df_nb_medoc["nb_medicaments"].sum()
-    
+
 # 1.5. Total des pertes dues aux médicaments invendus
 pertes_medicaments = overview_collection.make_specific_pipeline(
   pipeline=pipeline_overview.pipeline_pertes_expiration, 
   title="Calcul des pertes dues aux médicaments invendus"
 )
-try:
-  total_pertes_medicaments = pertes_medicaments[0]["total_pertes"] if pertes_medicaments else 0
-except Exception as e:
-  total_pertes_medicaments = 0
 
 # 1.6. Dataframe des ventes
 # overview_docs = overview_collection.find_all_documents()
@@ -67,8 +63,6 @@ first_date_vente = df_ventes["date_de_vente"].min() if not df_ventes.empty else 
 
 # Execute the pipeline
 chiffre_affaire_total = overview_collection.make_specific_pipeline(pipeline=pipeline_overview.pipeline_chiffre_affaire_total, title="CHIFFRE D'AFFAIRE TOTAL")
-df_CA = pd.DataFrame(chiffre_affaire_total)
-chiffre_affaire = df_CA["chiffre_affaire_total"].sum()
 
 # II. MEDICAMENTS
 # 2.1. Médicaments expirés
@@ -117,28 +111,6 @@ medicaments_moins_vendus = overview_collection.make_specific_pipeline(
 
 # III. F I N A N C E
 # 3.1. Chiffre d’affaires par jour
-chiffre_affaires_par_jour = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_overview.pipeline_chiffre_affaire_daily,
-  title="Récupération du chiffre d'affaires par jour"
-)
-
-# 3.2. Chiffre d’affaires par semaine
-chiffre_affaires_par_semaine = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_overview.pipeline_chiffre_affaire_weekly,
-  title="Récupération du chiffre d'affaires par semaine"
-)
-
-# 3.3. Chiffre d’affaires par mois
-chiffre_affaires_par_mois = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_overview.pipeline_chiffre_affaire_monthly,
-  title="Récupération du chiffre d'affaires par mois"
-)
-
-# 3.4. Chiffre d’affaires par annee
-chiffre_affaires_par_annee = overview_collection.make_specific_pipeline(
-  pipeline=pipeline_overview.pipeline_chiffre_affaire_yearly,
-  title="Récupération du chiffre d'affaires par annee"
-)
 
 # 3.5. Marge bénéficiaire moyenne 
 marge_beneficiaire_moyenne = overview_collection.make_specific_pipeline(
@@ -158,12 +130,19 @@ medicament_rapportant_moins = overview_collection.make_specific_pipeline(
   title="Récupération du médicament qui rapporte le moins"
 )
 
+#valeur de stock 
+
+valeur_stock_result = overview_collection.make_specific_pipeline(
+pipeline=pipeline_overview.pipeline_valeur_totale_stock, 
+title="Calcul de la valeur totale du stock"
+)
+
 # HTML ----------------------------------------------
 def format_number_to_str(value):
     """Format a number with spaces as thousands separator."""
     return f"{int(value):,}".replace(",", " ")
 
-def first_container_kpis_html(chiffre_affaire, valeur_totale_stock, total_pertes_medicaments=total_pertes_medicaments):
+def first_container_kpis_html(chiffre_affaire, valeur_totale_stock, total_pertes_medicaments):
     chiffre_affaire = format_number_to_str(chiffre_affaire)
     valeur_totale_stock = format_number_to_str(valeur_totale_stock)
     total_pertes_medicaments = format_number_to_str(total_pertes_medicaments)

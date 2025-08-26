@@ -86,66 +86,21 @@ with st.container():
     mois_map = {month: i for i, month in enumerate(calendar.month_abbr) if month}  # {'Jan':1, 'Feb':2,...}
     df_mois['mois_num'] = df_mois['mois'].map(mois_map)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1,3])
 
     with col1:
         # Multiselect médicaments
         medicaments_dispo = sorted(df_finance['nom_medicament'].dropna().unique())
         medicaments_choisis = st.multiselect("Sélectionner les médicaments :", medicaments_dispo)
 
-    with col2:
          # Multiselect années
         annees_dispo = sorted(df_finance['annee'].dropna().unique().astype(int))
         annees_choisies = st.multiselect("Sélectionner les années :", annees_dispo, default=[max(annees_dispo)])
 
-    # with col4:
-    #     st.markdown(finance_views.kpis_html, unsafe_allow_html=True)
+    with col2:
 
-
-    # with col4:
-# 🔹 Style personnalisé
-    st.markdown("""
-        <style>
-            .custom-card {
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                margin-bottom: 30px;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # 🔹 Données
-    data = finance_views.Evolution_pertes
-    df_pertes = pd.DataFrame(data)
-    df_pertes.rename(columns={"total_pertes": "Total Perte"}, inplace=True)
-
-    # 🔹 Dictionnaire mois
-    mois_dict = {"Jan":1, "Fév":2, "Mar":3, "Avr":4, "Mai":5, "Juin":6,
-                "Juil":7, "Aoû":8, "Sep":9, "Oct":10, "Nov":11, "Déc":12}
-    df_pertes['Mois_Num'] = df_pertes['Mois'].map(mois_dict)
-
-    # 🔹 Filtre année
-    annees_dispo = sorted(df_pertes['Annee'].unique(), reverse=True)
-    annee_selectionnee = annees_choisies[-1]  if annees_choisies else max(annees_dispo) # st.selectbox("Sélectionner l'année", annees_dispo)
-    # 🔹 Préparer les données à afficher (année sélectionnée + précédente si disponible)
-    annees_a_afficher = [annee_selectionnee]
-    annee_precedente = annee_selectionnee - 1
-    if annee_precedente in df_pertes['Annee'].values:
-        annees_a_afficher.append(annee_precedente)
-
-    df_graph = df_pertes[df_pertes['Annee'].isin(annees_a_afficher)]
-
-    # 🔹 Pour que X soit toujours Jan -> Déc (même si certains mois manquent)
-    mois_order = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
-                "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
-    df_graph['Mois'] = pd.Categorical(df_graph['Mois'], categories=mois_order, ordered=True)
-    df_graph = df_graph.sort_values(['Annee','Mois'])
-
-# CHIFFRE D'AFFAIRE ------------------------------------
-with st.container():
-        # --- Filtrage ---
+    # CHIFFRE D'AFFAIRE ------------------------------------
+    # --- Filtrage ---
         if medicaments_choisis:
             df_filtre = df_mois[df_mois['nom_medicament'].isin(medicaments_choisis)]
         else:
@@ -189,7 +144,6 @@ with st.container():
             st.plotly_chart(fig, use_container_width=True)
 
 
-
 # MEDICAMENT QUI RAPPORTENT MOINS ET PLUS -------------------
 with st.container():
     col1,col2 = st.columns(2)
@@ -197,38 +151,47 @@ with st.container():
     with col1:
         data = finance_views.medoc_rapporte_moins
         df_rapporte_moins = pd.DataFrame(data)
-        df_rapporte_moins.rename(columns={"_id" : "Médicaments", "total_gain" : "Total Gain"},inplace=True)
 
-        st.markdown("""
-            <style>
-                .custom-card {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    border-radius: 15px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    margin-bottom: 30px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+        # Renommer les colonnes
+        df_rapporte_moins.rename(columns={"nom_medicament": "Médicaments", "total_gain": "Total Gain"}, inplace=True)
 
-        # 🔸 Graphique camembert
+        # --- Convertir la colonne date en datetime si elle existe ---
+        # (il faut que ta table ait une colonne date, ex: 'date_de_vente')
+        df_rapporte_moins['date_de_vente'] = pd.to_datetime(df_rapporte_moins['date_de_vente'])
+
+        # --- Vérifier si bouton Appliquer cliqué ---
+        if apply_button and st.session_state.date_range:
+            date_debut, date_fin = st.session_state.date_range
+        else:
+            date_debut, date_fin = df_rapporte_moins['date_de_vente'].min(), df_rapporte_moins['date_de_vente'].max()
+
+        # --- Filtrer le dataframe par date ---
+        df_filtre = df_rapporte_moins[
+            (df_rapporte_moins['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_rapporte_moins['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
+
+        # --- Agrégation si besoin (par exemple somme du gain par médicament) ---
+        df_agg = df_filtre.groupby('Médicaments', as_index=False)['Total Gain'].sum()
+        df_top3_moins = df_agg.sort_values(by="Total Gain", ascending=True).head(3)
+
+        # --- Graphique camembert ---
         fig = px.pie(
-            df_rapporte_moins,
+            df_top3_moins,
             names="Médicaments",
             values="Total Gain",
-            hole=0.4  # Donut style
+            hole=0.4
         )
 
-        # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
                 'text': "Médicaments qui rapportent le moins",
-                'y': 0.90,            # Hauteur du titre (1 = tout en haut)
-                'x': 0.5,    # Centre horizontalement
+                'y': 0.90,
+                'x': 0.5,
                 'xanchor': 'center',
                 'yanchor': 'top'
             },
-            width=400,  # largeur en pixels (plus réaliste que 50)
+            width=400,
             height=335,
             title_font=dict(size=18),
             paper_bgcolor="rgba(0,0,0,0)",  
@@ -236,14 +199,37 @@ with st.container():
             margin=dict(l=30, r=30, t=80, b=30),
         )
 
-        # 🎯 Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
+
     with col2:
+        # --- Récupérer les données ---
         data = finance_views.medoc_rapporte_plus
         df_rapporte_plus = pd.DataFrame(data)
-        df_rapporte_plus.rename(columns={"_id" : "Médicaments", "total_gain" : "Total Gain"},inplace=True)
 
+        # Renommer les colonnes
+        df_rapporte_plus.rename(columns={"nom_medicament": "Médicaments", "total_gain": "Total Gain"}, inplace=True)
+
+        # --- Convertir la colonne date en datetime ---
+        df_rapporte_plus['date_de_vente'] = pd.to_datetime(df_rapporte_plus['date_de_vente'])
+
+        # --- Filtre par date ---
+        if 'date_range_plus' not in st.session_state:
+            st.session_state.date_range_plus = (df_rapporte_plus['date_de_vente'].min(), df_rapporte_plus['date_de_vente'].max())
+
+        date_debut, date_fin = st.session_state.date_range_plus
+
+        # Appliquer le filtre
+        df_filtre = df_rapporte_plus[
+            (df_rapporte_plus['date_de_vente'] >= pd.to_datetime(date_debut)) &
+            (df_rapporte_plus['date_de_vente'] <= pd.to_datetime(date_fin))
+        ]
+
+        # --- Agrégation et top 3 plus rapporteurs ---
+        df_agg = df_filtre.groupby('Médicaments', as_index=False)['Total Gain'].sum()
+        df_top3_plus = df_agg.sort_values(by="Total Gain", ascending=False).head(3)
+
+        # --- Style card ---
         st.markdown("""
             <style>
                 .custom-card {
@@ -256,34 +242,32 @@ with st.container():
             </style>
         """, unsafe_allow_html=True)
 
-        # 🔸 Graphique camembert
+        # --- Graphique camembert (donut) ---
         fig = px.pie(
-            df_rapporte_plus,
+            df_top3_plus,
             names="Médicaments",
             values="Total Gain",
-            hole=0.4  # Donut style
+            hole=0.4
         )
 
-        # ✅ Mise à jour du layout pour centrer le titre proprement
         fig.update_layout(
             title={
                 'text': "Médicaments qui rapportent le plus",
-                'y': 0.90,            # Hauteur du titre (1 = tout en haut)
-                'x': 0.5,             # Centré horizontalement
-                'xanchor': 'center',  # Ancre horizontale
-                'yanchor': 'bottom'   # Ancre verticale
+                'y': 0.90,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'bottom'
             },
-            width=400,  # largeur en pixels (plus réaliste que 50)
-            height=335, # hauteur en pixels
-            title_font=dict(size=18),  # Taille du titre
-            paper_bgcolor="rgba(0,0,0,0)",  
-            plot_bgcolor="rgba(0,0,0,0)",   
-            margin=dict(l=30, r=30, t=80, b=30)  # ✅ Un seul margin, t=100 pour espace
+            width=400,
+            height=335,
+            title_font=dict(size=18),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=30, r=30, t=80, b=30),
         )
 
-        # 🎯 Affichage dans Streamlit
+        # Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
-
 # MARGE FORTE ET FAIBLE PRIX ------------------------------------
 st.markdown("""
         <style>
@@ -314,16 +298,36 @@ with col1:
     </style>
 """, unsafe_allow_html=True) 
     # 🔹 Données
+    # --- Récupérer les données ---
     data = finance_views.medoc_forte_marge
     df_forte_marge = pd.DataFrame(data)
 
-    # 🔹 Nettoyage / renommage
+    # 🔹 Renommage et nettoyage
     df_forte_marge.rename(columns={
         "nom_medicament": "Médicaments",
-        "marge_prix": "Marges"
+        "marge_prix": "Marges",
+        "date_de_vente": "Date"  # si tu as la colonne date
     }, inplace=True)
+
+    # Convertir la date si existante
+    if "Date" in df_forte_marge.columns:
+        df_forte_marge["Date"] = pd.to_datetime(df_forte_marge["Date"])
+
+    # 🔹 Filtre par date (optionnel)
+    if "Date" in df_forte_marge.columns:
+        if 'date_range_marge' not in st.session_state:
+            st.session_state.date_range_marge = (df_forte_marge['Date'].min(), df_forte_marge['Date'].max())
+
+        date_debut, date_fin = st.session_state.date_range_marge
+
+        df_forte_marge = df_forte_marge[
+            (df_forte_marge['Date'] >= pd.to_datetime(date_debut)) &
+            (df_forte_marge['Date'] <= pd.to_datetime(date_fin))
+        ]
+
+    # 🔹 Limiter aux top 10 marges
+    df_forte_marge = df_forte_marge.sort_values(by="Marges", ascending=False).head(3)
     df_forte_marge["Marges"] = df_forte_marge["Marges"].round(2)
-    df_forte_marge = df_forte_marge.sort_values(by="Marges", ascending=False)
 
     # 🔹 CSS pour carte centrée
     st.markdown("""
@@ -344,12 +348,11 @@ with col1:
         </style>
     """, unsafe_allow_html=True)
 
-    # 🔹 Graphique
+    # 🔹 Graphique bar
     fig = px.bar(
         df_forte_marge,
         x="Médicaments",
         y="Marges",
-        text="Marges",
         color="Marges",
         color_continuous_scale=px.colors.sequential.Plasma
     )
@@ -358,27 +361,24 @@ with col1:
         xaxis_title="Médicaments",
         yaxis_title="Marges prix",
         title={
-                    'text': "Marges élevées ",
-                    'x': 0.5,  # Centre horizontalement
-                    'xanchor': 'center',
-                    'yanchor': 'top'
-                },
-        title_font=dict(size=18),  # Taille du titre
+            'text': "Médicaments à forte marge",
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
+        title_font=dict(size=18),
         yaxis=dict(range=[0, df_forte_marge["Marges"].max() * 1.2]),
         showlegend=False,
         height=320,
         paper_bgcolor="rgba(0,0,0,0)",  
         plot_bgcolor="rgba(0,0,0,0)",   
         margin=dict(l=0, r=0, t=30, b=0),
-    )   
+    )
 
     fig.update_traces(textposition='outside')
 
+    # 🔹 Affichage dans Streamlit
     st.plotly_chart(fig, use_container_width=True)
-
-    # 🔹 Fin de la carte
-    st.markdown("</div>", unsafe_allow_html=True)
-    
 with col2:
     st.markdown("""
         <style>
@@ -391,15 +391,36 @@ with col2:
             }
         </style>
     """, unsafe_allow_html=True)
+    # --- Récupérer les données ---
     data = finance_views.medoc_faible_marge
     df_faible_marge = pd.DataFrame(data)
-    
+
+    # 🔹 Renommage et nettoyage
     df_faible_marge.rename(columns={
         "nom_medicament": "Médicaments",
-        "marge_prix": "Marges"
+        "marge_prix": "Marges",
+        "date_de_vente": "Date"  # si tu as la colonne date
     }, inplace=True)
+
+    # Convertir la date si existante
+    if "Date" in df_faible_marge.columns:
+        df_faible_marge["Date"] = pd.to_datetime(df_faible_marge["Date"])
+
+    # 🔹 Filtre par date (optionnel)
+    if "Date" in df_faible_marge.columns:
+        if 'date_range_faible_marge' not in st.session_state:
+            st.session_state.date_range_faible_marge = (df_faible_marge['Date'].min(), df_faible_marge['Date'].max())
+
+        date_debut, date_fin = st.session_state.date_range_faible_marge
+
+        df_faible_marge = df_faible_marge[
+            (df_faible_marge['Date'] >= pd.to_datetime(date_debut)) &
+            (df_faible_marge['Date'] <= pd.to_datetime(date_fin))
+        ]
+
+    # 🔹 Limiter aux top 10 marges faibles (tri croissant)
+    df_faible_marge = df_faible_marge.sort_values(by="Marges", ascending=True).head(3)
     df_faible_marge["Marges"] = df_faible_marge["Marges"].round(2)
-    df_faible_marge = df_faible_marge.sort_values(by="Marges", ascending=False)
 
     # 🔹 CSS pour carte centrée
     st.markdown("""
@@ -420,12 +441,11 @@ with col2:
         </style>
     """, unsafe_allow_html=True)
 
-    # 🔹 Graphique
+    # 🔹 Graphique bar
     fig = px.bar(
         df_faible_marge,
         x="Médicaments",
         y="Marges",
-        text="Marges",
         color="Marges",
         color_continuous_scale=px.colors.sequential.Plasma
     )
@@ -434,12 +454,12 @@ with col2:
         xaxis_title="Médicaments",
         yaxis_title="Marges prix",
         title={
-                    'text': " Marges faibles ",
-                    'x': 0.5,  # Centre horizontalement
-                    'xanchor': 'center',
-                    'yanchor': 'top'
-                },
-        title_font=dict(size=18),  # Taille du titre
+            'text': " Médicaments à faible marge",
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
+        title_font=dict(size=18),
         yaxis=dict(range=[0, df_faible_marge["Marges"].max() * 1.2]),
         showlegend=False,
         height=320,
@@ -450,11 +470,8 @@ with col2:
 
     fig.update_traces(textposition='outside')
 
+    # 🔹 Affichage dans Streamlit
     st.plotly_chart(fig, use_container_width=True)
-
-    # 🔹 Fin de la carte
-    st.markdown("</div>", unsafe_allow_html=True)
-    
 with col3:
     # 🔹 Style personnalisé (carte)
     st.markdown("""
@@ -570,3 +587,9 @@ if question := st.chat_input("Posez une question sur les employés"):
 
     st.session_state.messages_employe.append({"role": "assistant", "content": response})
     st.chat_message("assistant").write(response)
+with st.container():
+        # with col4:
+# 🔹 Style personnalisé
+    # 🔹 Données
+    data_pertes = finance_views.Evolution_pertes
+    df_pertes = pd.DataFrame(data_pertes)

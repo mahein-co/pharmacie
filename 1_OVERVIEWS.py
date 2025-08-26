@@ -65,6 +65,14 @@ chiffre_affaire = df_CA["chiffre_affaire_total"].sum()
 #2.Nombres ventes
 df_nbventes = pd.DataFrame(vente_views.nombre_ventes)
 nb_ventes = df_nbventes["nb_ventes"].sum()
+
+#3.valeur de stock 
+df_stock = pd.DataFrame(dashboard_views.valeur_stock_result)
+valeur_stock = df_stock["quantite_restante"].sum()
+
+#total_pertes_medicaments
+df_pertes = pd.DataFrame(dashboard_views.pertes_medicaments)
+total_pertes_medicaments = df_pertes["total_pertes"].sum()
 # DASHBOARD TITLE
 col_title, col_empty, col_filter = st.columns([2, 2, 2])
 with col_title:
@@ -110,17 +118,39 @@ if apply_button:
             chiffre_affaire = df_CA.loc[date_filter, "chiffre_affaire_total"].sum()
 
             # 2. Nombre de ventes
-            # df_nbventes["date_de_vente"] = pd.to_datetime(df_nbventes["date_de_vente"])
-            # date_filter = (df_nbventes["date_de_vente"].dt.date >= date_debut) and (df_nbventes["date_de_vente"].dt.date <= date_fin)
-            # nb_ventes = df_nbventes.loc[date_filter, "nb_ventes"].sum()
-            # nombre_ventes = pipeline_overview.get_nombre_de_ventes(
-            #     start_date=date_debut, 
-            #     end_date=date_fin
-            # )
-            # 3. Valeur de stock
-            # valeur_stock = pipeline_overview.get_valeur_totale_stock(end_date=date_fin)
+            df_nbventes["date_de_vente"] = pd.to_datetime(df_nbventes["date_de_vente"])
 
-valeur_stock = 0
+            date_filter = (
+                (df_nbventes["date_de_vente"].dt.date >= date_debut) & 
+                (df_nbventes["date_de_vente"].dt.date <= date_fin)
+            )
+
+            nb_ventes = df_nbventes.loc[date_filter, "nb_ventes"].sum()
+
+            # 3. Valeur de stock
+            df_stock["date_expiration"] = pd.to_datetime(df_stock["date_expiration"])
+
+            # Filtrer par date d'expiration
+            date_filter = (
+                (df_stock["date_expiration"].dt.date >= date_debut) &
+                (df_stock["date_expiration"].dt.date <= date_fin)
+            )
+
+            valeur_stock = df_stock.loc[date_filter, "quantite_restante"].sum()
+
+            #4.total_pertes_medicaments
+            df_pertes["date_expiration"] = pd.to_datetime(df_pertes["date_expiration"])
+
+            # Filtrer par date d'expiration
+            date_filter = (
+                (df_pertes["date_expiration"].dt.date >= date_debut) &
+                (df_pertes["date_expiration"].dt.date <= date_fin)
+            )
+
+            total_pertes_medicaments = df_pertes.loc[date_filter, "total_pertes"].sum()
+
+
+
 # SCORECARD KPIS -----------------------------------------
 three_second_kpis_html = f"""
     <div class="kpi-container-secondary">
@@ -136,7 +166,7 @@ three_second_kpis_html = f"""
         {icons.ventes_icon_html}
         </div>
             <p class="kpi-title" style="font-size:1rem;">Nombre de ventes</p>
-            <p class="kpi-value" style="font-size:1.6rem;">{nb_ventes}
+            <p class="kpi-value" style="font-size:1.6rem;">{dashboard_views.format_number_to_str(nb_ventes)}
         </div>
         <div class="kpi-card">
         <div style="text-align: left; position:absolute;">
@@ -150,7 +180,8 @@ three_second_kpis_html = f"""
 """
 st.markdown(dashboard_views.first_container_kpis_html(
     chiffre_affaire,
-    valeur_stock
+    valeur_stock,
+    total_pertes_medicaments
 ), unsafe_allow_html=True)
 st.markdown(three_second_kpis_html, unsafe_allow_html=True)
 
