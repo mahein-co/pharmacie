@@ -267,7 +267,7 @@ qa = create_chatbot()
 
 # Préparation des données 
 total_approvisionnement = "\n".join([f"{row['Mois']}: {row['Année']}: {row['total_approvisionnement']}" for _, row in df_filtered.iterrows()])
-temps_moyen_livraison = "\n".join([f"{row['Fournisseurs']}: {row['Temps']}" for _, row in df_temps_moyen_fourn.iterrows()])
+# temps_moyen_livraison = "\n".join([f"{row['Fournisseur']}: {row['Temps']}" for _, row in df_temps_moyen_fourn.iterrows()])
 taux_retard_livraison = "\n".join([f"{row['Fournisseurs']}: {row['Taux']}" for _, row in df_taux_retard_livraison.iterrows()])
 Commande_moyen_fourn =  "\n".join([f"{row['Fournisseur']}: {row['Nombre']}" for _, row in df_commande_moyen_fourn.iterrows()])
 
@@ -277,12 +277,13 @@ Voici les données des approvisionnements :
 Total approvisionnement :
 {total_approvisionnement}
 
-Temps moyen de livraison par fournisseur :
-{temps_moyen_livraison}
 
 Nombre moyen de commandes par fournisseur :
 {Commande_moyen_fourn}
 """
+
+# Temps moyen de livraison par fournisseur :
+# {temps_moyen_livraison}
 
 # Chatbot interactif
 st.title("💬 Chatbot Analyse des approvisionnements")

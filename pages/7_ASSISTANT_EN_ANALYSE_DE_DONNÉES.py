@@ -48,7 +48,7 @@ def generate_text_embedding(text: str):
     return response.data[0].embedding
 
 
-def search_rag_mongo(query, k=400):
+def search_rag_mongo(query, k=30):
     query_embedding = generate_text_embedding(query)
 
     pipeline = [
@@ -57,7 +57,7 @@ def search_rag_mongo(query, k=400):
                 "index": "embedding_corpus_rag", 
                 "queryVector": query_embedding,
                 "path": "embedding",
-                "numCandidates": 7000,   
+                "numCandidates": 1500,   
                 "limit": k
             }
         },
@@ -78,6 +78,24 @@ def get_last_user_question():
 
     
 # System prompt for the AI
+response_prompt = f"""
+Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.chiffre_affaire_total} MGA.
+        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
+
+        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
+        Si on te demande le salaire moyen des employés, te voici le salaire moyen des employés de la pharmacie: {employe_views.salaire_moyen} MGA.
+        Si on te demande le nombre de médicaments, te voici le nombre de médicaments de la pharmacie: {dashboard_views.nb_total_medicaments} médicaments.
+        Si on te demande le nombre de ventes, te voici le nombre de ventes de la pharmacie: {dashboard_views.nombre_total_vente_str} ventes.
+        Si on te demande les médicament déjà ou bientôt expirés (périmés), tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
+        Si on te demande les médicaments les plus chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_plus_cher}.
+        Si on te demande les médicaments les moins chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_moins_cher}.
+        Si on te demande les médicaments en critique en stock (moins de 70 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_critique}.
+        
+        Si on te demande les médicaments en surplus en stock (plus de 700 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_surplus}.
+
+"""
+
+
 system_prompt = f"""
     Tu es un assistant en analyse de données pharmaceutiques et tu vas donner des explications business de leurs données.
     Ton rôle est d’assister les utilisateurs (pharmaciens ou professionnels de santé) en leur fournissant des informations fiables, claires, actualisées et compréhensibles sur :
@@ -95,26 +113,9 @@ system_prompt = f"""
         Si l’utilisateur demande une analyse de stock, tu fournis des rapports synthétiques ou détaillés selon le besoin.
         Si tu ne sais pas ou n'es pas autorisé à répondre, tu redonnes la main au professionnel de santé.
         
-
-    Voici des informations provenant de notre base de ventes, de stocks et d'employés:
+    {response_prompt}
 """
 
-response_prompt = f"""
-Si on te demande le chiffre d'affaire, te voici le chiffre d'affaire de la pharmacie : {dashboard_views.chiffre_affaire} MGA.
-        Si on te demande le chiffre d'affaire d'un certain temps, tu calcules la somme de tous les produits de quantite vendue et prix unitaire des ventes de ce temps en donnant le nom de médicament vendu et son fournisseur.
-
-        Si on te demande le nombre d'employés, te voici le nombre d'employés de la pharmacie: {employe_views.Nb_employers} employés.
-        Si on te demande le salaire moyen des employés, te voici le salaire moyen des employés de la pharmacie: {employe_views.salaire_moyen} MGA.
-        Si on te demande le nombre de médicaments, te voici le nombre de médicaments de la pharmacie: {dashboard_views.nb_total_medicaments} médicaments.
-        Si on te demande le nombre de ventes, te voici le nombre de ventes de la pharmacie: {dashboard_views.nombre_total_vente_str} ventes.
-        Si on te demande les médicament déjà ou bientôt expirés (périmés), tu fourniras ta réponse par la liste de médicaments qui les sont : {dashboard_views.medicaments_expires}.
-        Si on te demande les médicaments les plus chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_plus_cher}.
-        Si on te demande les médicaments les moins chers, tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_moins_cher}.
-        Si on te demande les médicaments en critique en stock (moins de 70 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_critique}.
-        
-        Si on te demande les médicaments en surplus en stock (plus de 700 unités en stokc), tu fourniras ta réponse par la liste de médicaments qui les sont : {medicament_views.medoc_surplus}.
-
-"""
 
 # Generate AI response
 def generate_answer(query, retrieved_docs):
@@ -122,11 +123,15 @@ def generate_answer(query, retrieved_docs):
     context = "\n\n---\n\n".join(retrieved_docs)
     # conversation_context = f"Dernière question de l'utilisateur : {last_question}\n" if last_question else ""
     conversation = [{"role": m["role"], "content": m["content"]} for m in st.session_state.data_analyste_messages]
+    if len(conversation) >= 3 :
+        conversation = conversation[-3:]
 
     prompt = f"""
-        {response_prompt}        
-        {context}   
+        Les 3 dernieres conversations:
         {conversation}
+
+        Voici des informations provenant de notre base de ventes, de stocks et d'employés:
+        {context}   
         Réponds à la question suivante de manière claire, concise et professionnelle :
         {query}
     """

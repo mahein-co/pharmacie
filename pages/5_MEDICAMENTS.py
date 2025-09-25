@@ -71,8 +71,7 @@ if apply_button:
     if len(st.session_state.date_range) == 2:
         date_debut, date_fin = st.session_state.date_range
         if (date_debut <= date_fin):
-
-            df_nb_medoc["date_de_vente"] = pd.to_datetime(df_nb_medoc["date_de_vente"])
+            df_nb_medoc["arrival_date"] = pd.to_datetime(df_nb_medoc["arrival_date"])
 
 if medicament_views.overview_collection :
   st.markdown(medicament_views.kpis_html,unsafe_allow_html=True)
@@ -869,7 +868,6 @@ def render_table(df_rupture, titre="Tableau des données"):
 
 from dashbot.chat_medicament import create_chatbot
 
-st.title("💬 Chatbot Analyse des finances")
 
 # Preparation des donnees  
 # Médicaments forte rotation

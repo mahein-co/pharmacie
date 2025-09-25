@@ -542,12 +542,12 @@ from dashbot.chat_vente import create_chatbot
 qa = create_chatbot()
 
 # Préparation des données 
-top_vendeurs_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre Affaire']}" for _, row in top_vendeurs.iterrows()])
-vendeurs_non_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre Affaire']}" for _, row in non_habilite_vendeurs.iterrows()])
-top_meds_text = "\n".join([f"{row['Médicaments']}: {row['quantite totale vendue']}" for _, row in top_medicaments.iterrows()])
-moins_meds_text = "\n".join([f"{row['Médicaments']}: {row['Quantite Totale Vendue']}" for _, row in Medoc_moins.iterrows()])
-saison_text = "\n".join([f"{row['Médicaments']} ({row['jour']}): {row['Quantite Totale']}" for _, row in df_saison.iterrows()])
-evolution_text = "\n".join([f"{row['Legend']} - {row['Mois']} {row['Annee']}: {row['Quantite Totale']:}" for _, row in df_plot.iterrows()])
+top_vendeurs_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre d’affaires']}" for _, row in top_vendeurs.iterrows()])
+vendeurs_non_text = "\n".join([f"{row['Vendeur']}: {row['Chiffre d’affaires']}" for _, row in non_habilite_vendeurs.iterrows()])
+top_meds_text = "\n".join([f"{row['Médicaments']}: {row['Quantité totale vendue']}" for _, row in top_medicaments.iterrows()])
+moins_meds_text = "\n".join([f"{row['Médicaments']}: {row['Quantité totale vendue']}" for _, row in Medoc_moins.iterrows()])
+# saison_text = "\n".join([f"{row['Médicaments']} ({row['jour']}): {row['Quantite']}" for _, row in df_saison.iterrows()])
+# evolution_text = "\n".join([f"{row['Legend']} - {row['Mois']} {row['Annee']}: {row['Quantite']:}" for _, row in df_plot.iterrows()])
 
 # Prompt complet 
 prompt = f"""
@@ -565,13 +565,15 @@ Top 3 médicaments :
 Médicaments les moins vendus :
 {moins_meds_text}
 
-Saisonnalité (ventes par jour et médicament) :
-{saison_text}
-
-Évolution des ventes par mois (proportionnelle) :
-{evolution_text}
 """
 
+# Saisonnalité (ventes par jour et médicament) :
+# {saison_text}
+
+# Évolution des ventes par mois (proportionnelle) :
+
+
+# {evolution_text}
 # Chatbot interactif 
 st.title("💬 Chatbot Analyse des ventes")
 
