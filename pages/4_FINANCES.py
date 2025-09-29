@@ -555,7 +555,7 @@ Voici les données des finances :
 #Médicaments qui rapportent moins :
 #{rapporte_moins}
 
-Médicaments qui rapportent plus :
+# Médicaments qui rapportent plus :
 {rapporte_plus}
 
 #Forte marge de prix des médicamants :
@@ -564,7 +564,7 @@ Médicaments qui rapportent plus :
 #Faible marge de prix des médicamants :
 #{faible_marge}
 
-Marge moyenne de prix des médicamants :
+# Marge moyenne de prix des médicamants :
 {funnel_data}
 
 """
