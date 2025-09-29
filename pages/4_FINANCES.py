@@ -537,20 +537,20 @@ from dashbot.chat_finance import create_chatbot
 
 qa = create_chatbot()
 
-# CA_mois = "\n".join([f"{row['annee']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
+CA_mois = "\n".join([f"{row['annee']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
 rapporte_plus = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_plus.iterrows()])
 rapporte_moins = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_moins.iterrows()])
 forte_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_forte_marge.iterrows()])
 faible_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_faible_marge.iterrows()])
-# moyenne_marge = "\n".join([f"{row['Prix de vente']}: {row["Prix d'chats"]}: {row['Marges bénéficiaires']}" for _, row in df_marge_moyen.iterrows()])
+funnel_data = "\n".join([f"{row['Prix de vente']}: {row["Prix d'chats"]}: {row['Marges bénéficiaires']}" for _, row in funnel_data.iterrows()])
 
-# Chiffre d'affaire mensuel :
-# # {CA_mois}
+
 # prompt prêt à l’emploi
 prompt = f"""
 Voici les données des finances :
 
-
+# Chiffre d'affaire mensuel :
+{CA_mois}
 
 Médicaments qui rapportent moins :
 {rapporte_moins}
@@ -564,11 +564,12 @@ Forte marge de prix des médicamants :
 Faible marge de prix des médicamants :
 {faible_marge}
 
+Marge moyenne de prix des médicamants :
+{funnel_data}
 
 """
 
-# Marge moyenne de prix des médicamants :
-# {moyenne_marge}
+
 
 # Chatbot interactif
 st.title("💬 Chatbot Analyse des finances")
