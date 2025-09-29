@@ -585,7 +585,8 @@ if question := st.chat_input("Posez une question sur le finance"):
 
     # On combine la question de l’utilisateur avec les données préparées
     full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
-    response = qa.run(full_prompt)
+    # response = qa.run(full_prompt)
+    response = qa({"query": full_prompt})
 
     st.session_state.messages_finances.append({"role": "assistant", "content": response})
     st.chat_message("assistant").write(response)
