@@ -537,11 +537,11 @@ from dashbot.chat_finance import create_chatbot
 
 qa = create_chatbot()
 
-CA_mois = "\n".join([f"{row['annee']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
+#CA_mois = "\n".join([f"{row['annee']}: {row['chiffre_affaire_mois']}" for _, row in df_filtre.iterrows()])
 rapporte_plus = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_plus.iterrows()])
-rapporte_moins = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_moins.iterrows()])
-forte_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_forte_marge.iterrows()])
-faible_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_faible_marge.iterrows()])
+#rapporte_moins = "\n".join([f"{row['Médicaments']}: {row['Total Gain']}" for _, row in df_rapporte_moins.iterrows()])
+#forte_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_forte_marge.iterrows()])
+#faible_marge = "\n".join([f"{row['Médicaments']}: {row['Marges']}" for _, row in df_faible_marge.iterrows()])
 funnel_data = "\n".join([f"{row['Prix de vente']}: {row["Prix d'chats"]}: {row['Marges bénéficiaires']}" for _, row in funnel_data.iterrows()])
 
 
@@ -550,19 +550,19 @@ prompt = f"""
 Voici les données des finances :
 
 # Chiffre d'affaire mensuel :
-{CA_mois}
+#{CA_mois}
 
-Médicaments qui rapportent moins :
-{rapporte_moins}
+#Médicaments qui rapportent moins :
+#{rapporte_moins}
 
 Médicaments qui rapportent plus :
 {rapporte_plus}
 
-Forte marge de prix des médicamants :
-{forte_marge}
+#Forte marge de prix des médicamants :
+#{forte_marge}
 
-Faible marge de prix des médicamants :
-{faible_marge}
+#Faible marge de prix des médicamants :
+#{faible_marge}
 
 Marge moyenne de prix des médicamants :
 {funnel_data}
@@ -586,8 +586,8 @@ if question := st.chat_input("Posez une question sur le finance"):
 
     # On combine la question de l’utilisateur avec les données préparées
     full_prompt = f"{prompt}\n\nQuestion de l'utilisateur : {question}"
-    # response = qa.run(full_prompt)
-    response = qa({"query": full_prompt})
+    response = qa.run(full_prompt)
+    #response = qa({"query": full_prompt})
 
     st.session_state.messages_finances.append({"role": "assistant", "content": response})
     st.chat_message("assistant").write(response)
