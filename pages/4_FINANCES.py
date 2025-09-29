@@ -580,7 +580,7 @@ if "messages_finances" not in st.session_state:
 for msg in st.session_state.messages_finances:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if question := st.chat_input("Posez une question sur les finances"):
+if question := st.chat_input("Posez une question sur le finance"):
     st.session_state.messages_finances.append({"role": "user", "content": question})
     st.chat_message("user").write(question)
 
